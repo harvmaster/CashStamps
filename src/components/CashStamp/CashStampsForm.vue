@@ -10,6 +10,7 @@
           label="Stamp Value (BCH)"
           type="number"
           filled
+          :rules="[val => val > 0 || 'Value must be greater than 0']"
         />
       </div>
 
@@ -22,6 +23,7 @@
           label="Stamp Quantity"
           type="number"
           filled
+          :rules="[val => val > 0 || 'Value must be greater than 0']"
         />
       </div>
 
