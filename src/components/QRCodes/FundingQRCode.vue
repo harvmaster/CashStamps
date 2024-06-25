@@ -1,7 +1,12 @@
 <template>
   <q-dialog v-model="visible">
-    <q-card>
-      <div ref="qrElement" />
+    <q-card class="q-pa-md">
+      <q-card-section class="text-h6 no-margin text-weight-medium row justify-center items-center text-center">
+        Scan to fill the stamps with BCH
+      </q-card-section>
+      <q-card-section class="row justify-center">
+      	<div ref="qrElement" />
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
@@ -11,7 +16,7 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import QRCode from 'easyqrcodejs'
 
 export type FundingQRCodeProps = {
@@ -23,13 +28,16 @@ const props = defineProps<FundingQRCodeProps>();
 const visible = ref(false);
 const toggleVisible = () => {
   visible.value = !visible.value;
-  generateQrCode();
+  nextTick(() => {
+    generateQrCode();
+  })
   console.log(props.content)
 }
 
 const qrElement = ref<HTMLElement | null>(null);
 const generateQrCode = async () => {
   if (qrElement.value) {
+    console.log(props.content, ' making qr code')
     new QRCode(qrElement.value, {
       text: props.content,
       width: 256,
