@@ -1,6 +1,8 @@
 <template>
   <q-dialog v-model="visible">
-    <div ref="qrElement" />
+    <q-card>
+      <div ref="qrElement" />
+    </q-card>
   </q-dialog>
 </template>
 
@@ -40,9 +42,9 @@ const generateQrCode = async () => {
   }
 }
 
-onMounted(() => {
-  generateQrCode();
-})
+// onMounted(() => {
+//   generateQrCode();
+// })
 
 defineExpose({
   toggleVisible
