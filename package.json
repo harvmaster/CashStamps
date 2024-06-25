@@ -19,7 +19,11 @@
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "easyqrcodejs": "^4.6.1",
+    "electrum-cash": "2.0.10-development.3428777728",
+    "events": "^3.3.0",
+    "idb-keyval": "^6.2.1",
     "quasar": "^2.6.0",
+    "vite-plugin-externals": "^0.6.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
   },

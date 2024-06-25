@@ -138,7 +138,10 @@
 </style>
 
 <script setup lang="ts">
+import { app } from 'src/boot/app.js';
 import { Wallet } from 'src/types';
+import { StampCollection } from 'src/services/stamp-collection.js';
+
 
 import { onMounted, ref } from 'vue';
 import QRCode from 'easyqrcodejs';
@@ -212,5 +215,14 @@ const exportStamps = (): void => {
 //   qrContent.value = '';
 //   creationStep.value = '1';
 // })
+
+onMounted(() => {
+  app.stampCollection = StampCollection.generate(20);
+
+  // Print each of the Private Key WIFs to the console.
+  app.stampCollection.getStamps().forEach((stamp) => {
+    console.log(stamp.privateKey().toWif());
+  });
+})
 
 </script>
