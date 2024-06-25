@@ -55,7 +55,7 @@ onMounted(() => {
       text: props.wallet.wif,
       width: 128,
       height: 128,
-      logo: '/bch.svg',
+      logo: 'bch.svg',
       logoBackgroundTransparent: true,
       colorDark: '#000000',
       colorLight: '#ffffff',

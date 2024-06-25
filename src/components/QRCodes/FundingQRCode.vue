@@ -40,7 +40,7 @@ const generateQrCode = async () => {
       text: props.content,
       width: 256,
       height: 256,
-      logo: '/bch.svg',
+      logo: 'bch.svg',
       logoBackgroundTransparent: true,
       colorDark: '#000000',
       correctLevel: QRCode.CorrectLevel.H

@@ -6,7 +6,7 @@
       <!-- Title -->
       <div class="col-12 row justify-center">
         <div class="col-auto row justify-center text-h2 text-weight-bold text-white">
-          <img src="/bch.svg" style="height: 1em" />
+          <img src="bch.svg" style="height: 1em" />
           CashStamps
         </div>
       </div>
@@ -169,7 +169,7 @@ const generateQrCode = (content: string): void => {
     quietZone: 0,
     width: 128,
     height: 128,
-    logo: '/bch.svg',
+    logo: 'bch.svg',
     logoBackgroundTransparent: true
   });
 
