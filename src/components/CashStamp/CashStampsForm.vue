@@ -1,6 +1,6 @@
 <template>
-  <div class="cash-stamps_form row">
-    <div class="col-12 row q-col-gutter-md">
+  <div class="cash-stamps_form row q-col-gutter-md">
+    <div class="col row q-col-gutter-md">
 
       <!-- Value Input -->
       <div class="col row">
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Submit -->
-        <div class="col-auto  justify-center">
+        <!-- <div class="col-auto  justify-center">
           <q-btn
             class="shadow-xs"
             
@@ -49,11 +49,30 @@
             color="primary"
             @click="submit"
           />
-        </div>
+        </div> -->
 
       </div>
 
     </div>
+
+     <!-- Action buttons -->
+    <div class="col-auto column q-col-gutter-y-md justify-evenly full-height">
+      <div class="col-auto">
+        <q-btn class="full-width" label="create Stamps" color="primary" @click="submit" />
+      </div>
+      <div class="col-auto">
+        <q-btn class="full-width" :disable="!wallets.length" label="Fund Stamps" color="green-6" @click="showFundingQR" />
+      </div>
+      <div class="col-auto">
+        <q-btn class="full-width" disable label="Redeem Stamps" color="orange-6" @click="printStamps" />
+      </div>
+    </div>
+
+    <funding-qr-code
+      ref="fundingQrCode"
+      :content="fundingTx"
+    />
+
   </div>
 </template>
 
@@ -66,6 +85,14 @@ import { ref } from 'vue';
 import { Wallet } from 'src/types'
 
 import { generateWallet } from 'src/lib/bchWallet';
+
+import FundingQrCode from '../QRCodes/FundingQRCode.vue';
+
+export type CashStampsFormProps = {
+  wallets: Wallet[]
+}
+
+const props = defineProps<CashStampsFormProps>();
 
 const inputForm = ref({
   quantity: 1,
@@ -83,12 +110,19 @@ const createTransaction = async (wallets: Wallet[]) : Promise<string> => {
   return 'bch tx string';
 }
 
+const fundingTx = ref('')
+const fundingQrCode = ref<typeof FundingQrCode | null>(null);
+const showFundingQR = async () => {
+  fundingTx.value = await createTransaction(props.wallets);
+  fundingQrCode.value?.toggleVisible();
+}
+
 const submit = async () => {
   const wallets = await createWallets(inputForm.value.quantity);
   emits('wallets', wallets)
 
-  const tx = await createTransaction(wallets);
-  emits('transaction', tx);
+  // const tx = await createTransaction(wallets);
+  // emits('transaction', tx);
 }
 
 const createWallets = async (quantity: number): Promise<Wallet[]> => {
