@@ -1,6 +1,43 @@
 <template>
-  <q-page class="row items-center justify-evenly q-pa-xl printable">
-    <div class="col-12 row cash-stamps_page justify-center q-col-gutter-y-md printable">
+  <q-page class="row items-center justify-evenly printable">
+
+    <!-- Header -->
+    <div class="col-12 row bg-dark q-pa-md q-py-lg print-hide">
+      <!-- Title -->
+      <div class="col-12 row justify-center">
+        <div class="col-auto row justify-center text-h2 text-weight-bold text-white">
+          <img src="/bch.svg" style="height: 1em" />
+          CashStamps
+        </div>
+      </div>
+
+      <!-- Subtitle -->
+      <div class="col-12 row justify-center">
+        <div class="col-auto text-h6 text-weight-medium text-white">
+          Create and print Bitcoin Cash stamps
+        </div>
+      </div>
+
+      <!-- Description & Instructions -->
+      <div class="col-12 row justify-center">
+        <div class="col-auto text-body1 text-white">
+          <!-- Create and print Bitcoin Cash stamps to give to friends, family, or customers.  -->
+          <br />
+          <br />
+          <strong>Instructions:</strong>
+          <br />
+          1. Enter the value and quantity of stamps you want to create.
+          <br />
+          2. Click "Create Stamps" to generate a QR code.
+          <br />
+          3. Scan the QR code with your Bitcoin Cash wallet to fund the stamps.
+          <br />
+          4. Print the stamps and give them to your friends, family, or customers.
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 row cash-stamps_page justify-center q-col-gutter-y-md printable q-pa-xl">
       <div class="col-12 col-sm row items-center print-hide">
         <cash-stamps-form 
           class="col"
@@ -15,7 +52,7 @@
         <div class="absolute qr-label col-12 q-pb-sm text-h5 text-center text-weight-medium">
           {{
             creationStep === '1' ? 'Create' :
-            creationStep === '2' ? 'Fill' :
+            creationStep === '2' ? 'Fund' :
             creationStep === '3' ? 'Print!' : ''
           }}
         </div>
@@ -44,10 +81,10 @@
       <!-- Stamp results -->
       <div class="col-12 row q-gutter-y-md justify-center">
         <!-- Controls for print -->
-        <div class="col-auto row justify-center q-pa-xs rounded-borders shadow-2 print-hide">
+        <div class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide">
           <div class="col-auto q-pa-xs">
             <q-btn
-              class="shadow-xs"
+              class="shadow-xs rounded-sm"
               outline
               icon="print"
               color="primary"
@@ -57,7 +94,7 @@
 
           <div class="col-auto q-pa-xs">
             <q-btn
-              class="shadow-xs"
+              class="shadow-xs rounded-sm"
               outline
               icon="download"
               color="positive"
@@ -67,8 +104,8 @@
 
           <div class="col-auto q-pa-xs">
             <q-btn
-              class="shadow-xs"
-              flat
+              class="shadow-xs rounded-sm"
+              outline
               icon="cancel"
               color="negative"
               @click="clearForm"
@@ -77,15 +114,18 @@
         </div>
 
         <!-- Printable Page -->
-        <div class="col-12 paper printable shadow-20 rounded-md q-pa-md" ref="printContent">
-          <cash-stamp-item
-            v-for="(wallet, index) in wallets"
-            :key="wallet.address"
-            :id="index"
-            :wallet="wallet"
-            :create_date="new Date().toLocaleDateString()"
-          />
-        </div>
+        <div class="col-12 row paper printable shadow-20 rounded-md q-pa-md items-start" ref="printContent">
+          <div class="row col-12">
+            <cash-stamp-item
+              class="col-auto q-pa-sm"
+              v-for="(wallet, index) in wallets"
+              :key="wallet.address"
+              :id="index"
+              :wallet="wallet"
+              :create_date="new Date().toLocaleDateString()"
+            />
+          </div>
+          </div>
       </div>
     </div>
 

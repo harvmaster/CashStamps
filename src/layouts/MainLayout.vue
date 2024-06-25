@@ -1,15 +1,14 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="print-hide">
+  <q-layout view="lHh Lpr lFf" class="">
+    <!-- <q-header class="print-hide bg-white">
       <q-toolbar>
 
-        <q-toolbar-title>
+        <q-toolbar-title class="text-black">
           CashStamps
         </q-toolbar-title>
 
-        <!-- <div>Quasar v{{ $q.version }}</div> -->
       </q-toolbar>
-    </q-header>
+    </q-header> -->
 
     <q-page-container>
       <router-view />
