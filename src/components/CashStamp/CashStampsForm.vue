@@ -125,6 +125,11 @@ const submit = async () => {
   // emits('transaction', tx);
 }
 
+const printStamps = () => {
+  // Print the stamps
+
+}
+
 const createWallets = async (quantity: number): Promise<Wallet[]> => {
   // Create wallets here
   const wallets = await Promise.all(
