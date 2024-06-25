@@ -65,9 +65,13 @@ module.exports = configure(function (/* ctx */) {
       // vueDevtools,
       // vueOptionsAPI: false,
 
+      env: {
+        BASE_PATH: process.env.BASE_PATH || '',
+      },
+
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: `/${process.env.BASE_PATH || ''}`,
       // analyze: true,
       // env: {},
       // rawDefine: {}

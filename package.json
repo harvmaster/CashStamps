@@ -11,6 +11,7 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build -m pwa",
+    "build_github": "BASE_PATH='CashStamps/' quasar build -m pwa",
     "favicons": "icongenie generate --theme-color 000 --skip-trim -i ./src/assets/bch.png"
   },
   "dependencies": {

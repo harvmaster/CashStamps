@@ -20,8 +20,8 @@
 
       <!-- Description & Instructions -->
       <div class="col-12 row justify-center">
-        <div class="col-auto text-body1 text-white">
-          <!-- Create and print Bitcoin Cash stamps to give to friends, family, or customers.  -->
+        <div class="col-auto text-body1 text-white paragraph">
+          CashStamps are easily redeemable Bitcoin Cash wallets that can be used to share BCH with others, with the ability to claim back funds on unused stamps
           <br />
           <br />
           <strong>Instructions:</strong>
@@ -118,6 +118,10 @@
 <style lang="scss" scoped>
 .cash-stamps_page {
   max-width: 992px
+}
+
+.paragraph {
+  max-width: 40em;
 }
 
 @media print {
