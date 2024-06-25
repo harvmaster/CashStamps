@@ -7,6 +7,9 @@
       <q-card-section class="row justify-center">
         <div ref="qrElement" />
       </q-card-section>
+      <q-card-section class="row justify-center text-center">
+        This QR code is not yet functional.<br> It is a placeholder for future functionality.
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
