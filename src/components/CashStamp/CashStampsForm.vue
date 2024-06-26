@@ -9,8 +9,11 @@
           v-model.number="inputForm.value"
           :label="`Stamp Value (${inputForm.currency.toUpperCase()})`"
           type="number"
+          :disable="disable"
           filled
           :rules="[val => val > 0 || 'Value must be greater than 0']"
+          @update:model-value="clampValue"
+          @input="logInput"
         />
       </div>
 
@@ -22,8 +25,10 @@
           v-model.number="inputForm.quantity"
           label="Stamp Quantity"
           type="number"
+          :disable="disable"
           filled
           :rules="[val => val > 0 || 'Value must be greater than 0']"
+          @update:model-value="clampQuantity"
         />
       </div>
 
@@ -35,6 +40,7 @@
           <q-select
             style="min-width: 10em"
             v-model="inputForm.currency"
+            :disable="disable"
             :options="['BCH']"
             label="Currency"
             filled
@@ -58,10 +64,10 @@
      <!-- Action buttons -->
     <div class="col-auto column q-col-gutter-y-md justify-evenly full-height">
       <div class="col-auto">
-        <q-btn class="full-width" label="create Stamps" color="primary" @click="submit" />
+        <q-btn class="full-width" :disable="disable" label="create Stamps" color="primary" @click="submit" />
       </div>
       <div class="col-auto">
-        <q-btn class="full-width" :disable="!wallets.length" label="Fund Stamps" color="green-6" @click="showFundingQR" />
+        <q-btn class="full-width" :disable="!wallets.length || disable" label="Fund Stamps" color="green-6" @click="showFundingQR" />
       </div>
       <div class="col-auto">
         <q-btn class="full-width" disable label="Redeem Stamps" color="orange-6" @click="redeemStamps" />
@@ -91,8 +97,14 @@ import { FundingOptions, StampCollection } from 'src/services/stamp-collection.j
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
 export type CashStampsFormProps = {
-  wallets: Wallet[]
+  wallets: Wallet[];
+  disable?: boolean;
 }
+
+const emits = defineEmits<{
+  (e: 'transaction', content: string): void
+  (e: 'wallets', content: Wallet[]): void
+}>()
 
 const props = defineProps<CashStampsFormProps>();
 
@@ -102,10 +114,17 @@ const inputForm = ref({
   currency: 'bch'
 })
 
-const emits = defineEmits<{
-  (e: 'transaction', content: string): void
-  (e: 'wallets', content: Wallet[]): void
-}>()
+const clampValue = (val: string | number | null) => {
+  if (val === null || typeof val == 'string') return;
+  inputForm.value.value = Math.max(0, val);
+}
+const clampQuantity = (val: string | number | null) => {
+  if (val === null || typeof val == 'string') return;
+  inputForm.value.quantity = Math.max(1, val);
+}
+const logInput = (event: Event) => {
+  console.log(event)
+}
 
 // Implement transaction creation for filling newly created stamps
 const createTransaction = async (wallets: unknown[]) : Promise<string> => {

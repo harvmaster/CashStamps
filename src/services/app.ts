@@ -62,6 +62,15 @@ export class App {
   //---------------------------------------------------------------------------
   // Methods
   //---------------------------------------------------------------------------
+  async getStampCollections(): Promise<StampCollection[]> {
+    /*
+      stampCollections: [
+        [key]: 'mneumonic',
+      ]
+    */
+    const collections = await get('stampCollections');
+    return collections || []
+  }
 
   //---------------------------------------------------------------------------
   // Events/Callbacks

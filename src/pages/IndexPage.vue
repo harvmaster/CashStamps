@@ -41,9 +41,28 @@
 
       <!-- Input form and wallet creator -->
       <div class="col-12 row items-center print-hide">
-        <cash-stamps-form 
+        <div class="col-12 q-py-sm">
+          <q-toggle label="Use Existing Colection" v-model="showExistingCollections" />
+        </div>
+
+        <q-slide-transition>
+          <div v-show="showExistingCollections" class="col-12 row">
+            <q-select class="q-py-sm col-auto" style="width: 20em; max-width: 100%" v-model="selectedCollection" :options="collections" label="Select Collection" filled>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey-8">
+                    No collections available
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+        </q-slide-transition>
+
+        <cash-stamps-form
           :wallets="stamps"
-          class="col"
+          :disable="showExistingCollections"
+          class="col-12 q-py-sm"
         />
       </div>
       
@@ -129,7 +148,7 @@
 
 <script setup lang="ts">
 import { Wallet } from 'src/types';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 import { app } from 'src/boot/app';
 
@@ -155,11 +174,17 @@ const stamps = computed<Wallet[]>(() => {
 
       // details about amount, currency, and whether its been funded yet 
       funding: stampFunding,
-      
+
       create_date: new Date().toISOString()
     }
   });
 })
+
+// Data for existing collections
+const showExistingCollections = ref(false);
+const selectedCollection = ref<string | undefined>(undefined);
+const collections = ref<string[]>([]);
+const getCollections = async () => collections.value = Object.keys(await app.getStampCollections()) || [];
 
 const clearForm = (): void => {
   if (!app.stampCollection) return;
@@ -182,4 +207,8 @@ const exportStamps = (): void => {
   a.click();
   URL.revokeObjectURL(url);
 };
+
+onMounted(() => {
+  getCollections();
+})
 </script>
