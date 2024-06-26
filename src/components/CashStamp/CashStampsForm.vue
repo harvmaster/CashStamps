@@ -7,7 +7,7 @@
         <q-input
           class="col-12"
           v-model.number="inputForm.value"
-          :label="`Stamp Value (${inputForm.denotion.toUpperCase()})`"
+          :label="`Stamp Value (${inputForm.currency.toUpperCase()})`"
           type="number"
           filled
           :rules="[val => val > 0 || 'Value must be greater than 0']"
