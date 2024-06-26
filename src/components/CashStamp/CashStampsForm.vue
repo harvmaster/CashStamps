@@ -36,7 +36,7 @@
             style="min-width: 10em"
             v-model="inputForm.denotion"
             :options="['bch', 'usd']"
-            label="Denotion"
+            label="Currency"
             filled
           />
         </div>
