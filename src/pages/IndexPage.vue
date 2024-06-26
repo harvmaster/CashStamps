@@ -130,6 +130,7 @@
 
 <script setup lang="ts">
 import { Wallet } from 'src/types';
+import app from 'src/boot/app';
 
 import { ref } from 'vue';
 

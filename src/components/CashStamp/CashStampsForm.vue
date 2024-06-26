@@ -35,7 +35,7 @@
           <q-select
             style="min-width: 10em"
             v-model="inputForm.currency"
-            :options="['bch', 'usd']"
+            :options="['bch']"
             label="Currency"
             filled
           />
