@@ -9,7 +9,7 @@
 
       <!-- Value -->
       <div class="col-auto row justify-center">
-        <div class="col-12 text-h4 no-margin no-padding text-weight-medium">{{ props.wallet.value.amount }} {{ props.wallet.value.denotion.toUpperCase() }}</div>
+        <div class="col-12 text-h4 no-margin no-padding text-weight-medium">{{ props.wallet.value.amount }} {{ props.wallet.value.currency.toUpperCase() }}</div>
       </div>
       
       <!-- Create-date -->

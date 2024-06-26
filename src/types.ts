@@ -3,7 +3,7 @@ export type Wallet = {
   privateKey: string;
   value: {
     amount: number;
-    denotion: string;
+    currency: string;
   }
   wif: string;
   create_date: string;

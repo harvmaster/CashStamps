@@ -34,7 +34,7 @@
         <div class="col-auto row items-center">
           <q-select
             style="min-width: 10em"
-            v-model="inputForm.denotion"
+            v-model="inputForm.currency"
             :options="['bch', 'usd']"
             label="Currency"
             filled
@@ -44,10 +44,10 @@
         <!-- Info -->
         <div class="col-auto row">
           <div class="col-12 col-md-auto text-body2">
-            Total Value ({{ inputForm.denotion.toUpperCase() }})
+            Total Value ({{ inputForm.currency.toUpperCase() }})
           </div>
           <div class="col-12 text-h6">
-            {{ inputForm.quantity * inputForm.value }} {{ inputForm.denotion.toUpperCase() }}
+            {{ inputForm.quantity * inputForm.value }} {{ inputForm.currency.toUpperCase() }}
           </div>
         </div>
 
@@ -99,7 +99,7 @@ const props = defineProps<CashStampsFormProps>();
 const inputForm = ref({
   quantity: 1,
   value: 0,
-  denotion: 'bch'
+  currency: 'bch'
 })
 
 const emits = defineEmits<{
@@ -147,7 +147,7 @@ const createWallets = async (quantity: number): Promise<Wallet[]> => {
       address: privateKey.derivePublicKey().deriveAddress(),
       value: {
         amount: inputForm.value.value,
-        denotion: inputForm.value.denotion
+        currency: inputForm.value.currency
       },
       create_date: new Date().toISOString()
     }
