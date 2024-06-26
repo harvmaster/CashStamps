@@ -29,6 +29,17 @@
 
 
       <div class="col-12 row items-center justify-start q-col-gutter-md">
+
+        <!-- list for FIAT/BCH -->
+        <div class="col-auto row items-center">
+          <q-select
+            style="min-width: 10em"
+            v-model="inputForm.denotion"
+            :options="['bch', 'usd']"
+            label="Denotion"
+            filled
+          />
+        </div>
         
         <!-- Info -->
         <div class="col-auto row">
