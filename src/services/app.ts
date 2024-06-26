@@ -9,12 +9,13 @@ import { StampCollection } from './stamp-collection.js';
 import { get } from 'idb-keyval';
 
 // Vue and Quasar.
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
 export class App {
   // Services.
   electrum: ElectrumService;
-  stampCollection?: StampCollection;
+  // stampCollection?: StampCollection | undefined = reactive<{value: InstanceType<StampCollection> | undefined }>({ value:  undefined });
+  stampCollection = ref<StampCollection | undefined>()
 
   // Flags.
   debug = ref(false);

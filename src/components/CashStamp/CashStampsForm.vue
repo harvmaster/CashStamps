@@ -35,7 +35,7 @@
           <q-select
             style="min-width: 10em"
             v-model="inputForm.currency"
-            :options="['bch']"
+            :options="['BCH']"
             label="Currency"
             filled
           />
@@ -64,7 +64,7 @@
         <q-btn class="full-width" :disable="!wallets.length" label="Fund Stamps" color="green-6" @click="showFundingQR" />
       </div>
       <div class="col-auto">
-        <q-btn class="full-width" disable label="Redeem Stamps" color="orange-6" @click="printStamps" />
+        <q-btn class="full-width" disable label="Redeem Stamps" color="orange-6" @click="redeemStamps" />
       </div>
     </div>
 
@@ -86,7 +86,7 @@ import { ref } from 'vue';
 import { Wallet } from 'src/types'
 
 import { app } from 'src/boot/app.js';
-import { StampCollection } from 'src/services/stamp-collection.js';
+import { FundingOptions, StampCollection } from 'src/services/stamp-collection.js';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
@@ -107,8 +107,8 @@ const emits = defineEmits<{
   (e: 'wallets', content: Wallet[]): void
 }>()
 
-// Implement transaction creation for filling newly created wallets
-const createTransaction = async (wallets: Wallet[]) : Promise<string> => {
+// Implement transaction creation for filling newly created stamps
+const createTransaction = async (wallets: unknown[]) : Promise<string> => {
   // Create bch tx string here
   return 'bch tx string';
 }
@@ -118,40 +118,31 @@ const createTransaction = async (wallets: Wallet[]) : Promise<string> => {
 const fundingTx = ref('')
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
-  fundingTx.value = await createTransaction(props.wallets);
+  if (!app.stampCollection?.value) return;
+  fundingTx.value = await createTransaction(app.stampCollection.value.getStamps());
   fundingQrCode.value?.toggleVisible();
 }
 
 // Create and Emit wallets
 const submit = async () => {
   const wallets = await createWallets(inputForm.value.quantity);
-  emits('wallets', wallets)
 }
 
-const printStamps = () => {
-  // Print the stamps
-
+const redeemStamps = () => {
+  // redeem the unclaimed stamps
 }
 
-const createWallets = async (quantity: number): Promise<Wallet[]> => {
+// Create StampCollection filled with Stamps
+const createWallets = async (quantity: number): Promise<void> => {
+  // Create options for funding
+  const fundingOptions: FundingOptions = {
+    amount: inputForm.value.value,
+    currency: inputForm.value.currency,
+    funded: false
+  }
+  
   // Generate wallets
-  app.stampCollection = StampCollection.generate(quantity);
-
-  // Return Wallets with WIIF, Private Key, Address, Value, and Create Date
-  return app.stampCollection.getStamps().map((stamp) => {
-    const privateKey = stamp.privateKey()
-    
-    return {
-      privateKey,
-      wif: privateKey.toWif(),
-      address: privateKey.derivePublicKey().deriveAddress(),
-      value: {
-        amount: inputForm.value.value,
-        currency: inputForm.value.currency
-      },
-      create_date: new Date().toISOString()
-    }
-  });
+  app.stampCollection.value = StampCollection.generate(quantity, fundingOptions);
 }
 
 </script>

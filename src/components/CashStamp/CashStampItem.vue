@@ -9,7 +9,7 @@
 
       <!-- Value -->
       <div class="col-auto row justify-center">
-        <div class="col-12 text-h4 no-margin no-padding text-weight-medium">{{ props.wallet.value.amount }} {{ props.wallet.value.currency.toUpperCase() }}</div>
+        <div class="col-12 text-h4 no-margin no-padding text-weight-medium">{{ props.wallet.funding.amount }} {{ props.wallet.funding.currency.toUpperCase() }}</div>
       </div>
       
       <!-- Create-date -->
@@ -51,7 +51,7 @@ const createdAt = computed(() => {
   const hours = date.getHours()
   const minutes = date.getMinutes()
 
-  return `${hours < 10 ? '0'+hours : hours}:${minutes < 10 ? '0'+minutes : minutes}${hours/12 < 1 ? 'am' : 'pm'} ${date.toLocaleDateString()}`
+  return `${hours < 10 ? '0'+hours : hours%12}:${minutes < 10 ? '0'+minutes : minutes}${hours/12 < 1 ? 'am' : 'pm'} ${date.toLocaleDateString()}`
 })
 
 // Create QR Code when loaded

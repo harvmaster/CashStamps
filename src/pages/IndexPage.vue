@@ -42,9 +42,8 @@
       <!-- Input form and wallet creator -->
       <div class="col-12 row items-center print-hide">
         <cash-stamps-form 
-          :wallets="wallets"
+          :wallets="stamps"
           class="col"
-          @wallets="addWallets"  
         />
       </div>
       
@@ -92,10 +91,10 @@
           <div class="row col-12">
             <cash-stamp-item
               class="col-auto q-pa-sm"
-              v-for="(wallet, index) in wallets"
-              :key="wallet.address"
+              v-for="(stamp, index) in stamps || []"
+              :key="stamp.wif"
               :id="index"
-              :wallet="wallet"
+              :wallet="stamp"
             />
           </div>
         </div>
@@ -130,22 +129,42 @@
 
 <script setup lang="ts">
 import { Wallet } from 'src/types';
-import app from 'src/boot/app';
+import { ref, computed } from 'vue';
 
-import { ref } from 'vue';
+import { app } from 'src/boot/app';
 
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import CashStampItem from 'src/components/CashStamp/CashStampItem.vue';
 
-const wallets = ref<Wallet[]>([]);
+// Access to stamps from StampCollection
+const stamps = computed<Wallet[]>(() => {
+  // Check if stampCollection is available
+  const stampCollection = app.stampCollection?.value;
+  if (!stampCollection) return []
 
-const addWallets = (newWallets: Wallet[]): void => {
-  wallets.value = newWallets;
-};
+  // Get funding options
+  const stampFunding = stampCollection?.getFundingOptions();
+
+  // Format stamps for display
+  return stampCollection.getStamps().map((stamp) => {
+    const privateKey = stamp.privateKey()
+    
+    return {
+      // Wif is standard 'wallet import format'
+      wif: privateKey.toWif(),
+
+      // details about amount, currency, and whether its been funded yet 
+      funding: stampFunding,
+      
+      create_date: new Date().toISOString()
+    }
+  });
+})
 
 const clearForm = (): void => {
-  wallets.value = [];
-  qrContent.value = '';
+  if (!app.stampCollection) return;
+
+  app.stampCollection.value = undefined;
 };
 
 const printStamps = (): void => {
@@ -154,7 +173,7 @@ const printStamps = (): void => {
 
 const exportStamps = (): void => {
   // Download json of wallets
-  const data = JSON.stringify(wallets.value, null, 2);
+  const data = JSON.stringify(stamps.value, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
