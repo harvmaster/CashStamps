@@ -19,7 +19,7 @@
 </style>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import QRCode from 'easyqrcodejs'
 
 export type FundingQRCodeProps = {

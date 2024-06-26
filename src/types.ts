@@ -1,6 +1,10 @@
 export type Wallet = {
   address: string;
   privateKey: string;
-  value: number | string;
+  value: {
+    amount: number;
+    denotion: string;
+  }
   wif: string;
+  create_date: string;
 }

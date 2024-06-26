@@ -1,13 +1,13 @@
 <template>
   <div class="cash-stamps_form row q-col-gutter-md">
-    <div class="col row q-col-gutter-md">
+    <div class="col-md col-12 row q-col-gutter-md">
 
       <!-- Value Input -->
-      <div class="col row">
+      <div class="col-md col-12 row">
         <q-input
           class="col-12"
           v-model.number="inputForm.value"
-          label="Stamp Value (BCH)"
+          :label="`Stamp Value (${inputForm.denotion.toUpperCase()})`"
           type="number"
           filled
           :rules="[val => val > 0 || 'Value must be greater than 0']"
@@ -28,28 +28,17 @@
       </div>
 
 
-      <div class="col-12 row items-center justify-between">
+      <div class="col-12 row items-center justify-start q-col-gutter-md">
         
         <!-- Info -->
         <div class="col-auto row">
           <div class="col-12 col-md-auto text-body2">
-            Total Value (BCH)
+            Total Value ({{ inputForm.denotion.toUpperCase() }})
           </div>
           <div class="col-12 text-h6">
-            {{ inputForm.quantity * inputForm.value }} BCH
+            {{ inputForm.quantity * inputForm.value }} {{ inputForm.denotion.toUpperCase() }}
           </div>
         </div>
-
-        <!-- Submit -->
-        <!-- <div class="col-auto  justify-center">
-          <q-btn
-            class="shadow-xs"
-            
-            label="Create Stamps"
-            color="primary"
-            @click="submit"
-          />
-        </div> -->
 
       </div>
 
@@ -68,6 +57,7 @@
       </div>
     </div>
 
+    <!-- Modal for showing Funding TX Qr Code -->
     <funding-qr-code
       ref="fundingQrCode"
       :content="fundingTx"
@@ -84,7 +74,8 @@
 import { ref } from 'vue';
 import { Wallet } from 'src/types'
 
-import { generateWallet } from 'src/lib/bchWallet';
+import { app } from 'src/boot/app.js';
+import { StampCollection } from 'src/services/stamp-collection.js';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
@@ -105,11 +96,14 @@ const emits = defineEmits<{
   (e: 'wallets', content: Wallet[]): void
 }>()
 
+// Implement transaction creation for filling newly created wallets
 const createTransaction = async (wallets: Wallet[]) : Promise<string> => {
   // Create bch tx string here
   return 'bch tx string';
 }
 
+// Information for Funding Transaction
+// Funding Transaction fills the wallets with BCH
 const fundingTx = ref('')
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
@@ -117,12 +111,10 @@ const showFundingQR = async () => {
   fundingQrCode.value?.toggleVisible();
 }
 
+// Create and Emit wallets
 const submit = async () => {
   const wallets = await createWallets(inputForm.value.quantity);
   emits('wallets', wallets)
-
-  // const tx = await createTransaction(wallets);
-  // emits('transaction', tx);
 }
 
 const printStamps = () => {
@@ -131,18 +123,24 @@ const printStamps = () => {
 }
 
 const createWallets = async (quantity: number): Promise<Wallet[]> => {
-  // Create wallets here
-  const wallets = await Promise.all(
-    new Array(quantity).fill(generateWallet())
-  )
-  
-  return wallets;
-  
-  return new Array(quantity).fill({
-    address: 'address',
-    privateKey: '724144a7a1742658a5f5b0e58b570d3b04a5415fd446966d530bcde8cb3a802e',
-    value: inputForm.value.value
-  })
+  // Generate wallets
+  app.stampCollection = StampCollection.generate(quantity);
+
+  // Return Wallets with WIIF, Private Key, Address, Value, and Create Date
+  return app.stampCollection.getStamps().map((stamp) => {
+    const privateKey = stamp.privateKey()
+    
+    return {
+      privateKey,
+      wif: privateKey.toWif(),
+      address: privateKey.derivePublicKey().deriveAddress(),
+      value: {
+        amount: inputForm.value.value,
+        denotion: inputForm.value.denotion
+      },
+      create_date: new Date().toISOString()
+    }
+  });
 }
 
 </script>
