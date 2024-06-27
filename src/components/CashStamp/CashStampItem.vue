@@ -10,7 +10,7 @@
       <div class="col-auto row justify-center">
         <div class="col-12 text-h5 no-margin no-padding text-weight-medium">
           {{ props.wallet.funding.amount }}
-          {{ props.wallet.funding.currency.toUpperCase() }}
+          {{ currencyName }}
         </div>
       </div>
 
@@ -37,6 +37,7 @@
 import { onMounted, ref, computed } from 'vue';
 import QRCode from 'easyqrcodejs';
 import { Wallet } from 'src/types';
+import { app } from 'src/boot/app';
 
 export type CashStampItemProps = {
   id: number;
@@ -57,6 +58,15 @@ const createdAt = computed(() => {
   return `${hours < 10 ? '0' + hours : hours % 12}:${
     minutes < 10 ? '0' + minutes : minutes
   }${hours / 12 < 1 ? 'am' : 'pm'} ${date.toLocaleDateString()}`;
+});
+
+// Get the currency name, Currencies are stored as the public key to that currency for the oracle
+const currencyName = computed(() => {
+  const currency = props.wallet.funding.currency;
+  if (currency === 'BCH') return 'BCH';
+
+  return app.oracles.oracleMetadataStore[currency]
+    .sourceNumeratorUnitCode || 'unknown';
 });
 
 // Create QR Code when loaded

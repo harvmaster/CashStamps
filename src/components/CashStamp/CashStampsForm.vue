@@ -10,8 +10,8 @@
           :label="`Stamp Collection Name`"
           :disable="disabled"
           filled
-          @update:model-value="(val) => changeOptions({ name: val as string })"
-        />
+          />
+          <!-- @update:model-value="(val) => changeOptions({ name: val as string })" -->
       </div>
 
       <!-- Value Input -->
@@ -19,13 +19,13 @@
         <q-input
           class="col-12"
           v-model.number="inputForm.value"
-          :label="`Stamp Value (${inputForm.currency.toUpperCase()})`"
+          :label="`Stamp Value (${ currencyName })`"
           type="number"
           :disable="disabled"
           :min="0"
           filled
-          @update:model-value="(val) => changeOptions({ value: val as number })"
-        />
+          />
+          <!-- @update:model-value="(val) => changeOptions({ value: val as number })" -->
       </div>
 
       <!-- list for FIAT/BCH -->
@@ -38,10 +38,11 @@
           option-value="value"
           option-label="label"
           map-options
+          emit-value
           label="Currency"
           filled
-          @update:model-value="(val) => changeOptions({ currency: val })"
-        />
+          />
+          <!-- @update:model-value="(val) => changeOptions({ currency: val })" -->
       </div>
 
       <!-- Quantity Input -->
@@ -54,8 +55,8 @@
           :disable="disabled"
           filled
           :min="0"
-          @update:model-value="(val) => changeOptions({ quantity: val as number })"
-        />
+          />
+          <!-- @update:model-value="(val) => changeOptions({ quantity: val as number })" -->
       </div>
 
       <!-- New Row -->
@@ -63,11 +64,11 @@
         <!-- Total value of the TX -->
         <div class="col-auto row">
           <div class="col-12 col-md-auto text-body2">
-            Total Value ({{ inputForm.currency.toUpperCase() }})
+            Total Value ({{ currencyName }})
           </div>
           <div class="col-12 text-h6">
             {{ inputForm.quantity * inputForm.value }}
-            {{ inputForm.currency.toUpperCase() }}
+            {{ currencyName }}
           </div>
         </div>
       </div>
@@ -110,7 +111,7 @@
     </div>
 
     <!-- Modal for showing Funding TX Qr Code -->
-    <funding-qr-code ref="fundingQrCode" :tx="fundingTx" />
+    <funding-qr-code ref="fundingQrCode" />
   </div>
 </template>
 
@@ -118,7 +119,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { CashPayServer_Invoice, Wallet } from 'src/types';
+import { Wallet } from 'src/types';
 
 import { app } from 'src/boot/app.js';
 import {
@@ -128,7 +129,7 @@ import {
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
-export type CashStampsFormProps = {
+export type CashStampFormProps = {
   wallets: Wallet[];
 };
 
@@ -145,24 +146,35 @@ interface Option {
   value: string;
 }
 
+const props = defineProps<CashStampFormProps>();
+
 const emits = defineEmits<{
   (e: 'transaction', content: string): void;
   (e: 'wallets', content: Wallet[]): void;
 }>();
 
-const props = defineProps<CashStampsFormProps>();
-
 // Intermediary form for creating StampCollection
 const inputForm = ref({
   name: '',
-  quantity: 0,
+  quantity: 1,
   value: 0,
   currency: 'BCH',
 });
 
-const currencyOptions = computed((): Array<Option> => {
-  const options: Array<Option> = [];
+// Get the currency name, Currencies are stored as the public key to that currency for the oracle
+const currencyName = computed(() => {
+  if (inputForm.value.currency === 'BCH') return 'BCH';
 
+  return app.oracles.oracleMetadataStore[inputForm.value.currency]
+    .sourceNumeratorUnitCode || 'unknown';
+});
+
+// Create list of currency options and then add BCH
+const currencyOptions = computed((): Array<Option> => {
+  // Initialise list with BCH as default
+  const options: Array<Option> = [ { label: 'BCH', value: 'BCH' } ];
+
+  // Add all other oracle currencies
   Object.keys(app.oracles.oracleMetadataStore).forEach((oraclePublicKey) => {
     options.push({
       value: oraclePublicKey,
@@ -184,11 +196,6 @@ watch(app.stampCollection, () => {
 const disabled = computed(
   () => app.stampCollection.value?.getFundingOptions().funded
 );
-
-// Update StampCollection when the options change
-const changeOptions = (options: Partial<StampCollectionProps>) => {
-  createWallets(mergeOptions(options));
-};
 
 // Merge the options with the current StampCollection
 const mergeOptions = (
@@ -212,34 +219,19 @@ const mergeOptions = (
   return newOptions;
 };
 
-// Implement transaction creation for filling newly created stamps
-const createTransaction = async (wallets: unknown[]): Promise<string> => {
-  return '';
-};
-
-// Information for Funding Transaction
-// Funding Transaction fills the wallets with BCH
-const fundingTx = ref<CashPayServer_Invoice | undefined>();
+// Model for showing funding transaction QR code
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
   if (!app.stampCollection?.value) return;
-  // fundingTx.value = await createTransaction(app.stampCollection.value.getStamps());
-
-  // fundingTx.value = await app.stampCollection.value.createFundingTx()
-  // console.log(fundingTx.value)
   fundingQrCode.value?.toggleVisible();
-
-  // Test code to make tx funded
-  // app.stampCollection.value.fundStamps();
-  // await app.stampCollection.value.saveStamps()
-  // app.getStampCollections()
 };
 
 // Create and Emit wallets
 const submit = async () => {
-  const wallets = await createWallets(mergeOptions({}));
+  const wallets = await createWallets(mergeOptions(inputForm.value));
 };
 
+// TODO: Implement redeeming stamps
 const redeemStamps = () => {
   // redeem the unclaimed stamps
 };

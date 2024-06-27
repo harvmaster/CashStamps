@@ -11,6 +11,7 @@ import { get, set } from 'idb-keyval';
 // Import the CashPayServer library for generating transactions
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 import { CashPayServer_Invoice } from 'src/types';
+import { app } from 'src/boot/app';
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
@@ -107,6 +108,26 @@ export class StampCollection {
     // Create BIP70 invoice instance
     const invoice = new CashPayServer.Invoice();
 
+    // Get amount without currency reference
+    const rawAmount = this.getFundingOptions().amount;
+
+    // Get currency
+    const currency = this.getFundingOptions().currency;
+
+    // Initialise the output amount to be in BCH
+    let bchAmount = rawAmount;
+
+    // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
+    if (currency !== 'BCH') {
+      // Get the BCH price in the selected currency
+      const bchPrice = app.oracles.getOraclePriceCommonUnits(this.getFundingOptions().currency);
+
+      // Set BCH amount to the equivalent amount in the selected currency
+      bchAmount = rawAmount / bchPrice;
+    }
+
+    console.log('bch amount: ', bchAmount);
+
     // Add addresses to transaction
     for (const node of this.hdNodes) {
       const address = node
@@ -116,16 +137,12 @@ export class StampCollection {
         .toCashAddr();
       invoice.addAddress(
         address,
-        `${this.getFundingOptions().amount / 10000}${
-          this.getFundingOptions().currency
-        }`
+        `${bchAmount}BCH` // Amount sent to CashPayServer is in BCH
       );
     }
 
     // Name invoice to show up in cryptocurrency wallet
     invoice.setMemo(`CashStamps: ${this.name}`);
-
-    console.log(JSON.stringify(invoice));
 
     // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
     return invoice;
