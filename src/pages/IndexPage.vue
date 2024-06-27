@@ -148,12 +148,13 @@
 
 <script setup lang="ts">
 import { Wallet } from 'src/types';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 import { app } from 'src/boot/app';
 
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import CashStampItem from 'src/components/CashStamp/CashStampItem.vue';
+import { StampCollection } from 'src/services/stamp-collection';
 
 // Access to stamps from StampCollection
 const stamps = computed<Wallet[]>(() => {
@@ -182,16 +183,31 @@ const stamps = computed<Wallet[]>(() => {
 
 // Data for existing collections
 const showExistingCollections = ref(false);
+watch(showExistingCollections, () => {
+  if (showExistingCollections.value) getCollections();
+  else clearForm()
+  // else if (collections.value.includes(app.stampCollection.value.getName())) app.stampCollection.value = StampCollection.generate({ count: 0 });
+})
+
+// Update app.stampCollection when a collection is selected
 const selectedCollection = ref<string | undefined>(undefined);
+watch(selectedCollection, (value) => {
+  if (!value) return;
+  app.getStampCollection(value);
+})
+
+// List of StampCollections that exist in the database
 const collections = ref<string[]>([]);
 const getCollections = async () => collections.value = Object.keys(await app.getStampCollections()) || [];
 
+// Clear the form and reset the StampCollection
 const clearForm = (): void => {
   if (!app.stampCollection) return;
 
-  app.stampCollection.value = undefined;
+  app.stampCollection.value = StampCollection.generate({ count: 0 });
 };
 
+// Print the stamps
 const printStamps = (): void => {
   window.print()
 };

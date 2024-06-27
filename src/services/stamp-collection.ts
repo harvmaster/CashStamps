@@ -5,6 +5,9 @@ import {
   generateBip39Mnemonic,
 } from '@bitauth/libauth';
 
+// Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
+import { get, set } from 'idb-keyval';
+
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
@@ -15,25 +18,36 @@ export type FundingOptions = {
 }
 export const DEFAULT_FUNDING_OPTIONS: Readonly<FundingOptions> = {
   amount: 0,
-  currency: 'bch',
+  currency: 'BCH',
   funded: false,
+}
+
+export type GenerateOptions = {
+  count: number;
+  name?: string;
+  mnemonic?: string;
+  funding?: FundingOptions;
 }
 
 export class StampCollection {
   constructor(
     private readonly mnemonic: string,
     private readonly hdNodes: Array<HDPrivateNode> = [], 
-    private readonly funding: FundingOptions = {...DEFAULT_FUNDING_OPTIONS}
+    private readonly funding: FundingOptions = {...DEFAULT_FUNDING_OPTIONS},
+    private readonly name: string = ''
   ) {}
 
-  static generate(count: number, fundingOptions: FundingOptions = DEFAULT_FUNDING_OPTIONS): StampCollection {
-    // Generate a random mnemonic.
-    const mnemonic = generateBip39Mnemonic();
+  static generate(options: GenerateOptions): StampCollection {
+    // Use default funding options if none are provided.
+    const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
 
-    console.log(mnemonic);
+    // Generate a random mnemonic.
+    if (!options.mnemonic) options.mnemonic = generateBip39Mnemonic();
+
+    console.log(options.mnemonic);
 
     // Derive the seed from the mnemonic.
-    const seed = deriveSeedFromBip39Mnemonic(mnemonic);
+    const seed = deriveSeedFromBip39Mnemonic(options.mnemonic);
 
     // Create a node from the seed.
     const parentNode = HDPrivateNode.fromSeed(seed);
@@ -42,12 +56,12 @@ export class StampCollection {
     const nodes: Array<HDPrivateNode> = [];
 
     // Derive a node for each stamp.
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < options.count; i++) {
       nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/${i}`));
     }
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(mnemonic, nodes, fundingOptions);
+    return new StampCollection(options.mnemonic, nodes, fundingOptions, options.name);
   }
 
   static fromMnemonic(mnemonic: string): StampCollection {
@@ -80,13 +94,30 @@ export class StampCollection {
 
   fundStamps() {
     console.log('fund stamps');
+    this.funding.funded = true;
   }
 
   redeemRemainingStamps() {
     console.log('redeem stamps');
   }
 
+  getName() {
+    return this.name
+    // const collections = await get('stampCollections') || [];
+    // return collections.find((collection: string) => collection === this.mnemonic)
+  }
+
   getFundingOptions () {
     return this.funding;
+  }
+
+  async saveStamps() {
+    const name = this.getName() || this.mnemonic;
+
+    const collections = await get('stampCollections') || [];
+    if (Object.values(collections).includes(this.mnemonic)) return;
+
+    collections[name] = this.mnemonic;
+    await set('stampCollections', collections);
   }
 }

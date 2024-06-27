@@ -10,12 +10,13 @@ import { get } from 'idb-keyval';
 
 // Vue and Quasar.
 import { ref, reactive } from 'vue';
+import { Loading } from 'quasar';
 
 export class App {
   // Services.
   electrum: ElectrumService;
   // stampCollection?: StampCollection | undefined = reactive<{value: InstanceType<StampCollection> | undefined }>({ value:  undefined });
-  stampCollection = ref<StampCollection | undefined>()
+  stampCollection = ref<StampCollection | undefined>(StampCollection.generate({ count: 0 }))
 
   // Flags.
   debug = ref(false);
@@ -62,14 +63,32 @@ export class App {
   //---------------------------------------------------------------------------
   // Methods
   //---------------------------------------------------------------------------
-  async getStampCollections(): Promise<StampCollection[]> {
-    /*
-      stampCollections: [
-        [key]: 'mneumonic',
-      ]
-    */
+
+  // Get the StampCollections from the browser's IndexedDB.
+  /*
+    stampCollections: [
+      [key]: 'mneumonic',
+    ]
+  */
+  async getStampCollections(): Promise<Record<string, string>> {
     const collections = await get('stampCollections');
-    return collections || []
+    return collections || {}
+  }
+
+  // Find a StampCollection by name and set it to the stampCollection ref.
+  async getStampCollection(name: string) {
+    const collections = await this.getStampCollections();
+
+    // Example code to simulate computing a StampCollection from a mnemonic and getting funded information, etc
+    const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+    // Simulate loading
+    Loading.show()
+    await wait(2000)
+
+    // Set the stampCollection to the generated StampCollection
+    this.stampCollection.value = StampCollection.generate({ count: 5, name: name, mnemonic: collections[name], funding: { amount: 0, currency: 'BCH', funded: true }});
+    Loading.hide()
   }
 
   //---------------------------------------------------------------------------
