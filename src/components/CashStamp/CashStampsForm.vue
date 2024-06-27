@@ -95,7 +95,7 @@
     <!-- Modal for showing Funding TX Qr Code -->
     <funding-qr-code
       ref="fundingQrCode"
-      :content="fundingTx"
+      :tx="fundingTx"
     />
 
   </div>
@@ -107,7 +107,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { Wallet } from 'src/types'
+import { CashPayServer_Invoice, Wallet } from 'src/types'
 
 import { app } from 'src/boot/app.js';
 import { FundingOptions, StampCollection } from 'src/services/stamp-collection.js';
@@ -174,23 +174,25 @@ const mergeOptions = (options: Partial<StampCollectionProps>): StampCollectionPr
 
 // Implement transaction creation for filling newly created stamps
 const createTransaction = async (wallets: unknown[]) : Promise<string> => {
-  // Create bch tx string here
-  return 'bch tx string';
+  return '';
 }
 
 // Information for Funding Transaction
 // Funding Transaction fills the wallets with BCH
-const fundingTx = ref('')
+const fundingTx = ref<CashPayServer_Invoice | undefined>()
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
   if (!app.stampCollection?.value) return;
-  fundingTx.value = await createTransaction(app.stampCollection.value.getStamps());
+  // fundingTx.value = await createTransaction(app.stampCollection.value.getStamps());
+
+  // fundingTx.value = await app.stampCollection.value.createFundingTx()
+  // console.log(fundingTx.value)
   fundingQrCode.value?.toggleVisible();
 
   // Test code to make tx funded
-  app.stampCollection.value.fundStamps();
-  await app.stampCollection.value.saveStamps()
-  app.getStampCollections()
+  // app.stampCollection.value.fundStamps();
+  // await app.stampCollection.value.saveStamps()
+  // app.getStampCollections()
 }
 
 // Create and Emit wallets

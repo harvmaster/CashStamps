@@ -8,6 +8,10 @@ import {
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
 
+// Import the CashPayServer library for generating transactions
+import CashPayServer from '@developers.cash/cash-pay-server-js';
+import { CashPayServer_Invoice } from 'src/types';
+
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
@@ -92,6 +96,28 @@ export class StampCollection {
     return this.hdNodes;
   }
 
+  createFundingTx (): CashPayServer_Invoice {
+    if (this.funding.funded) throw new Error('Funding already complete');
+
+    // Create BIP70 invoice instance
+    const invoice = new CashPayServer.Invoice()
+
+    // Add addresses to transaction
+    for (const node of this.hdNodes) {
+      const address = node.deriveHDPublicNode().publicKey().deriveAddress().toCashAddr();
+      invoice.addAddress(address, `${this.getFundingOptions().amount/10000}${this.getFundingOptions().currency}`)
+    }
+    
+    // Name invoice to show up in cryptocurrency wallet
+    invoice.setMemo(`CashStamps: ${this.name}`)
+
+    console.log(JSON.stringify(invoice))
+
+    // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
+    return invoice
+  }
+
+  // Set stamp as funded to disable funding button
   fundStamps() {
     console.log('fund stamps');
     this.funding.funded = true;
@@ -103,21 +129,27 @@ export class StampCollection {
 
   getName() {
     return this.name
-    // const collections = await get('stampCollections') || [];
-    // return collections.find((collection: string) => collection === this.mnemonic)
   }
 
   getFundingOptions () {
     return this.funding;
   }
 
+  // Save stamps into IDB
   async saveStamps() {
+    // Get the name or use the mnemonic as the name
     const name = this.getName() || this.mnemonic;
 
+    // Get the existing collections or create a new one
     const collections = await get('stampCollections') || [];
+
+    // If the value is already in there, no need to put it in there again
     if (Object.values(collections).includes(this.mnemonic)) return;
 
+    // Add the mnemonic to the collections
     collections[name] = this.mnemonic;
+
+    // Save the collections back to IDB
     await set('stampCollections', collections);
   }
 }

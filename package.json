@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
+    "@developers.cash/cash-pay-server-js": "^0.15.3",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "easyqrcodejs": "^4.6.1",

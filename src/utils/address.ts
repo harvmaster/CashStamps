@@ -323,11 +323,11 @@ export class Address {
     }
 
     // NOTE: This function will throw if the payload is invalid.
-    return encodeCashAddress(
-      networkPrefix,
-      encodeType,
-      this.addressContents.payload
-    );
+    return encodeCashAddress({
+      prefix: networkPrefix,
+      type: encodeType,
+      payload: this.addressContents.payload
+    }).address;
   }
 
   /**
