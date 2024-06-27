@@ -126,7 +126,7 @@ export class StampCollection {
       bchAmount = rawAmount / bchPrice;
     }
 
-    console.log('bch amount: ', bchAmount);
+    // console.log('bch amount: ', bchAmount);
 
     // Add addresses to transaction
     for (const node of this.hdNodes) {
