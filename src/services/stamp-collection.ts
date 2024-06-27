@@ -19,25 +19,25 @@ export type FundingOptions = {
   amount: number;
   currency: string;
   funded: boolean;
-}
+};
 export const DEFAULT_FUNDING_OPTIONS: Readonly<FundingOptions> = {
   amount: 0,
   currency: 'BCH',
   funded: false,
-}
+};
 
 export type GenerateOptions = {
   count: number;
   name?: string;
   mnemonic?: string;
   funding?: FundingOptions;
-}
+};
 
 export class StampCollection {
   constructor(
     private readonly mnemonic: string,
-    private readonly hdNodes: Array<HDPrivateNode> = [], 
-    private readonly funding: FundingOptions = {...DEFAULT_FUNDING_OPTIONS},
+    private readonly hdNodes: Array<HDPrivateNode> = [],
+    private readonly funding: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
     private readonly name: string = ''
   ) {}
 
@@ -61,11 +61,16 @@ export class StampCollection {
 
     // Derive a node for each stamp.
     for (let i = 0; i < options.count; i++) {
-      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/${i}`));
+      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/${i}/0`));
     }
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(options.mnemonic, nodes, fundingOptions, options.name);
+    return new StampCollection(
+      options.mnemonic,
+      nodes,
+      fundingOptions,
+      options.name
+    );
   }
 
   static fromMnemonic(mnemonic: string): StampCollection {
@@ -96,25 +101,34 @@ export class StampCollection {
     return this.hdNodes;
   }
 
-  createFundingTx (): CashPayServer_Invoice {
+  createFundingTx(): CashPayServer_Invoice {
     if (this.funding.funded) throw new Error('Funding already complete');
 
     // Create BIP70 invoice instance
-    const invoice = new CashPayServer.Invoice()
+    const invoice = new CashPayServer.Invoice();
 
     // Add addresses to transaction
     for (const node of this.hdNodes) {
-      const address = node.deriveHDPublicNode().publicKey().deriveAddress().toCashAddr();
-      invoice.addAddress(address, `${this.getFundingOptions().amount/10000}${this.getFundingOptions().currency}`)
+      const address = node
+        .deriveHDPublicNode()
+        .publicKey()
+        .deriveAddress()
+        .toCashAddr();
+      invoice.addAddress(
+        address,
+        `${this.getFundingOptions().amount / 10000}${
+          this.getFundingOptions().currency
+        }`
+      );
     }
-    
-    // Name invoice to show up in cryptocurrency wallet
-    invoice.setMemo(`CashStamps: ${this.name}`)
 
-    console.log(JSON.stringify(invoice))
+    // Name invoice to show up in cryptocurrency wallet
+    invoice.setMemo(`CashStamps: ${this.name}`);
+
+    console.log(JSON.stringify(invoice));
 
     // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
-    return invoice
+    return invoice;
   }
 
   // Set stamp as funded to disable funding button
@@ -128,10 +142,10 @@ export class StampCollection {
   }
 
   getName() {
-    return this.name
+    return this.name;
   }
 
-  getFundingOptions () {
+  getFundingOptions() {
     return this.funding;
   }
 
@@ -141,7 +155,7 @@ export class StampCollection {
     const name = this.getName() || this.mnemonic;
 
     // Get the existing collections or create a new one
-    const collections = await get('stampCollections') || [];
+    const collections = (await get('stampCollections')) || [];
 
     // If the value is already in there, no need to put it in there again
     if (Object.values(collections).includes(this.mnemonic)) return;

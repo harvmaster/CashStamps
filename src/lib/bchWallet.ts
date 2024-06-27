@@ -8,21 +8,21 @@
 import { Wallet } from 'src/types';
 
 export async function generateWallet(): Promise<Wallet> {
-//   // const privateKey = generatePrivateKey();
-//   // const publicKeyHash = await deriveHdPublicKey(privateKey.toString());
-//   // const address = encodeCashAddress({ payload: publicKeyHash, prefix: CashAddressNetworkPrefix.testnet });
-  
-//   // return {
-//   //   address,
-//   //   privateKey: privateKey.toString('hex')
-//   // };
+  //   // const privateKey = generatePrivateKey();
+  //   // const publicKeyHash = await deriveHdPublicKey(privateKey.toString());
+  //   // const address = encodeCashAddress({ payload: publicKeyHash, prefix: CashAddressNetworkPrefix.testnet });
+
+  //   // return {
+  //   //   address,
+  //   //   privateKey: privateKey.toString('hex')
+  //   // };
 
   return Promise.resolve({
     address: 'bchtest:qz2k6z4y0j7qz2k6z4y0j7qz2k6z4y0j7qz2k6z4y0j',
     privateKey: 'cVJ92k6z4y0j7z2k6z4y0j76z4y0j7qz2k6z',
     wif: 'cVJ92k6z4y0j7z2k6z4y0j76z4y0j7qz2k6z',
-    value: 0
-  })
+    value: 0,
+  });
 }
 
 // import { encodePrivateKeyWif, generatePrivateKey, instantiateSha256, privateKeyToP2pkhCashAddress } from '@bitauth/libauth';

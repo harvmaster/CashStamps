@@ -1,11 +1,12 @@
 <template>
   <q-page class="row items-center justify-evenly printable">
-
     <!-- Header -->
     <div class="col-12 row bg-dark q-pa-md q-py-lg print-hide">
       <!-- Title -->
       <div class="col-12 row justify-center">
-        <div class="col-auto row justify-center text-h2 text-weight-bold text-white">
+        <div
+          class="col-auto row justify-center text-h2 text-weight-bold text-white"
+        >
           <img src="bch.svg" style="height: 1em" />
           CashStamps
         </div>
@@ -21,7 +22,9 @@
       <!-- Description & Instructions -->
       <div class="col-12 row justify-center q-pt-md">
         <div class="col-auto text-body1 text-white paragraph">
-          CashStamps are easily redeemable Bitcoin Cash wallets that can be used to share BCH with others, with the ability to claim back funds on unused stamps
+          CashStamps are easily redeemable Bitcoin Cash wallets that can be used
+          to share BCH with others, with the ability to claim back funds on
+          unused stamps
           <br />
           <br />
           <strong>Instructions:</strong>
@@ -32,22 +35,34 @@
           <br />
           3. Scan the QR code with your Bitcoin Cash wallet to fund the stamps.
           <br />
-          4. Print the stamps and give them to your friends, family, or customers.
+          4. Print the stamps and give them to your friends, family, or
+          customers.
         </div>
       </div>
     </div>
 
-    <div class="col-12 row cash-stamps_page justify-center q-col-gutter-y-md printable q-pa-xl">
-
+    <div
+      class="col-12 row cash-stamps_page justify-center q-col-gutter-y-md printable q-pa-xl"
+    >
       <!-- Input form and wallet creator -->
       <div class="col-12 row items-center print-hide">
         <div class="col-12 q-py-sm">
-          <q-toggle label="Use Existing Colection" v-model="showExistingCollections" />
+          <q-toggle
+            label="Use Existing Colection"
+            v-model="showExistingCollections"
+          />
         </div>
 
         <q-slide-transition>
           <div v-show="showExistingCollections" class="col-12 row">
-            <q-select class="q-py-sm col-auto" style="width: 20em; max-width: 100%" v-model="selectedCollection" :options="collections" label="Select Collection" filled>
+            <q-select
+              class="q-py-sm col-auto"
+              style="width: 20em; max-width: 100%"
+              v-model="selectedCollection"
+              :options="collections"
+              label="Select Collection"
+              filled
+            >
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey-8">
@@ -65,12 +80,13 @@
           class="col-12 q-py-sm"
         />
       </div>
-      
+
       <!-- Stamp results -->
       <div class="col-12 row q-gutter-y-md justify-center">
         <!-- Controls for print -->
-        <div class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide">
-
+        <div
+          class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide"
+        >
           <!-- Print -->
           <div class="col-auto q-pa-xs">
             <q-btn
@@ -106,7 +122,10 @@
         </div>
 
         <!-- Printable Page -->
-        <div class="col-12 row paper printable shadow-20 rounded-md q-pa-md items-start" ref="printContent">
+        <div
+          class="col-12 row paper printable shadow-20 rounded-md q-pa-md items-start"
+          ref="printContent"
+        >
           <div class="row col-12">
             <cash-stamp-item
               class="col-auto q-pa-sm"
@@ -119,13 +138,12 @@
         </div>
       </div>
     </div>
-
   </q-page>
 </template>
 
 <style lang="scss" scoped>
 .cash-stamps_page {
-  max-width: 992px
+  max-width: 992px;
 }
 
 .paragraph {
@@ -141,7 +159,6 @@
     border: none;
     padding: 0 !important;
     margin: 0 !important;
-    
   }
 }
 </style>
@@ -160,45 +177,46 @@ import { StampCollection } from 'src/services/stamp-collection';
 const stamps = computed<Wallet[]>(() => {
   // Check if stampCollection is available
   const stampCollection = app.stampCollection?.value;
-  if (!stampCollection) return []
+  if (!stampCollection) return [];
 
   // Get funding options
   const stampFunding = stampCollection?.getFundingOptions();
 
   // Format stamps for display
   return stampCollection.getStamps().map((stamp) => {
-    const privateKey = stamp.privateKey()
-    
+    const privateKey = stamp.privateKey();
+
     return {
       // Wif is standard 'wallet import format'
       wif: privateKey.toWif(),
 
-      // details about amount, currency, and whether its been funded yet 
+      // details about amount, currency, and whether its been funded yet
       funding: stampFunding,
 
-      create_date: new Date().toISOString()
-    }
+      create_date: new Date().toISOString(),
+    };
   });
-})
+});
 
 // Data for existing collections
 const showExistingCollections = ref(false);
 watch(showExistingCollections, () => {
   if (showExistingCollections.value) getCollections();
-  else clearForm()
+  else clearForm();
   // else if (collections.value.includes(app.stampCollection.value.getName())) app.stampCollection.value = StampCollection.generate({ count: 0 });
-})
+});
 
 // Update app.stampCollection when a collection is selected
 const selectedCollection = ref<string | undefined>(undefined);
 watch(selectedCollection, (value) => {
   if (!value) return;
   app.getStampCollection(value);
-})
+});
 
 // List of StampCollections that exist in the database
 const collections = ref<string[]>([]);
-const getCollections = async () => collections.value = Object.keys(await app.getStampCollections()) || [];
+const getCollections = async () =>
+  (collections.value = Object.keys(await app.getStampCollections()) || []);
 
 // Clear the form and reset the StampCollection
 const clearForm = (): void => {
@@ -209,7 +227,7 @@ const clearForm = (): void => {
 
 // Print the stamps
 const printStamps = (): void => {
-  window.print()
+  window.print();
 };
 
 const exportStamps = (): void => {
@@ -226,5 +244,5 @@ const exportStamps = (): void => {
 
 onMounted(() => {
   getCollections();
-})
+});
 </script>

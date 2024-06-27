@@ -326,7 +326,7 @@ export class Address {
     return encodeCashAddress({
       prefix: networkPrefix,
       type: encodeType,
-      payload: this.addressContents.payload
+      payload: this.addressContents.payload,
     }).address;
   }
 

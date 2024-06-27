@@ -1,8 +1,12 @@
 <template>
   <div>
-    <q-input v-model="numberOfWallets" type="number" label="Number of wallets to generate" />
+    <q-input
+      v-model="numberOfWallets"
+      type="number"
+      label="Number of wallets to generate"
+    />
     <q-btn @click="generateWallets" label="Generate Wallets" />
-    
+
     <div v-for="wallet in wallets" :key="wallet.address">
       <h3>Wallet {{ wallet.index }}</h3>
       <p>Address: {{ wallet.address }}</p>
@@ -13,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, Ref } from 'vue'
-import { generateWallet, Wallet } from '../../lib/bchWallet'
+import { defineComponent, ref, Ref } from 'vue';
+import { generateWallet, Wallet } from '../../lib/bchWallet';
 
 interface WalletWithIndex extends Wallet {
   index: number;
@@ -32,7 +36,7 @@ const generateWallets = async (): Promise<void> => {
       const newWallet = await generateWallet();
       wallets.value.push({
         index: i + 1,
-        ...newWallet
+        ...newWallet,
       });
     }
   } catch (error) {

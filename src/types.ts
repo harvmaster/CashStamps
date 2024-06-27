@@ -5,10 +5,10 @@ export type Wallet = {
     amount: number;
     currency: string;
     funded: boolean;
-  }
+  };
   wif: string;
   create_date: string;
-}
+};
 
 export type CashPayServer_Output = {
   address?: string;
@@ -72,18 +72,28 @@ export type CashPayServer_Invoice = {
   setData(data: string | object): CashPayServer_Invoice;
   setPrivateData(data: string | object): CashPayServer_Invoice;
   setUserCurrency(currency: string): CashPayServer_Invoice;
-  setWebhook(endpoint: string, events?: string | string[]): CashPayServer_Invoice;
+  setWebhook(
+    endpoint: string,
+    events?: string | string[]
+  ): CashPayServer_Invoice;
   create(): Promise<CashPayServer_Invoice>;
-  createFrom(endpoint: string, params?: object, options?: object): Promise<void>;
+  createFrom(
+    endpoint: string,
+    params?: object,
+    options?: object
+  ): Promise<void>;
   createFromExisting(invoice: object): Promise<void>;
   payload(): object;
   destroy(): Promise<void>;
-  intoContainer(container: HTMLElement, options?: {
-    template?: string;
-    lang?: {
-      expiresIn?: string;
-      invoiceHasExpired?: string;
-    };
-    destroyOnRemoved?: boolean;
-  }): CashPayServer_Invoice;
+  intoContainer(
+    container: HTMLElement,
+    options?: {
+      template?: string;
+      lang?: {
+        expiresIn?: string;
+        invoiceHasExpired?: string;
+      };
+      destroyOnRemoved?: boolean;
+    }
+  ): CashPayServer_Invoice;
 };

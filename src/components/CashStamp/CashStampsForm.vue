@@ -1,7 +1,6 @@
 <template>
   <div class="cash-stamps_form row q-col-gutter-md">
     <div class="col-md col-12 row q-col-gutter-md">
-
       <!-- Name Input -->
       <div class="col-md-12 col-12 row">
         <q-input
@@ -35,7 +34,10 @@
           style="min-width: 10em"
           v-model="inputForm.currency"
           :disable="disabled"
-          :options="['BCH']"
+          :options="currencyOptions"
+          option-value="value"
+          option-label="label"
+          map-options
           label="Currency"
           filled
           @update:model-value="(val) => changeOptions({ currency: val })"
@@ -57,78 +59,96 @@
       </div>
 
       <!-- New Row -->
-      <div class="col-12 row items-center justify-start q-col-gutter-md">        
-        
+      <div class="col-12 row items-center justify-start q-col-gutter-md">
         <!-- Total value of the TX -->
         <div class="col-auto row">
           <div class="col-12 col-md-auto text-body2">
             Total Value ({{ inputForm.currency.toUpperCase() }})
           </div>
           <div class="col-12 text-h6">
-            {{ inputForm.quantity * inputForm.value }} {{ inputForm.currency.toUpperCase() }}
+            {{ inputForm.quantity * inputForm.value }}
+            {{ inputForm.currency.toUpperCase() }}
           </div>
         </div>
-
       </div>
-
     </div>
 
-     <!-- Action buttons -->
+    <!-- Action buttons -->
     <div class="col-auto column q-col-gutter-y-md justify-evenly full-height">
-
       <!-- Create -->
       <div class="col-auto">
-        <q-btn class="full-width" :disable="disabled" label="create Stamps" color="primary" @click="submit" />
+        <q-btn
+          class="full-width"
+          :disable="disabled"
+          label="create Stamps"
+          color="primary"
+          @click="submit"
+        />
       </div>
 
       <!-- Fund -->
       <div class="col-auto">
-        <q-btn class="full-width" :disable="!wallets.length || disabled" label="Fund Stamps" color="green-6" @click="showFundingQR" />
+        <q-btn
+          class="full-width"
+          :disable="!wallets.length || disabled"
+          label="Fund Stamps"
+          color="green-6"
+          @click="showFundingQR"
+        />
       </div>
 
       <!-- Redeem -->
       <div class="col-auto">
-        <q-btn class="full-width" disable label="Redeem Stamps" color="orange-6" @click="redeemStamps" />
+        <q-btn
+          class="full-width"
+          disable
+          label="Redeem Stamps"
+          color="orange-6"
+          @click="redeemStamps"
+        />
       </div>
     </div>
 
     <!-- Modal for showing Funding TX Qr Code -->
-    <funding-qr-code
-      ref="fundingQrCode"
-      :tx="fundingTx"
-    />
-
+    <funding-qr-code ref="fundingQrCode" :tx="fundingTx" />
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { CashPayServer_Invoice, Wallet } from 'src/types'
+import { CashPayServer_Invoice, Wallet } from 'src/types';
 
 import { app } from 'src/boot/app.js';
-import { FundingOptions, StampCollection } from 'src/services/stamp-collection.js';
+import {
+  FundingOptions,
+  StampCollection,
+} from 'src/services/stamp-collection.js';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
 export type CashStampsFormProps = {
   wallets: Wallet[];
-}
+};
 
 export type StampCollectionProps = {
   quantity: number;
   name: string;
   value: number;
   currency: string;
+};
+
+// TODO: This interface is probably available in Quasar somewhere.
+interface Option {
+  label: string;
+  value: string;
 }
 
 const emits = defineEmits<{
-  (e: 'transaction', content: string): void
-  (e: 'wallets', content: Wallet[]): void
-}>()
+  (e: 'transaction', content: string): void;
+  (e: 'wallets', content: Wallet[]): void;
+}>();
 
 const props = defineProps<CashStampsFormProps>();
 
@@ -137,24 +157,43 @@ const inputForm = ref({
   name: '',
   quantity: 0,
   value: 0,
-  currency: 'BCH'
-})
+  currency: 'BCH',
+});
+
+const currencyOptions = computed((): Array<Option> => {
+  const options: Array<Option> = [];
+
+  Object.keys(app.oracles.oracleMetadataStore).forEach((oraclePublicKey) => {
+    options.push({
+      value: oraclePublicKey,
+      label:
+        app.oracles.oracleMetadataStore[oraclePublicKey]
+          .sourceNumeratorUnitCode,
+    });
+  });
+
+  return options;
+});
 
 // const options = computed(() => app.stampCollection.value?.getFundingOptions())
 watch(app.stampCollection, () => {
-  inputForm.value = mergeOptions({})
-})
+  inputForm.value = mergeOptions({});
+});
 
 // Disable buttons if funded
-const disabled = computed(() => app.stampCollection.value?.getFundingOptions().funded)
+const disabled = computed(
+  () => app.stampCollection.value?.getFundingOptions().funded
+);
 
 // Update StampCollection when the options change
 const changeOptions = (options: Partial<StampCollectionProps>) => {
   createWallets(mergeOptions(options));
-}
+};
 
 // Merge the options with the current StampCollection
-const mergeOptions = (options: Partial<StampCollectionProps>): StampCollectionProps => {
+const mergeOptions = (
+  options: Partial<StampCollectionProps>
+): StampCollectionProps => {
   const currentStamps = app.stampCollection.value;
 
   // Merge options with current StampCollection
@@ -162,24 +201,25 @@ const mergeOptions = (options: Partial<StampCollectionProps>): StampCollectionPr
     name: options.name || currentStamps?.getName() || '',
     quantity: options.quantity || currentStamps?.getStamps().length || 0,
     value: options.value || currentStamps?.getFundingOptions().amount || 0,
-    currency: options.currency || currentStamps?.getFundingOptions().currency || 'BCH'
-  }
+    currency:
+      options.currency || currentStamps?.getFundingOptions().currency || 'BCH',
+  };
 
   // Ensure 0 is merged correctly
   if (options.quantity === 0) newOptions.quantity = 0;
   if (options.value === 0) newOptions.value = 0;
 
   return newOptions;
-}
+};
 
 // Implement transaction creation for filling newly created stamps
-const createTransaction = async (wallets: unknown[]) : Promise<string> => {
+const createTransaction = async (wallets: unknown[]): Promise<string> => {
   return '';
-}
+};
 
 // Information for Funding Transaction
 // Funding Transaction fills the wallets with BCH
-const fundingTx = ref<CashPayServer_Invoice | undefined>()
+const fundingTx = ref<CashPayServer_Invoice | undefined>();
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
   if (!app.stampCollection?.value) return;
@@ -193,16 +233,16 @@ const showFundingQR = async () => {
   // app.stampCollection.value.fundStamps();
   // await app.stampCollection.value.saveStamps()
   // app.getStampCollections()
-}
+};
 
 // Create and Emit wallets
 const submit = async () => {
   const wallets = await createWallets(mergeOptions({}));
-}
+};
 
 const redeemStamps = () => {
   // redeem the unclaimed stamps
-}
+};
 
 // Create StampCollection filled with Stamps
 const createWallets = async (options: StampCollectionProps): Promise<void> => {
@@ -210,22 +250,21 @@ const createWallets = async (options: StampCollectionProps): Promise<void> => {
   const fundingOptions: FundingOptions = {
     amount: options.value,
     currency: options.currency,
-    funded: false
-  }
-  
+    funded: false,
+  };
+
   // Get mnemonic if not funded (if its not funded, its likely in creation process)
-  let mnemonic
+  let mnemonic;
   if (!app.stampCollection.value?.getFundingOptions().funded) {
     mnemonic = app.stampCollection.value?.getMnemonic();
   }
-  
+
   // Generate wallets
   app.stampCollection.value = StampCollection.generate({
     count: options.quantity,
     mnemonic,
     funding: fundingOptions,
-    name: options.name
+    name: options.name,
   });
-}
-
+};
 </script>
