@@ -80,6 +80,11 @@ module.exports = configure(function (/* ctx */) {
       extendViteConf(viteConf) {
         // Allow relative URLs to work for Gitlab Pages deployment.
         viteConf.base = '';
+
+        viteConf.build.commonjsOptions = {
+          // NOTE: We need this to compile AnyHedge Library + Dependencies to work with Vite.
+          transformMixedEsModules: true,
+        };
       },
 
       // Instantiate Vite Plugins to work around Module issues.

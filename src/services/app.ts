@@ -14,7 +14,7 @@ import { StampCollection } from './stamp-collection.js';
 import { get } from 'idb-keyval';
 
 // Vue and Quasar.
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { Loading } from 'quasar';
 
 export class App {

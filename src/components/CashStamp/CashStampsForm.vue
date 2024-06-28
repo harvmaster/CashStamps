@@ -148,11 +148,6 @@ interface Option {
 
 const props = defineProps<CashStampFormProps>();
 
-const emits = defineEmits<{
-  (e: 'transaction', content: string): void;
-  (e: 'wallets', content: Wallet[]): void;
-}>();
-
 // Intermediary form for creating StampCollection
 const inputForm = ref({
   name: '',
@@ -228,7 +223,7 @@ const showFundingQR = async () => {
 
 // Create and Emit wallets
 const submit = async () => {
-  const wallets = await createWallets(mergeOptions(inputForm.value));
+  createWallets(mergeOptions(inputForm.value));
 };
 
 // TODO: Implement redeeming stamps
