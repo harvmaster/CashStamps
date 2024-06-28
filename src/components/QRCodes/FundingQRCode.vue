@@ -1,21 +1,23 @@
 <template>
   <q-dialog v-model="visible" class="blur-background">
-    <q-card class="q-pa-md">
-      <q-card-section
-        class="text-h6 no-margin text-weight-medium row justify-center items-center text-center"
-      >
-        Scan to fill the stamps with BCH
-      </q-card-section>
-      <q-card-section class="row justify-center">
-        <div ref="qrElement" id="invoice-container" />
-      </q-card-section>
-
-      <!-- Small text to inform user the qr code would not work in development -->
-      <!-- <q-card-section class="row justify-center text-center">
-        This QR code is not yet functional.<br />
-        It is a placeholder for future functionality.
-      </q-card-section> -->
-    </q-card>
+    <div class="square row items-center">
+      <q-card class="q-pa-md col-12 column square justify-center">
+        <q-card-section
+          class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center"
+        >
+          Scan to fill the stamps with BCH
+        </q-card-section>
+        <q-card-section class="col-auto row justify-center">
+          <div ref="qrElement" id="invoice-container" />
+        </q-card-section>
+    
+        <!-- Small text to inform user the qr code would not work in development -->
+        <!-- <q-card-section class="row justify-center text-center">
+          This QR code is not yet functional.<br />
+          It is a placeholder for future functionality.
+        </q-card-section> -->
+      </q-card>
+    </div>
   </q-dialog>
 </template>
 
@@ -28,6 +30,7 @@
   margin: auto;
   max-width: 150px;
   font-size: 0.8em;
+  min-height: 80px;
 }
 
 .cashpay-loading {
