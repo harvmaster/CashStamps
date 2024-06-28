@@ -94,8 +94,11 @@
               outline
               icon="print"
               color="primary"
+              :disable="!stamps.length"
               @click="printStamps"
-            />
+            >
+              <q-tooltip>Print Stamps</q-tooltip>
+            </q-btn>
           </div>
 
           <!-- Download -->
@@ -105,8 +108,11 @@
               outline
               icon="download"
               color="positive"
+              :disable="!stamps.length"
               @click="exportStamps"
-            />
+            >
+              <q-tooltip>Download as Electron Wallet</q-tooltip>
+            </q-btn>
           </div>
 
           <!-- Clear Stamps -->
@@ -116,8 +122,11 @@
               outline
               icon="cancel"
               color="negative"
+              :disable="!stamps.length"
               @click="clearForm"
-            />
+            >
+              <q-tooltip>Clear Stamps</q-tooltip>
+            </q-btn>
           </div>
         </div>
 
