@@ -21,7 +21,7 @@ export type FundingOptions = {
   currency: string;
   funded: boolean;
 };
-export const DEFAULT_FUNDING_OPTIONS: Readonly<FundingOptions> = {
+export const DEFAULT_FUNDING_OPTIONS: FundingOptions = {
   amount: 0,
   currency: 'BCH',
   funded: false,
@@ -45,6 +45,11 @@ export class StampCollection {
   static generate(options: GenerateOptions): StampCollection {
     // Use default funding options if none are provided.
     const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
+    
+    // Make sure amount isnt stupid amount of digits
+    if (fundingOptions.amount?.toString()?.split('.')?.[1]?.length > 8) {
+      fundingOptions.amount = parseFloat(fundingOptions.amount.toFixed(8));
+    }
 
     // Generate a random mnemonic.
     if (!options.mnemonic) options.mnemonic = generateBip39Mnemonic();

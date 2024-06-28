@@ -63,7 +63,11 @@
             Total Value ({{ currencyName }})
           </div>
           <div class="col-12 text-h6">
-            {{ inputForm.quantity * inputForm.value }}
+            {{
+              currencyName === 'BCH'
+                ? (inputForm.quantity * inputForm.value).toFixed(8)
+                : (inputForm.quantity * inputForm.value).toFixed(2)
+            }}
             {{ currencyName }}
           </div>
         </div>

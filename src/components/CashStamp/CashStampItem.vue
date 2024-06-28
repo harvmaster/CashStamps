@@ -9,7 +9,11 @@
       <!-- Value -->
       <div class="col-auto row justify-center">
         <div class="col-12 text-h5 no-margin no-padding text-weight-medium">
-          {{ props.wallet.funding.amount }}
+          {{ 
+            currencyName === 'BCH' ?
+              props.wallet.funding.amount.toString()
+              : props.wallet.funding.amount.toFixed(2)
+          }}
           {{ currencyName }}
         </div>
       </div>
