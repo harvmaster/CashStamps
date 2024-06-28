@@ -9,10 +9,12 @@
       <q-card-section class="row justify-center">
         <div ref="qrElement" id="invoice-container" />
       </q-card-section>
-      <q-card-section class="row justify-center text-center">
+
+      <!-- Small text to inform user the qr code would not work in development -->
+      <!-- <q-card-section class="row justify-center text-center">
         This QR code is not yet functional.<br />
         It is a placeholder for future functionality.
-      </q-card-section>
+      </q-card-section> -->
     </q-card>
   </q-dialog>
 </template>
