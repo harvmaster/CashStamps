@@ -9,11 +9,7 @@
       <!-- Value -->
       <div class="col-auto row justify-center">
         <div class="col-12 text-h5 no-margin no-padding text-weight-medium">
-          {{ 
-            currencyName === 'BCH' ?
-              props.wallet.funding.amount.toString()
-              : props.wallet.funding.amount.toFixed(2)
-          }}
+          {{ stampAmount}}
           {{ currencyName }}
         </div>
       </div>
@@ -71,6 +67,16 @@ const currencyName = computed(() => {
 
   return app.oracles.oracleMetadataStore[currency]
     .sourceNumeratorUnitCode || 'unknown';
+});
+
+const stampAmount = computed(() => {
+  const removeTrailingZeros = (value: string) => {
+    return value.replace(/(\.[0-9]*[1-9])0+$/, '$1').replace(/\.$/, '');
+  };
+
+  return currencyName.value === 'BCH' ?
+    removeTrailingZeros(props.wallet.funding.amount.toFixed(8))
+    : props.wallet.funding.amount.toFixed(2);
 });
 
 // Create QR Code when loaded
