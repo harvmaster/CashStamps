@@ -10,8 +10,7 @@
           :label="`Stamp Collection Name`"
           :disable="disabled"
           filled
-          />
-          <!-- @update:model-value="(val) => changeOptions({ name: val as string })" -->
+        />
       </div>
 
       <!-- Value Input -->
@@ -24,8 +23,7 @@
           :disable="disabled"
           :min="0"
           filled
-          />
-          <!-- @update:model-value="(val) => changeOptions({ value: val as number })" -->
+        />
       </div>
 
       <!-- list for FIAT/BCH -->
@@ -41,8 +39,7 @@
           emit-value
           label="Currency"
           filled
-          />
-          <!-- @update:model-value="(val) => changeOptions({ currency: val })" -->
+        />
       </div>
 
       <!-- Quantity Input -->
@@ -56,7 +53,6 @@
           filled
           :min="0"
           />
-          <!-- @update:model-value="(val) => changeOptions({ quantity: val as number })" -->
       </div>
 
       <!-- New Row -->
@@ -91,11 +87,14 @@
       <div class="col-auto">
         <q-btn
           class="full-width"
-          :disable="!wallets.length || disabled"
+          :disable="!stampCollectionStamps.length || !stampCollectionName || disabled"
           label="Fund Stamps"
           color="green-6"
           @click="showFundingQR"
-        />
+        >
+          <q-tooltip v-if="!stampCollectionStamps.length" style="font-size: 0.75rem">Stamps must be created before you can fund them</q-tooltip>
+          <q-tooltip v-else-if="!stampCollectionName" style="font-size: 0.75rem">Stamp collections must have a name in order to fund them</q-tooltip>
+        </q-btn>
       </div>
 
       <!-- Redeem -->
@@ -129,10 +128,6 @@ import {
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 
-export type CashStampFormProps = {
-  wallets: Wallet[];
-};
-
 export type StampCollectionProps = {
   quantity: number;
   name: string;
@@ -146,8 +141,6 @@ interface Option {
   value: string;
 }
 
-const props = defineProps<CashStampFormProps>();
-
 // Intermediary form for creating StampCollection
 const inputForm = ref({
   name: '',
@@ -155,6 +148,11 @@ const inputForm = ref({
   value: 0,
   currency: 'BCH',
 });
+
+// Get the current StampCollection. Have to get them individually because the variables are private on the stamp collection object
+const stampCollection = computed(() => app.stampCollection.value);
+const stampCollectionStamps = computed(() => stampCollection.value?.getStamps());
+const stampCollectionName = computed(() => stampCollection.value?.getName());
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {

@@ -1,21 +1,47 @@
 <template>
   <q-dialog v-model="visible" class="blur-background">
     <div class="square row items-center">
-      <q-card class="q-pa-md col-12 column square justify-center">
-        <q-card-section
+      <q-card class="q-pa-md col-12 column square justify-center q-col-gutter-y-md">
+
+        <!-- Show mnemonic and ask user to save it somewhere -->
+        <div class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center q-col-gutter-sm">
+          <q-icon name="info" class="text-primary" />
+          <span>Save your seed somewhere safe before proceeding</span>
+        </div>
+
+        <div class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center">
+          {{ mnemonic }}
+        </div>
+
+        <!-- button to actually display QR code -->
+        <div class="col-auto row justify-center">
+          <q-btn
+            class="shadow-xs rounded-sm"
+            color="primary"
+            :label="showQRCode ? 'Hide Transaction' : 'Generate Tranasction'"
+            @click="toggleQrCode"
+          />
+        </div>
+
+        <!-- Qr code -->
+        <div 
+          v-if="showQRCode"
           class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center"
         >
           Scan to fill the stamps with BCH
-        </q-card-section>
-        <q-card-section class="col-auto row justify-center">
-          <div ref="qrElement" id="invoice-container" />
-        </q-card-section>
+        </div>
+        <div 
+          v-if="showQRCode"
+          class="col-auto row justify-center"
+        >
+          <div ref="qrElement" id="invoice-container" class="full-width"/>
+        </div>
     
         <!-- Small text to inform user the qr code would not work in development -->
-        <!-- <q-card-section class="row justify-center text-center">
+        <!-- <div class="row justify-center text-center">
           This QR code is not yet functional.<br />
           It is a placeholder for future functionality.
-        </q-card-section> -->
+        </div> -->
       </q-card>
     </div>
   </q-dialog>
@@ -47,12 +73,24 @@
 </style>
 
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, computed } from 'vue';
 import { app } from 'src/boot/app';
+
+const collection = computed(() => app.stampCollection.value);
+const mnemonic = computed(() => collection.value?.mnemonic);
 
 const visible = ref(false);
 const toggleVisible = () => {
   visible.value = !visible.value;
+  showQRCode.value = false;
+  nextTick(() => {
+    generateQrCode();
+  });
+};
+
+const showQRCode = ref(false);
+const toggleQrCode = () => {
+  showQRCode.value = !showQRCode.value;
   nextTick(() => {
     generateQrCode();
   });
