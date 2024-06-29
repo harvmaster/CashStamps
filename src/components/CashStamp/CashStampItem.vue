@@ -74,12 +74,13 @@ const stampAmount = computed(() => {
 
   // Remove trailing zeros
   const removeTrailingZeros = (value: string) => {
-    return value.replace(/(\.[0-9]*[1-9])0+$/, '$1').replace(/\.$/, '');
+    return value.replace(/\.?0+$/, '');
   };
 
   // Return the amount with the correct number of decimal places
   return currencyName.value === 'BCH' ?
     removeTrailingZeros(props.wallet.funding.amount.toFixed(8))
+    // props.wallet.funding.amount
     : props.wallet.funding.amount.toFixed(2);
 });
 

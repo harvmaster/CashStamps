@@ -67,7 +67,7 @@ export class StampCollection {
 
     // Derive a node for each stamp.
     for (let i = 0; i < options.count; i++) {
-      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/${i}/0`));
+      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
     }
 
     // Create instance of StampCollection using generated mnemonic.

@@ -105,16 +105,18 @@
       <div class="col-auto">
         <q-btn
           class="full-width"
-          disable
           label="Redeem Stamps"
           color="orange-6"
-          @click="redeemStamps"
+          @click="showRedeemDialog"
         />
       </div>
     </div>
 
     <!-- Modal for showing Funding TX Qr Code -->
     <funding-qr-code ref="fundingQrCode" />
+    
+    <!-- Model to display instructions for Redeeming unclaimed wallets -->
+    <redeem-dialog ref="redeemDialog" />
   </div>
 </template>
 
@@ -131,6 +133,7 @@ import {
 } from 'src/services/stamp-collection.js';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
+import RedeemDialog from './RedeemDialog.vue';
 
 export type StampCollectionProps = {
   quantity: number;
@@ -157,6 +160,7 @@ const inputForm = ref({
 const stampCollection = computed(() => app.stampCollection.value);
 const stampCollectionStamps = computed(() => stampCollection.value?.getStamps());
 const stampCollectionName = computed(() => stampCollection.value?.getName());
+const stampCollectionFunding = computed(() => stampCollection.value?.getFundingOptions());
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
@@ -222,6 +226,12 @@ const showFundingQR = async () => {
   if (!app.stampCollection?.value) return;
   fundingQrCode.value?.toggleVisible();
 };
+
+// Model for showing redeeming unclaimed wallets dialog
+const redeemDialog = ref<typeof RedeemDialog | null>(null);
+const showRedeemDialog = async () => {
+  redeemDialog.value?.toggleVisible();
+}
 
 // Create and Emit wallets
 const submit = async () => {
