@@ -39,7 +39,7 @@ export class StampCollection {
     private readonly mnemonic: string,
     private readonly hdNodes: Array<HDPrivateNode> = [],
     private readonly funding: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
-    private readonly name: string = ''
+    private name: string = ''
   ) {}
 
   static generate(options: GenerateOptions): StampCollection {
@@ -97,6 +97,10 @@ export class StampCollection {
 
     // Create instance of StampCollection using generated mnemonic.
     return new StampCollection(mnemonic, nodes);
+  }
+
+  setName(name: string) {
+    this.name = name;
   }
 
   getMnemonic(): string {

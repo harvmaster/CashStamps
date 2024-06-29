@@ -10,6 +10,7 @@
           :label="`Stamp Collection Name`"
           :disable="disabled"
           filled
+          @update:model-value="onNameChange"
         />
       </div>
 
@@ -192,6 +193,13 @@ const currencyOptions = computed((): Array<Option> => {
 watch(app.stampCollection, () => {
   inputForm.value = mergeOptions({});
 });
+
+const onNameChange = (val: string) => {
+  const stampCollection = app.stampCollection.value;
+  if (!stampCollection) return;
+
+  stampCollection.setName(val);
+}
 
 // Disable buttons if funded
 const disabled = computed(
