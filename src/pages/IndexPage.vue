@@ -77,7 +77,7 @@
         <cash-stamps-form
           :wallets="stamps"
           :disable="showExistingCollections"
-          class="col-12 q-py-sm"
+          class="col-12 q-p-sm"
         />
       </div>
 
@@ -86,6 +86,7 @@
         <!-- Controls for print -->
         <div
           class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide"
+          style="background-color: white"
         >
           <!-- Print -->
           <div class="col-auto q-pa-xs">
@@ -106,12 +107,13 @@
             <q-btn
               class="shadow-xs rounded-sm"
               outline
-              icon="download"
+              icon="password"
               color="positive"
               :disable="!stamps.length"
-              @click="exportStamps"
+              @click="showMnemonicDialog"
             >
-              <q-tooltip>Download as Electron Wallet</q-tooltip>
+              <q-tooltip>Show Seed phrase</q-tooltip>
+              <!-- <q-tooltip>Download as Electron Wallet</q-tooltip> -->
             </q-btn>
           </div>
 
@@ -147,6 +149,8 @@
         </div>
       </div>
     </div>
+
+    <mnemonic-dialog ref="mnemonicDialog" />
   </q-page>
 </template>
 
@@ -181,6 +185,8 @@ import { app } from 'src/boot/app';
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import CashStampItem from 'src/components/CashStamp/CashStampItem.vue';
 import { StampCollection } from 'src/services/stamp-collection';
+
+import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
 
 // Access to stamps from StampCollection
 const stamps = computed<Wallet[]>(() => {
@@ -249,6 +255,11 @@ const exportStamps = (): void => {
   a.download = 'cash-stamps.json';
   a.click();
   URL.revokeObjectURL(url);
+};
+
+const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
+const showMnemonicDialog = async () => {
+  mnemonicDialog.value?.toggleVisible();
 };
 
 onMounted(() => {
