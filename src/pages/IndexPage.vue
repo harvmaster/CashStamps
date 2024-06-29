@@ -22,9 +22,7 @@
       <!-- Description & Instructions -->
       <div class="col-12 row justify-center q-pt-md">
         <div class="col-auto text-body1 text-white paragraph">
-          CashStamps are easily redeemable Bitcoin Cash wallets that can be used
-          to share BCH with others, with the ability to claim back funds on
-          unused stamps
+          CashStamps are easily redeemable Bitcoin Cash wallets that can be used for gifting BCH with the option to reclaim any unused stamps.
           <br />
           <br />
           <strong>Instructions:</strong>
