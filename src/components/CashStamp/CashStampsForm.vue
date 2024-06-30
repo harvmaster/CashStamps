@@ -92,12 +92,12 @@
       <div class="col-auto">
         <q-btn
           class="full-width"
-          :disable="!stampCollectionStamps.length || !stampCollectionName || disabled"
+          :disable="!stampCollectionStamps?.length || !stampCollectionName || disabled"
           label="Fund Stamps"
           color="green-6"
           @click="showFundingQR"
         >
-          <q-tooltip v-if="!stampCollectionStamps.length" style="font-size: 0.75rem">Stamps must be created before you can fund them</q-tooltip>
+          <q-tooltip v-if="!stampCollectionStamps?.length" style="font-size: 0.75rem">Stamps must be created before you can fund them</q-tooltip>
           <q-tooltip v-else-if="!stampCollectionName" style="font-size: 0.75rem">Stamp collections must have a name in order to fund them</q-tooltip>
         </q-btn>
       </div>
@@ -203,7 +203,7 @@ const onNameChange = (val: string) => {
 
 // Disable buttons if funded
 const disabled = computed(
-  () => app.stampCollection.value?.getFundingOptions().funded
+  () => !!app.stampCollection.value?.getFundingOptions().funded
 );
 
 // Merge the options with the current StampCollection

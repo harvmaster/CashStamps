@@ -108,13 +108,19 @@ export class App {
     Loading.show();
     await wait(2000);
 
+    // -------
+    //  TEST CODE
+    //--------
+    this.stampCollection.value = await StampCollection.fromMnemonic(collections[name])
+
+
     // Set the stampCollection to the generated StampCollection
-    this.stampCollection.value = StampCollection.generate({
-      count: 5,
-      name: name,
-      mnemonic: collections[name],
-      funding: { amount: 0, currency: 'BCH', funded: true },
-    });
+    // this.stampCollection.value = StampCollection.generate({
+    //   count: 5,
+    //   name: name,
+    //   mnemonic: collections[name],
+    //   funding: { amount: 0, currency: 'BCH', funded: true },
+    // });
     Loading.hide();
   }
 

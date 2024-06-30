@@ -51,7 +51,7 @@ const qrElement = ref<HTMLDivElement | null>(null);
 
 // Create human readable time and date `HH:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
-  const date = new Date(props.wallet.create_date);
+  const date = new Date(props.wallet.funding.funded || Date.now());
   const hours = date.getHours();
   const minutes = date.getMinutes();
 

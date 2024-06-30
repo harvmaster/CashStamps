@@ -4,7 +4,7 @@ export type Wallet = {
   funding: {
     amount: number;
     currency: string;
-    funded: boolean;
+    funded: false | Date;
   };
   wif: string;
   create_date: string;

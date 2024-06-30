@@ -215,7 +215,10 @@ const stamps = computed<Wallet[]>(() => {
 const showExistingCollections = ref(false);
 watch(showExistingCollections, () => {
   if (showExistingCollections.value) getCollections();
-  else clearForm();
+  else {
+    clearForm()
+    selectedCollection.value = undefined;
+  };
   // else if (collections.value.includes(app.stampCollection.value.getName())) app.stampCollection.value = StampCollection.generate({ count: 0 });
 });
 
