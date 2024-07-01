@@ -24,7 +24,7 @@ export class App {
 
   // stampCollection?: StampCollection | undefined = reactive<{value: InstanceType<StampCollection> | undefined }>({ value:  undefined });
   stampCollection = ref<StampCollection | undefined>(
-    StampCollection.generate({ count: 0 })
+    StampCollection.generate({ quantity: 0 })
   );
 
   // Flags.
@@ -98,29 +98,14 @@ export class App {
 
   // Find a StampCollection by name and set it to the stampCollection ref.
   async getStampCollection(name: string) {
+    Loading.show();
+
+    // Get the StampCollections from the browser's IndexedDB.
     const collections = await this.getStampCollections();
 
-    // Example code to simulate computing a StampCollection from a mnemonic and getting funded information, etc
-    const wait = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-
-    // Simulate loading
-    Loading.show();
-    await wait(2000);
-
-    // -------
-    //  TEST CODE
-    //--------
+    // Load the StampCollection from the mnemonic.
     this.stampCollection.value = await StampCollection.fromMnemonic(collections[name])
-
-
-    // Set the stampCollection to the generated StampCollection
-    // this.stampCollection.value = StampCollection.generate({
-    //   count: 5,
-    //   name: name,
-    //   mnemonic: collections[name],
-    //   funding: { amount: 0, currency: 'BCH', funded: true },
-    // });
+    
     Loading.hide();
   }
 

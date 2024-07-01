@@ -1,4 +1,6 @@
-import { HDPrivateNode } from 'src/utils/hd-private-node.js';
+// -------------------
+// 3rd party imports
+// -------------------
 
 import {
   deriveSeedFromBip39Mnemonic,
@@ -11,34 +13,42 @@ import { get, set } from 'idb-keyval';
 // Import the CashPayServer library for generating transactions
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
+// ---------------
+//  Type imports
+// ---------------
 // Made type for CashPayServer as it was not defined in the library
 import { CashPayServer_Invoice } from 'src/types';
 
+// -------------------
+//  Local imports
+// -------------------
 // Import the app instance to access the oracle
 import { app } from 'src/boot/app';
 
+// Import the HDPrivateNode class to derive the private keys
+import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 // Import the functions to get the used keys and unspent transactions
-import { getUsedKeys, getKeyUnspent, getTransactionBlocktime } from 'src/utils/transaction-helpers';
-
+import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
 // Import Satoshi class to convert satoshis to BCH
-import { Satoshis } from 'src/utils/satoshis';
+// import { Satoshis } from 'src/utils/satoshis';
+
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
 export type FundingOptions = {
-  amount: number;
+  value: number;
   currency: string;
   funded: false | Date;
 };
 export const DEFAULT_FUNDING_OPTIONS: FundingOptions = {
-  amount: 0,
+  value: 0,
   currency: 'BCH',
   funded: false,
 };
 
 export type GenerateOptions = {
-  count: number;
+  quantity: number;
   name?: string;
   mnemonic?: string;
   funding?: FundingOptions;
@@ -57,8 +67,8 @@ export class StampCollection {
     const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
     
     // Make sure amount isnt stupid amount of digits
-    if (fundingOptions.amount?.toString()?.split('.')?.[1]?.length > 8) {
-      fundingOptions.amount = parseFloat(fundingOptions.amount.toFixed(8));
+    if (fundingOptions.value?.toString()?.split('.')?.[1]?.length > 8) {
+      fundingOptions.value = parseFloat(fundingOptions.value.toFixed(8));
     }
 
     // Generate a random mnemonic.
@@ -76,7 +86,7 @@ export class StampCollection {
     const nodes: Array<HDPrivateNode> = [];
 
     // Derive a node for each stamp.
-    for (let i = 0; i < options.count; i++) {
+    for (let i = 0; i < options.quantity; i++) {
       nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
     }
 
@@ -101,18 +111,17 @@ export class StampCollection {
 
     // Get all the addresses that have been a tx history
     const usedKeys = await getUsedKeys(parentNode);
-    console.log(usedKeys);
+    // console.log(usedKeys);
 
     // Get the unspent transactions for each key, Not sure if we need each key or just the first one.
     // Its used to get the funding amount in BCH. This can be used to convert to other currencies with the Oracle
-    const unspentPromises = usedKeys.map(async (key) => {
-      const unspent = await getKeyUnspent(key);
-      return unspent
-    })
+    // const unspentPromises = usedKeys.map(async (key) => {
+    //   const unspent = await getKeyUnspent(key);
+    //   return unspent
+    // })
 
     // Wait for all the promises to resolve
-    const unspent = await Promise.all(unspentPromises);
-    console.log(unspent);
+    // const unspent = await Promise.all(unspentPromises);
 
     usedKeys.forEach((key, i) => {
       nodes.push(key.node);
@@ -120,12 +129,24 @@ export class StampCollection {
     
     // Get the blocktime of the first transaction to get the funding date
     // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet
-    const blocktime = await getTransactionBlocktime(usedKeys[0]) || Date.now() / 1000;
-    console.log(blocktime);
+    const firstTransaction = await getTransactionData(usedKeys[0]);
+
+    // Get the blocktime of the first transaction (they should all be the same), we can use this to get the price of the stamp from the oracle
+    const blocktime = firstTransaction ? firstTransaction.blocktime : Date.now() / 1000;
+
+    // Get the transaction's value to set the funding amount
+    let txValue = 0
+    if (firstTransaction) {
+      txValue = firstTransaction.vout.find((output: any) => {
+        return output.scriptPubKey.addresses.some((address: string) => {
+          return address == usedKeys[0].address
+        })
+      }).value
+    }
 
     // Set funding options to be used in the StampCollection
     const fundingOptions = {
-      amount: Satoshis.fromSats(unspent[0]?.[0]?.value).toBCH(),
+      value: txValue,
       currency: 'BCH',
       funded: new Date(blocktime * 1000)
     }
@@ -153,7 +174,7 @@ export class StampCollection {
     const invoice = new CashPayServer.Invoice();
 
     // Get amount without currency reference
-    const rawAmount = this.getFundingOptions().amount;
+    const rawAmount = this.getFundingOptions().value;
 
     // Get currency
     const currency = this.getFundingOptions().currency;

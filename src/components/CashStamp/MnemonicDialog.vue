@@ -12,7 +12,7 @@
 import { ref, computed } from 'vue'
 import { app } from 'src/boot/app'
 
-const mnemonic = computed(() => app.stampCollection.value?.mnemonic)
+const mnemonic = computed(() => app.stampCollection.value?.getMnemonic())
 
 const visible = ref(false)
 const toggleVisible = () => {

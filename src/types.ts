@@ -2,7 +2,7 @@ export type Wallet = {
   // address: string;
   // privateKey: string;
   funding: {
-    amount: number;
+    value: number;
     currency: string;
     funded: false | Date;
   };

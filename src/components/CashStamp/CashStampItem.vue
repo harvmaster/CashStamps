@@ -8,7 +8,10 @@
 
       <!-- Value -->
       <div class="col-auto row justify-center">
-        <div class="col-12 text-h5 no-margin no-padding text-weight-medium">
+        <div v-if="loadingFunding" class="col-12 text-h5 no-margin no-padding text-weight-medium">
+          <q-spinner />
+        </div>
+        <div v-else class="col-12 text-h5 no-margin no-padding text-weight-medium">
           {{ stampAmount}}
           {{ currencyName }}
         </div>
@@ -36,14 +39,16 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import QRCode from 'easyqrcodejs';
-import { Wallet } from 'src/types';
+
 import { app } from 'src/boot/app';
+import { HDPrivateNode } from 'src/utils/hd-private-node';
+import { FundingOptions } from 'src/services/stamp-collection';
 
 export type CashStampItemProps = {
   id: number;
-  wallet: Wallet;
-
-  message?: string;
+  stamp: HDPrivateNode;
+  funding: FundingOptions;
+  loadingFunding: boolean;
 };
 
 const props = defineProps<CashStampItemProps>();
@@ -51,7 +56,7 @@ const qrElement = ref<HTMLDivElement | null>(null);
 
 // Create human readable time and date `HH:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
-  const date = new Date(props.wallet.funding.funded || Date.now());
+  const date = new Date(props.funding.funded || Date.now());
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
@@ -62,7 +67,7 @@ const createdAt = computed(() => {
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
-  const currency = props.wallet.funding.currency;
+  const currency = props.funding?.currency;
   if (currency === 'BCH') return 'BCH';
 
   return app.oracles.oracleMetadataStore[currency]
@@ -77,18 +82,21 @@ const stampAmount = computed(() => {
     return value.replace(/\.?0+$/, '');
   };
 
+  console.log('props.funding.amount', props.funding?.value);
   // Return the amount with the correct number of decimal places
   return currencyName.value === 'BCH' ?
-    removeTrailingZeros(props.wallet.funding.amount.toFixed(8))
+    removeTrailingZeros(props.funding.value.toFixed(8))
     // props.wallet.funding.amount
-    : props.wallet.funding.amount.toFixed(2);
+    : props.funding.value.toFixed(2);
 });
 
 // Create QR Code when loaded
 onMounted(() => {
   if (qrElement.value) {
+    const wif = props.stamp.privateKey().toWif();
+
     new QRCode(qrElement.value, {
-      text: props.wallet.wif,
+      text: wif,
       width: 128,
       height: 128,
       logo: 'bch.svg',

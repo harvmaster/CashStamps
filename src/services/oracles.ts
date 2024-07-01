@@ -175,6 +175,25 @@ export class OraclesService {
     );
   }
 
+  // Get the price from the Oracle with the given public key and timestamp.
+  async getPrice(oraclePublicKey: string | Uint8Array, timestamp?: number) {
+    const oraclePublicKeyHex =
+      oraclePublicKey instanceof Uint8Array
+        ? binToHex(oraclePublicKey)
+        : oraclePublicKey;
+
+    // Fetch price message from the Oracle with a max timestamp of the given timestamp.
+    const { parsedPriceMessage } = await this.oracleClient.getPrice(oraclePublicKeyHex, {
+      maxMessageTimestamp: timestamp,
+    });
+
+    // Convert the price to common units.
+    const price = this.toCommonUnits(parsedPriceMessage.priceValue, oraclePublicKeyHex);
+
+    // Return the parsed price message
+    return price;
+  }
+
   handleMetadataMessage(metadataEvent: OracleClientMetadataEvent): void {
     // Save the metadata to our store.
     this.oracleMetadataStore[metadataEvent.oraclePublicKey] =

@@ -73,7 +73,9 @@
         </q-slide-transition>
 
         <cash-stamps-form
-          :wallets="stamps"
+          :form="collectionForm"
+          @create="createCollection"
+          
           :disable="showExistingCollections"
           class="col-12 q-p-sm"
         />
@@ -136,13 +138,7 @@
           ref="printContent"
         >
           <div class="row col-12">
-            <cash-stamp-item
-              class="col-auto q-pa-sm"
-              v-for="(stamp, index) in stamps || []"
-              :key="stamp.wif"
-              :id="index"
-              :wallet="stamp"
-            />
+            <stamp-list v-if="stamps.length" :stamps="stamps" :funding="collectionForm.funding" />
           </div>
         </div>
       </div>
@@ -175,41 +171,25 @@
 </style>
 
 <script setup lang="ts">
-import { Wallet } from 'src/types';
 import { ref, computed, onMounted, watch } from 'vue';
 
 import { app } from 'src/boot/app';
+import { useCollectionForm } from 'src/composables/useCollectionForm';
 
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
-import CashStampItem from 'src/components/CashStamp/CashStampItem.vue';
-import { StampCollection } from 'src/services/stamp-collection';
+import StampList from 'src/components/CashStamp/StampList.vue';
 
+import { StampCollection } from 'src/services/stamp-collection';
 import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
 
-// Access to stamps from StampCollection
-const stamps = computed<Wallet[]>(() => {
-  // Check if stampCollection is available
-  const stampCollection = app.stampCollection?.value;
-  if (!stampCollection) return [];
+// List of stamps (as HDPrivateNodes)
+const stamps = computed(() => app.stampCollection.value?.getStamps() || [])
 
-  // Get funding options
-  const stampFunding = stampCollection?.getFundingOptions();
-
-  // Format stamps for display
-  return stampCollection.getStamps().map((stamp) => {
-    const privateKey = stamp.privateKey();
-
-    return {
-      // Wif is standard 'wallet import format'
-      wif: privateKey.toWif(),
-
-      // details about amount, currency, and whether its been funded yet
-      funding: stampFunding,
-
-      create_date: new Date().toISOString(),
-    };
-  });
-});
+// Form for creating a new collection and loading an existing collections params into the form
+const {
+  collectionForm,
+  createCollection,
+} = useCollectionForm()
 
 // Data for existing collections
 const showExistingCollections = ref(false);
@@ -219,7 +199,6 @@ watch(showExistingCollections, () => {
     clearForm()
     selectedCollection.value = undefined;
   };
-  // else if (collections.value.includes(app.stampCollection.value.getName())) app.stampCollection.value = StampCollection.generate({ count: 0 });
 });
 
 // Update app.stampCollection when a collection is selected
@@ -238,7 +217,7 @@ const getCollections = async () =>
 const clearForm = (): void => {
   if (!app.stampCollection) return;
 
-  app.stampCollection.value = StampCollection.generate({ count: 0 });
+  app.stampCollection.value = StampCollection.generate({ quantity: 0 });
 };
 
 // Print the stamps
@@ -246,17 +225,17 @@ const printStamps = (): void => {
   window.print();
 };
 
-const exportStamps = (): void => {
-  // Download json of wallets
-  const data = JSON.stringify(stamps.value, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'cash-stamps.json';
-  a.click();
-  URL.revokeObjectURL(url);
-};
+// const exportStamps = (): void => {
+//   // Download json of wallets
+//   const data = JSON.stringify(stamps.value, null, 2);
+//   const blob = new Blob([data], { type: 'application/json' });
+//   const url = URL.createObjectURL(blob);
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = 'cash-stamps.json';
+//   a.click();
+//   URL.revokeObjectURL(url);
+// };
 
 const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
 const showMnemonicDialog = async () => {
