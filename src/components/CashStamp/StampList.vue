@@ -29,6 +29,7 @@ import { getKeyUnspent } from 'src/utils/transaction-helpers';
 
 export type StampListProps = {
   stamps: HDPrivateNode[];
+  usedStamps: string[];
   funding: FundingOptions;
 }
 
@@ -63,28 +64,7 @@ const getStampFunding = async () => {
 watch(() => props.funding.currency, () => getStampFunding());
 watch(appFunding, () => getStampFunding());
 
-const usedStamps = ref<string[]>([]);
-const getUsedStamps = async () => {
-  if (!props.funding.funded) {
-    return [] 
-  }
-
-  const unspentPromises = props.stamps.map(async (stamp) => {
-    return {
-      stamp: stamp.toString(),
-      unspent: await getKeyUnspent(stamp)
-    }
-});
-  const unspent = await Promise.all(unspentPromises);
-
-  const used = unspent.filter(address => !address.unspent.length);
-
-  usedStamps.value = used.map(address => address.stamp)
-}
-watch(() => props.stamps, () => getUsedStamps());
-
 onMounted(() => {
   getStampFunding()
-  getUsedStamps()
 });
 </script>

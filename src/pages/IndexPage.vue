@@ -40,7 +40,7 @@
     </div>
 
     <div
-      class="col-12 row cash-stamps_page justify-center q-col-gutter-y-md printable q-pa-xl"
+      class="col-12 row cash-stamps_page justify-center printable q-pa-xl"
     >
       <!-- Input form and wallet creator -->
       <div class="col-12 row items-center print-hide">
@@ -69,6 +69,13 @@
                 </q-item>
               </template>
             </q-select>
+
+            <div class="col-auto self-end">
+              <div v-if="stamps.length" class="col-auto text-weight-medium q-pa-sm ">
+                {{ usedStamps.length }}/
+                {{ stamps.length }} claimed
+              </div>
+            </div>
           </div>
         </q-slide-transition>
 
@@ -82,53 +89,56 @@
       </div>
 
       <!-- Stamp results -->
-      <div class="col-12 row q-gutter-y-md justify-center">
+      <div class="col-12 row justify-center">
         <!-- Controls for print -->
-        <div
-          class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide"
-          style="background-color: white"
-        >
-          <!-- Print -->
-          <div class="col-auto q-pa-xs">
-            <q-btn
-              class="shadow-xs rounded-sm"
-              outline
-              icon="print"
-              color="primary"
-              :disable="!stamps.length"
-              @click="printStamps"
-            >
-              <q-tooltip class="print-hide">Print Stamps</q-tooltip>
-            </q-btn>
-          </div>
+        <div class="col-12 row justify-center q-pb-md">
 
-          <!-- Download -->
-          <div class="col-auto q-pa-xs">
-            <q-btn
-              class="shadow-xs rounded-sm"
-              outline
-              icon="password"
-              color="positive"
-              :disable="!stamps.length"
-              @click="showMnemonicDialog"
-            >
-              <q-tooltip>Show Seed phrase</q-tooltip>
-              <!-- <q-tooltip>Download as Electron Wallet</q-tooltip> -->
-            </q-btn>
-          </div>
+          <div
+            class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide"
+            style="background-color: white"
+          >
+            <!-- Print -->
+            <div class="col-auto q-pa-xs">
+              <q-btn
+                class="shadow-xs rounded-sm"
+                outline
+                icon="print"
+                color="primary"
+                :disable="!stamps.length"
+                @click="printStamps"
+              >
+                <q-tooltip class="print-hide">Print Stamps</q-tooltip>
+              </q-btn>
+            </div>
 
-          <!-- Clear Stamps -->
-          <div class="col-auto q-pa-xs">
-            <q-btn
-              class="shadow-xs rounded-sm"
-              outline
-              icon="cancel"
-              color="negative"
-              :disable="!stamps.length"
-              @click="clearForm"
-            >
-              <q-tooltip>Clear Stamps</q-tooltip>
-            </q-btn>
+            <!-- Download -->
+            <div class="col-auto q-pa-xs">
+              <q-btn
+                class="shadow-xs rounded-sm"
+                outline
+                icon="password"
+                color="positive"
+                :disable="!stamps.length"
+                @click="showMnemonicDialog"
+              >
+                <q-tooltip>Show Seed phrase</q-tooltip>
+                <!-- <q-tooltip>Download as Electron Wallet</q-tooltip> -->
+              </q-btn>
+            </div>
+
+            <!-- Clear Stamps -->
+            <div class="col-auto q-pa-xs">
+              <q-btn
+                class="shadow-xs rounded-sm"
+                outline
+                icon="cancel"
+                color="negative"
+                :disable="!stamps.length"
+                @click="clearForm"
+              >
+                <q-tooltip>Clear Stamps</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </div>
 
@@ -138,7 +148,12 @@
           ref="printContent"
         >
           <div class="row col-12">
-            <stamp-list v-if="stamps.length" :stamps="stamps" :funding="collectionForm.funding" />
+            <stamp-list 
+              v-if="stamps.length"
+              :stamps="stamps"
+              :usedStamps="usedStamps"
+              :funding="collectionForm.funding"
+            />
           </div>
         </div>
       </div>
@@ -184,6 +199,7 @@ import { useCollectionForm } from 'src/composables/useCollectionForm';
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import StampList from 'src/components/CashStamp/StampList.vue';
 import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
+import { getKeyUnspent } from 'src/utils/transaction-helpers';
 
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || [])
@@ -194,6 +210,10 @@ const {
   createCollection,
 } = useCollectionForm()
 
+
+// ---------------------------------------
+// Existing Collections
+// ---------------------------------------
 // Data for existing collections
 const showExistingCollections = ref(false);
 watch(showExistingCollections, () => {
@@ -216,6 +236,35 @@ const collections = ref<string[]>([]);
 const getCollections = async () =>
   (collections.value = Object.keys(await app.getStampCollections()) || []);
 
+
+// ---------------------------------------
+// Get used Stamps
+// ---------------------------------------
+// List of stamps that have been used
+const usedStamps = ref<string[]>([]);
+const getUsedStamps = async () => {
+  if (!collectionForm.value.funding.funded) {
+    return [] 
+  }
+
+  const unspentPromises = stamps.value.map(async (stamp) => {
+    return {
+      stamp: stamp.toString(),
+      unspent: await getKeyUnspent(stamp)
+    }
+});
+  const unspent = await Promise.all(unspentPromises);
+
+  const used = unspent.filter(address => !address.unspent.length);
+
+  usedStamps.value = used.map(address => address.stamp)
+}
+watch(stamps, () => getUsedStamps());
+
+
+// ---------------------------------------
+// Print Page Actions
+// ---------------------------------------
 // Clear the form and reset the StampCollection
 const clearForm = (): void => {
   if (!app.stampCollection) return;
@@ -234,6 +283,10 @@ const showMnemonicDialog = async () => {
   mnemonicDialog.value?.toggleVisible();
 };
 
+
+// ---------------------------------------
+// Lifecycle hooks
+// ---------------------------------------
 onMounted(() => {
   getCollections();
 });
