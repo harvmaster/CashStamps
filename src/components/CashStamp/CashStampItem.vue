@@ -84,13 +84,11 @@ const currencyName = computed(() => {
 
 // Create a human readable amount. Fiat get 2 decimal places, BCH gets 8 (empty 0s are removed for BCH)
 const stampAmount = computed(() => {
-
   // Remove trailing zeros
   const removeTrailingZeros = (value: string) => {
     return value.replace(/\.?0+$/, '');
   };
 
-  console.log('props.funding.amount', props.funding?.value);
   // Return the amount with the correct number of decimal places
   return currencyName.value === 'BCH' ?
     removeTrailingZeros(props.funding.value.toFixed(8))
