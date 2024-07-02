@@ -5,27 +5,31 @@ const cache = ref<{ [key: string]: number }>({})
 
 export const useCurrencyConverter = () => {
   const convert = async (currencyPublicKey: string, amount: number, timestamp?: number) => {
+
+    // Return the latest conversion rate if no timestamp is provided
     if (!timestamp) {
       const rate = app.oracles.getOraclePriceCommonUnits(currencyPublicKey)
-      console.log('No timestamp provided, returning: ', amount, rate, amount / rate)
       return amount * rate
     }
 
+    // Convert the timestamp to seconds
     timestamp = Math.floor(timestamp / 1000)
+
+    // Return the amount if the currency is BCH (its already in BCH)
     if (currencyPublicKey === 'BCH') return amount
-
-    console.log('Converting: ', currencyPublicKey, amount, timestamp)
+ 
+    // Check the cache for the conversion rate
     const key = `${currencyPublicKey}-${timestamp}`
-
     if (cache.value[key]) return amount * cache.value[key]
     
     // Fetch the conversion rate from the Oracle
     const rate = await app.oracles.getPrice(currencyPublicKey, timestamp)
     if (!rate) throw new Error('Failed to fetch conversion rate')
 
-    console.log('Conversion rate: ', rate)
-
+    // Store the conversion rate in the cache
     cache.value[key] = rate
+
+    // Return the converted amount
     return amount * rate
   }
 

@@ -110,16 +110,7 @@ export class StampCollection {
     // Get all the addresses that have been a tx history
     const usedKeys = await getUsedKeys(parentNode);
 
-    // Get the unspent transactions for each key, Not sure if we need each key or just the first one.
-    // Its used to get the funding amount in BCH. This can be used to convert to other currencies with the Oracle
-    // const unspentPromises = usedKeys.map(async (key) => {
-    //   const unspent = await getKeyUnspent(key);
-    //   return unspent
-    // })
-
-    // Wait for all the promises to resolve
-    // const unspent = await Promise.all(unspentPromises);
-
+    // Get the nodes from the used keys
     usedKeys.forEach((key, i) => {
       nodes.push(key.node);
     })
