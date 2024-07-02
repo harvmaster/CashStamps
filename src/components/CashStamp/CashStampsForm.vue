@@ -179,14 +179,17 @@ const currencyOptions = computed((): Array<Option> => {
   return options;
 });
 
+
+// Show the total value of a transaction in the selected currency. This is used for old collections that have been funded
 const loadingFormattingCurrency = ref(false)
 const formattedCurrency = ref<number>(model.value.funding.value)
 const formatCurrency = async () => {
-  console.log(model.value.funding.value)
+  // If the collection is not funded, just show the value
   if (!stampCollectionFunding.value?.funded) return formattedCurrency.value = model.value.funding.value;
 
   loadingFormattingCurrency.value = true;
 
+  // Convert the value to the selected currency
   formattedCurrency.value = await convert(
     model.value.funding.currency,
     stampCollectionFunding.value.value,
@@ -195,7 +198,10 @@ const formatCurrency = async () => {
 
   loadingFormattingCurrency.value = false;
 }
+
+// Update the formatted currency when the funding value or currency changes
 watch(() => [model.value.funding.value, model.value.funding.currency], () => formatCurrency());
+// This is used to detect when the collection changes. Otherwise it may not notice the change
 watch(() => model.value.funding, () => formatCurrency());
 
 // Disable buttons if funded
