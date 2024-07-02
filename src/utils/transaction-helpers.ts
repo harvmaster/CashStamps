@@ -51,8 +51,9 @@ export const getUsedKeys = async (parentNode: HDPrivateNode, offset = 0, count =
   return history.filter(key => key.history.length);
 }
 
-export const getKeyUnspent = async (key: KeyHistory): Promise<AddressListUnspent['response']> => {
-  const res = await app.electrum.request('blockchain.address.listunspent', key.address) as AddressListUnspent['response']
+export const getKeyUnspent = async (key: HDPrivateNode): Promise<AddressListUnspent['response']> => {
+  const address = key.deriveHDPublicNode().publicKey().deriveAddress().toCashAddr();
+  const res = await app.electrum.request('blockchain.address.listunspent', address) as AddressListUnspent['response']
 
   return res
 }

@@ -1,6 +1,11 @@
 <template>
   <div class="" style="height: fit-content">
-    <div class="cash-stamp_item q-pa-md column items-center">
+    <div class="cash-stamp_item q-pa-md column items-center relative">
+      <!-- Claimed Badge -->
+      <div v-if="claimed" class="col-auto row justify-end absolute" style="top: 0; right: 0; padding: 1em;">
+        <q-badge class="q-pa-sm" style="background-color: #1DC18E; font-size: 1rem" label="Claimed" />
+      </div>
+
       <!-- QR Code -->
       <div class="col-auto row square q-pa-md">
         <div ref="qrElement" class="col-12" />
@@ -32,7 +37,7 @@
   background-color: white;
   border-radius: 8px;
   padding: 16px;
-  border: dashed 2px #73ce6b;
+  border: dashed 2px #1DC18E;
 }
 </style>
 
@@ -49,6 +54,7 @@ export type CashStampItemProps = {
   stamp: HDPrivateNode;
   funding: FundingOptions;
   loadingFunding: boolean;
+  claimed: boolean;
 };
 
 const props = defineProps<CashStampItemProps>();
