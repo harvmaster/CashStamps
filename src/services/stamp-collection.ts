@@ -29,8 +29,6 @@ import { app } from 'src/boot/app';
 import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 // Import the functions to get the used keys and unspent transactions
 import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
-// Import Satoshi class to convert satoshis to BCH
-// import { Satoshis } from 'src/utils/satoshis';
 
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
@@ -111,7 +109,6 @@ export class StampCollection {
 
     // Get all the addresses that have been a tx history
     const usedKeys = await getUsedKeys(parentNode);
-    // console.log(usedKeys);
 
     // Get the unspent transactions for each key, Not sure if we need each key or just the first one.
     // Its used to get the funding amount in BCH. This can be used to convert to other currencies with the Oracle
@@ -190,8 +187,6 @@ export class StampCollection {
       // Set BCH amount to the equivalent amount in the selected currency
       bchAmount = rawAmount / bchPrice;
     }
-
-    // console.log('bch amount: ', bchAmount);
 
     // Add addresses to transaction
     for (const node of this.hdNodes) {

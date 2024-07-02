@@ -36,6 +36,7 @@ export const useCollectionForm = () => {
 
   // Watch for changes in the stamp collection, and update the form accordingly.
   watch(app.stampCollection, async () => {
+    console.log('stamp updated')
     collectionForm.value = {
       name: app.stampCollection.value?.getName() || '',
       quantity: app.stampCollection.value?.getStamps().length || 1,

@@ -14,7 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
+
+import { app } from 'src/boot/app'
 
 import { HDPrivateNode } from 'src/utils/hd-private-node';
 import { FundingOptions } from 'src/services/stamp-collection';
@@ -33,23 +35,25 @@ const { convert } = useCurrencyConverter();
 
 const loadingFunding = ref(false);
 
+const appFunding = computed(() => app.stampCollection.value?.getFundingOptions());
+
 const stampFunding = ref<FundingOptions>(props.funding);
 const getStampFunding = async () => {
   if (!props.funding.funded) {
-    stampFunding.value = props.funding;
+    stampFunding.value = appFunding.value;
     return
   }
 
   loadingFunding.value = true;
 
-  const value = await convert(props.funding.currency, props.funding.value, props.funding.funded.getTime());
+  const value = await convert(props.funding.currency, appFunding.value.value, props.funding.funded.getTime());
   stampFunding.value = { ...props.funding, value };
 
   loadingFunding.value = false;
 }
 
 watch(() => props.funding.currency, () => getStampFunding());
-watch(() => props.funding.value, () => getStampFunding());
+watch(appFunding, () => getStampFunding());
 
 onMounted(() => {
   getStampFunding()

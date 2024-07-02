@@ -98,7 +98,7 @@
               :disable="!stamps.length"
               @click="printStamps"
             >
-              <q-tooltip>Print Stamps</q-tooltip>
+              <q-tooltip class="print-hide">Print Stamps</q-tooltip>
             </q-btn>
           </div>
 
@@ -173,13 +173,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 
+// Service / App imports
 import { app } from 'src/boot/app';
+import { StampCollection } from 'src/services/stamp-collection';
+
+// Composables Imports
 import { useCollectionForm } from 'src/composables/useCollectionForm';
 
+// Component Imports
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import StampList from 'src/components/CashStamp/StampList.vue';
-
-import { StampCollection } from 'src/services/stamp-collection';
 import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
 
 // List of stamps (as HDPrivateNodes)
@@ -225,18 +228,7 @@ const printStamps = (): void => {
   window.print();
 };
 
-// const exportStamps = (): void => {
-//   // Download json of wallets
-//   const data = JSON.stringify(stamps.value, null, 2);
-//   const blob = new Blob([data], { type: 'application/json' });
-//   const url = URL.createObjectURL(blob);
-//   const a = document.createElement('a');
-//   a.href = url;
-//   a.download = 'cash-stamps.json';
-//   a.click();
-//   URL.revokeObjectURL(url);
-// };
-
+// Show the mnemonic dialog
 const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
 const showMnemonicDialog = async () => {
   mnemonicDialog.value?.toggleVisible();

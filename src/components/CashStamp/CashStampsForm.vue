@@ -95,6 +95,7 @@
           color="green-6"
           @click="showFundingQR"
         >
+          <!-- Error messages -->
           <q-tooltip v-if="!stampCollectionStamps?.length" style="font-size: 0.75rem">Stamps must be created before you can fund them</q-tooltip>
           <q-tooltip v-else-if="stampCollectionFunding?.funded" style="font-size: 0.75rem">Stamps are already funded</q-tooltip>
           <q-tooltip v-else-if="!stampCollectionName" style="font-size: 0.75rem">Stamp collections must have a name in order to fund them</q-tooltip>
