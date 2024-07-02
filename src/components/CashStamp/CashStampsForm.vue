@@ -61,11 +61,14 @@
           <div class="col-12 col-md-auto text-body2">
             Total Value ({{ currencyName }})
           </div>
-          <div class="col-12 text-h6">
+          <div v-if="loadingFormattingCurrency" class="col-12">
+            <q-spinner />
+          </div>
+          <div v-else class="col-12 text-h6">
             {{
               currencyName === 'BCH'
-                ? (form.quantity * form.funding.value).toFixed(8)
-                : (form.quantity * form.funding.value).toFixed(2)
+                ? (form.quantity * formattedCurrency).toFixed(8)
+                : (form.quantity * formattedCurrency).toFixed(2)
             }}
             {{ currencyName }}
           </div>
@@ -124,10 +127,11 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { computed, ref, defineModel } from 'vue';
+import { computed, ref, defineModel, watch } from 'vue';
 
 import { app } from 'src/boot/app.js';
 import { GenerateOptions } from 'src/services/stamp-collection.js';
+import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 import RedeemDialog from './RedeemDialog.vue';
@@ -140,6 +144,8 @@ interface Option {
 
 const model = defineModel<Required<GenerateOptions>>('form', { required: true })
 const emits = defineEmits(['create'])
+
+const { convert } = useCurrencyConverter();
 
 // Get the current StampCollection. Have to get them individually because the variables are private on the stamp collection object
 const stampCollection = computed(() => app.stampCollection.value);
@@ -172,6 +178,25 @@ const currencyOptions = computed((): Array<Option> => {
 
   return options;
 });
+
+const loadingFormattingCurrency = ref(false)
+const formattedCurrency = ref<number>(model.value.funding.value)
+const formatCurrency = async () => {
+  console.log(model.value.funding.value)
+  if (!stampCollectionFunding.value?.funded) return formattedCurrency.value = model.value.funding.value;
+
+  loadingFormattingCurrency.value = true;
+
+  formattedCurrency.value = await convert(
+    model.value.funding.currency,
+    stampCollectionFunding.value.value,
+    stampCollectionFunding.value.funded.getTime()
+  );
+
+  loadingFormattingCurrency.value = false;
+}
+watch(() => [model.value.funding.value, model.value.funding.currency], () => formatCurrency());
+watch(() => model.value.funding, () => formatCurrency());
 
 // Disable buttons if funded
 const disabled = computed(

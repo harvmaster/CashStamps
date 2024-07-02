@@ -61,9 +61,9 @@ const createdAt = computed(() => {
   const minutes = date.getMinutes();
 
   // Format hours and minutes
-  let formattedHours = hours % 12 || 12;
+  const formattedHours = hours % 12 || 12;
 
-  let formattedMinutes = minutes;
+  let formattedMinutes: string | number = minutes;
   if (formattedMinutes < 10) formattedMinutes = '0' + formattedMinutes;
 
   // Format date as `hh:MMam/pm DD/MM/YYYY`

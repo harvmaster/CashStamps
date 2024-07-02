@@ -40,7 +40,12 @@ const appFunding = computed(() => app.stampCollection.value?.getFundingOptions()
 const stampFunding = ref<FundingOptions>(props.funding);
 const getStampFunding = async () => {
   if (!props.funding.funded) {
-    stampFunding.value = appFunding.value;
+    stampFunding.value = appFunding.value || { ...props.funding };
+    return
+  }
+
+  // This case should never happen, but TS gets mad if we don't check
+  if (!appFunding.value) {
     return
   }
 
