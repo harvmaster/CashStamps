@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 import { app } from 'src/boot/app'
 import { StampCollection, GenerateOptions } from 'src/services/stamp-collection'
