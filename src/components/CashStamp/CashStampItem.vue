@@ -56,9 +56,7 @@ const qrElement = ref<HTMLDivElement | null>(null);
 
 // Create human readable time and date `hh:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
-  const testTime = 1719886094212
   const date = new Date(props.funding.funded || Date.now());
-  // const date = new Date(testTime);
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
