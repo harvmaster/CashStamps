@@ -54,15 +54,25 @@ export type CashStampItemProps = {
 const props = defineProps<CashStampItemProps>();
 const qrElement = ref<HTMLDivElement | null>(null);
 
-// Create human readable time and date `HH:MMam/pm DD/MM/YYYY`
+// Create human readable time and date `hh:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
+  const testTime = 1719886094212
   const date = new Date(props.funding.funded || Date.now());
+  // const date = new Date(testTime);
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
-  return `${hours < 10 ? '0' + hours : hours % 12}:${
-    minutes < 10 ? '0' + minutes : minutes
-  }${hours / 12 < 1 ? 'am' : 'pm'} ${date.toLocaleDateString()}`;
+  // Format hours and minutes
+  let formattedHours = hours % 12 || 12;
+
+  let formattedMinutes = minutes;
+  if (formattedMinutes < 10) formattedMinutes = '0' + formattedMinutes;
+
+  // Format date as `hh:MMam/pm DD/MM/YYYY`
+  return `
+          ${formattedHours}:${ formattedMinutes}${hours / 12 < 1 ? 'am' : 'pm'} 
+          ${date.toLocaleDateString()}
+        `;
 });
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
