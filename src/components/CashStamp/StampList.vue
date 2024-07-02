@@ -25,8 +25,6 @@ import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 import CashStampItem from './CashStampItem.vue';
 
-import { getKeyUnspent } from 'src/utils/transaction-helpers';
-
 export type StampListProps = {
   stamps: HDPrivateNode[];
   usedStamps: string[];

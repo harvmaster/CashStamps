@@ -1,7 +1,7 @@
 <template>
   <div class="" style="height: fit-content">
     <div class="cash-stamp_item q-pa-md column items-center relative">
-      <!-- Claimed Badge -->
+      <!-- Claimed Badge - Absolute, Top-Right-->
       <div v-if="claimed" class="col-auto row justify-end absolute" style="top: 0; right: 0; padding: 1em;">
         <q-badge class="q-pa-sm" style="background-color: #1DC18E; font-size: 1rem" label="Claimed" />
       </div>
@@ -60,6 +60,10 @@ export type CashStampItemProps = {
 const props = defineProps<CashStampItemProps>();
 const qrElement = ref<HTMLDivElement | null>(null);
 
+// ----------------------------------
+// Date Formatting
+// ----------------------------------
+//
 // Create human readable time and date `hh:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
   const date = new Date(props.funding.funded || Date.now());
@@ -79,6 +83,10 @@ const createdAt = computed(() => {
         `;
 });
 
+// ----------------------------------
+// Currency Names
+// ----------------------------------
+//
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
   const currency = props.funding?.currency;
@@ -88,6 +96,10 @@ const currencyName = computed(() => {
     .sourceNumeratorUnitCode || 'unknown';
 });
 
+// ----------------------------------
+// Currency length controller
+// ----------------------------------
+//
 // Create a human readable amount. Fiat get 2 decimal places, BCH gets 8 (empty 0s are removed for BCH)
 const stampAmount = computed(() => {
   // Remove trailing zeros
@@ -102,6 +114,10 @@ const stampAmount = computed(() => {
     : props.funding.value.toFixed(2);
 });
 
+// ----------------------------------
+// Lifecycle Hooks
+// ----------------------------------
+//
 // Create QR Code when loaded
 onMounted(() => {
   if (qrElement.value) {

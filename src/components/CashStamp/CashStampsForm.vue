@@ -147,12 +147,25 @@ const emits = defineEmits(['create'])
 
 const { convert } = useCurrencyConverter();
 
+// ----------------------------------
+// Reactive Variables
+// ----------------------------------
+//
 // Get the current StampCollection. Have to get them individually because the variables are private on the stamp collection object
 const stampCollection = computed(() => app.stampCollection.value);
 const stampCollectionStamps = computed(() => stampCollection.value?.getStamps());
 const stampCollectionName = computed(() => stampCollection.value?.getName());
 const stampCollectionFunding = computed(() => stampCollection.value?.getFundingOptions());
 
+// Disable buttons if funded
+const disabled = computed(
+  () => !!app.stampCollection.value?.getFundingOptions().funded
+);
+
+// ----------------------------------
+// Currency Name & Options
+// ----------------------------------
+//
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
   if (model.value.funding.currency === 'BCH') return 'BCH';
@@ -180,6 +193,10 @@ const currencyOptions = computed((): Array<Option> => {
 });
 
 
+// ----------------------------------
+// Currency Conversion for Total Value
+// ----------------------------------
+//
 // Show the total value of a transaction in the selected currency. This is used for old collections that have been funded
 const loadingFormattingCurrency = ref(false)
 const formattedCurrency = ref<number>(model.value.funding.value)
@@ -206,11 +223,10 @@ watch(() => [model.value.funding.value, model.value.funding.currency], () => for
 // This is used to detect when the collection changes. Otherwise it may not notice the change
 watch(() => model.value.funding, () => formatCurrency());
 
-// Disable buttons if funded
-const disabled = computed(
-  () => !!app.stampCollection.value?.getFundingOptions().funded
-);
-
+// ----------------------------------
+// Dialog Refs & Controls
+// ----------------------------------
+//
 // Model for showing funding transaction QR code
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {
