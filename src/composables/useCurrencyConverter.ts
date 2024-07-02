@@ -10,6 +10,8 @@ export const useCurrencyConverter = () => {
       console.log('No timestamp provided, returning: ', amount, rate, amount / rate)
       return amount * rate
     }
+
+    timestamp = Math.floor(timestamp / 1000)
     if (currencyPublicKey === 'BCH') return amount
 
     console.log('Converting: ', currencyPublicKey, amount, timestamp)
