@@ -185,7 +185,9 @@ const loadingFormattingCurrency = ref(false)
 const formattedCurrency = ref<number>(model.value.funding.value)
 const formatCurrency = async () => {
   // If the collection is not funded, just show the value
-  if (!stampCollectionFunding.value?.funded) return formattedCurrency.value = model.value.funding.value;
+  if (!stampCollectionFunding.value?.funded) {
+    return formattedCurrency.value = model.value.funding.value;
+  }
 
   loadingFormattingCurrency.value = true;
 
