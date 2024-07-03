@@ -29,7 +29,6 @@ import { app } from 'src/boot/app';
 import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 // Import the functions to get the used keys and unspent transactions
 import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
-import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
@@ -211,12 +210,12 @@ export class StampCollection {
       this.funding.currency = 'BCH';
     }
 
-    app.stampCollection.value = StampCollection.generate({
-      quantity: this.hdNodes.length,
-      name: this.name,
-      funding: this.funding,
-      mnemonic: this.mnemonic
-    })
+    // app.stampCollection.value = StampCollection.generate({
+    //   quantity: this.hdNodes.length,
+    //   name: this.name,
+    //   funding: this.funding,
+    //   mnemonic: this.mnemonic
+    // })
   }
 
   redeemRemainingStamps() {

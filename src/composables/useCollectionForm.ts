@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { app } from 'src/boot/app'
 import { StampCollection, GenerateOptions } from 'src/services/stamp-collection'
@@ -47,6 +47,19 @@ export const useCollectionForm = () => {
       mnemonic: ''
     }
   })
+
+  const stampCollction = computed(() => app.stampCollection.value)
+  const fundingOptions = computed(() => stampCollction.value?.getFundingOptions())
+  watch(() => fundingOptions.value?.currency, () => {
+    // collectionForm.value.funding.currency = fundingOptions.value?.currency || 'BCH'
+  })
+  watch(() => fundingOptions.value?.value, () => {
+    // collectionForm.value.funding.value = fundingOptions.value?.value || 0
+  })
+  watch(() => fundingOptions.value?.funded, () => {
+    collectionForm.value.funding.funded = fundingOptions.value?.funded || false
+  })
+
 
   return {
     collectionForm,

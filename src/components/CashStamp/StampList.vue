@@ -60,6 +60,7 @@ const getStampFunding = async () => {
 }
 
 watch(() => props.funding.currency, () => getStampFunding());
+watch(() => props.funding.funded, () => getStampFunding());
 watch(appFunding, () => getStampFunding());
 
 onMounted(() => {
