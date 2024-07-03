@@ -214,6 +214,7 @@ const {
 // ---------------------------------------
 // Existing Collections
 // ---------------------------------------
+//
 // Data for existing collections
 const showExistingCollections = ref(false);
 watch(showExistingCollections, () => {
@@ -240,6 +241,7 @@ const getCollections = async () =>
 // ---------------------------------------
 // Get used Stamps
 // ---------------------------------------
+//
 // List of stamps that have been used
 const usedStamps = ref<string[]>([]);
 const getUsedStamps = async () => {
@@ -252,9 +254,9 @@ const getUsedStamps = async () => {
       stamp: stamp.toString(),
       unspent: await getKeyUnspent(stamp)
     }
-});
-  const unspent = await Promise.all(unspentPromises);
+  });
 
+  const unspent = await Promise.all(unspentPromises);
   const used = unspent.filter(address => !address.unspent.length);
 
   usedStamps.value = used.map(address => address.stamp)
@@ -265,6 +267,7 @@ watch(stamps, () => getUsedStamps());
 // ---------------------------------------
 // Print Page Actions
 // ---------------------------------------
+//
 // Clear the form and reset the StampCollection
 const clearForm = (): void => {
   if (!app.stampCollection) return;
@@ -287,6 +290,7 @@ const showMnemonicDialog = async () => {
 // ---------------------------------------
 // Lifecycle hooks
 // ---------------------------------------
+//
 onMounted(() => {
   getCollections();
 });

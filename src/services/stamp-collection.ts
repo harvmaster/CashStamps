@@ -29,6 +29,7 @@ import { app } from 'src/boot/app';
 import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 // Import the functions to get the used keys and unspent transactions
 import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
+import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
@@ -200,9 +201,22 @@ export class StampCollection {
   }
 
   // Set stamp as funded to disable funding button
-  fundStamps() {
+  async fundStamps() {
     console.log('fund stamps');
     this.funding.funded = new Date();
+
+    if (this.funding.currency !== 'BCH') {
+      const bchPrice = app.oracles.getOraclePriceCommonUnits(this.getFundingOptions().currency);
+      this.funding.value = this.funding.value / bchPrice;
+      this.funding.currency = 'BCH';
+    }
+
+    app.stampCollection.value = StampCollection.generate({
+      quantity: this.hdNodes.length,
+      name: this.name,
+      funding: this.funding,
+      mnemonic: this.mnemonic
+    })
   }
 
   redeemRemainingStamps() {

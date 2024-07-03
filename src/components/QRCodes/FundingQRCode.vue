@@ -79,7 +79,7 @@ import { app } from 'src/boot/app';
 
 // Stamp collection and mnemonic
 const collection = computed(() => app.stampCollection.value);
-const mnemonic = computed(() => collection.value?.mnemonic);
+const mnemonic = computed(() => collection.value?.getMnemonic());
 
 const visible = ref(false);
 const toggleVisible = () => {
@@ -113,14 +113,13 @@ const generateQrCode = async () => {
   if (!invoice) return;
 
   // Set QR code to fill QrElement
-  invoice
-    ?.intoContainer(qrElement.value)
+  invoice?.intoContainer(qrElement.value)
 
     // Listen for broadcasted event to update stamps
     .on(['broadcasted'], async (e: unknown) => {
       console.log(e);
-      app.stampCollection.value?.fundStamps();
-      app.stampCollection.value?.saveStamps();
+      await app.stampCollection.value?.fundStamps();
+      await app.stampCollection.value?.saveStamps();
     });
 
   // Create the QR code by sending request to CashPayServer
