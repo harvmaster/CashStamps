@@ -10,6 +10,7 @@
           :label="`Stamp Collection Name`"
           :disable="disabled"
           filled
+          @update:model-value="updateName"
         />
       </div>
 
@@ -161,6 +162,17 @@ const stampCollectionFunding = computed(() => stampCollection.value?.getFundingO
 const disabled = computed(
   () => !!app.stampCollection.value?.getFundingOptions().funded
 );
+
+// ----------------------------------
+// Collection Name Updater
+// ----------------------------------
+//
+// Update the collection name dynamically using a setter on the collection
+const updateName = (val: string | number | null) => {
+  if (!(typeof val === 'string')) return;
+  if (!stampCollection.value) return;
+  stampCollection.value.setName(val);
+}
 
 // ----------------------------------
 // Currency Name & Options
