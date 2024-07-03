@@ -127,7 +127,7 @@
             </div>
 
             <!-- Clear Stamps -->
-            <div class="col-auto q-pa-xs">
+            <!-- <div class="col-auto q-pa-xs">
               <q-btn
                 class="shadow-xs rounded-sm"
                 outline
@@ -138,7 +138,7 @@
               >
                 <q-tooltip>Clear Stamps</q-tooltip>
               </q-btn>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -269,11 +269,11 @@ watch(stamps, () => getUsedStamps());
 // ---------------------------------------
 //
 // Clear the form and reset the StampCollection
-const clearForm = (): void => {
-  if (!app.stampCollection) return;
+// const clearForm = (): void => {
+//   if (!app.stampCollection) return;
 
-  app.stampCollection.value = StampCollection.generate({ quantity: 0 });
-};
+//   app.stampCollection.value = StampCollection.generate({ quantity: 0 });
+// };
 
 // Print the stamps
 const printStamps = (): void => {
