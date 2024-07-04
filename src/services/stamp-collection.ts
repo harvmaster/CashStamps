@@ -1,7 +1,6 @@
 // -------------------
 // 3rd party imports
 // -------------------
-
 import {
   deriveSeedFromBip39Mnemonic,
   generateBip39Mnemonic,
@@ -199,9 +198,8 @@ export class StampCollection {
     return invoice;
   }
 
-  // Set stamp as funded to disable funding button
+  // Set stamp as funded to disable funding button. Convert the value to BCH if it is not already in BCH
   async fundStamps() {
-    console.log('fund stamps');
     this.funding.funded = new Date();
 
     if (this.funding.currency !== 'BCH') {
@@ -209,13 +207,6 @@ export class StampCollection {
       this.funding.value = this.funding.value / bchPrice;
       this.funding.currency = 'BCH';
     }
-
-    // app.stampCollection.value = StampCollection.generate({
-    //   quantity: this.hdNodes.length,
-    //   name: this.name,
-    //   funding: this.funding,
-    //   mnemonic: this.mnemonic
-    // })
   }
 
   redeemRemainingStamps() {

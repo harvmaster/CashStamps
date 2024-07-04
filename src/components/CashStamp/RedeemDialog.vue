@@ -21,6 +21,7 @@
           These instructions will be replaced with a button to automatically redeem the wallets in the future
         </div>
       </q-card-section>
+
     </q-card>
   </q-dialog>
 </template>
