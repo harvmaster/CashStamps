@@ -1,80 +1,111 @@
 <template>
   <div class="cash-stamps_form row q-col-gutter-md">
     <div class="col-md col-12 row q-col-gutter-md">
-      <!-- Name Input -->
-      <div class="col-md-12 col-12 row">
-        <q-input
-          class="col"
-          style="max-width: 30em"
-          v-model.number="form.name"
-          :label="`Stamp Collection Name`"
-          :disable="disabled"
-          filled
-          @update:model-value="updateName"
-        />
-      </div>
 
-      <!-- Value Input -->
-      <div class="col-md col-12 row">
-        <q-input
-          class="col-12"
-          v-model.number="form.funding.value"
-          :label="`Stamp Value (${ currencyName })`"
-          type="number"
-          :disable="disabled"
-          :min="0"
-          filled
-        />
-      </div>
+      <div class="col-12 row q-col-gutter-md">
 
-      <!-- list for FIAT/BCH -->
-      <div class="col-md-auto col-8 row">
-        <q-select
-          style="min-width: 10em"
-          v-model="form.funding.currency"
-          :options="currencyOptions"
-          option-value="value"
-          option-label="label"
-          map-options
-          emit-value
-          label="Currency"
-          filled
-        />
-      </div>
-
-      <!-- Quantity Input -->
-      <div class="col-auto row">
-        <q-input
-          class="col-12 col-md-auto"
-          v-model.number="form.quantity"
-          label="Stamp Quantity"
-          type="number"
-          :disable="disabled"
-          filled
-          :min="0"
+        <!-- Name Input -->
+        <div class="col-md col-12 row">
+          <!-- style="max-width: 30em" -->
+          <q-input
+            class="col"
+            v-model.number="form.name"
+            :label="`Stamp Collection Name`"
+            :disable="disabled"
+            filled
+            @update:model-value="updateName"
           />
+        </div>
+        
+        <!-- Date input -->
+        <div class="col-md-auto col-12 row">
+          <q-input 
+            filled
+            v-model="form.expiry"
+            mask="date"
+            class="col"
+            placeholder="YYYY/MM/DD"
+            label="Expiry Date (YYYY/MM/DD)"
+            :disable="disabled"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover :breakpoint="600">
+                  <q-date v-model="form.expiry" />
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </div>
+
       </div>
 
-      <!-- New Row -->
-      <div class="col-12 row items-center justify-start q-col-gutter-md">
-        <!-- Total value of the TX -->
+      <div class="col-12 row q-col-gutter-md">
+
+
+        <!-- Value Input -->
+        <div class="col-md col-12 row">
+          <q-input
+            class="col-12"
+            v-model.number="form.funding.value"
+            :label="`Stamp Value (${ currencyName })`"
+            type="number"
+            :disable="disabled"
+            :min="0"
+            filled
+          />
+        </div>
+
+        <!-- list for FIAT/BCH -->
+        <div class="col-md-auto col-8 row">
+          <q-select
+            style="min-width: 10em"
+            v-model="form.funding.currency"
+            :options="currencyOptions"
+            option-value="value"
+            option-label="label"
+            map-options
+            emit-value
+            label="Currency"
+            filled
+          />
+        </div>
+
+        <!-- Quantity Input -->
         <div class="col-auto row">
-          <div class="col-12 col-md-auto text-body2">
-            Total Value ({{ currencyName }})
-          </div>
-          <div v-if="loadingFormattingCurrency" class="col-12">
-            <q-spinner />
-          </div>
-          <div v-else class="col-12 text-h6">
-            {{
-              currencyName === 'BCH'
-                ? (form.quantity * formattedCurrency).toFixed(8)
-                : (form.quantity * formattedCurrency).toFixed(2)
-            }}
-            {{ currencyName }}
+          <q-input
+            class="col-12 col-md-auto"
+            v-model.number="form.quantity"
+            label="Stamp Quantity"
+            type="number"
+            :disable="disabled"
+            filled
+            :min="0"
+            />
+        </div>
+
+        <!-- New Row -->
+        <div class="col-12 row items-center justify-start q-col-gutter-md">
+          <!-- Total value of the TX -->
+          <div class="col-auto row">
+            <div class="col-12 col-md-auto text-body2">
+              Total Value ({{ currencyName }})
+            </div>
+            <div v-if="loadingFormattingCurrency" class="col-12">
+              <q-spinner />
+            </div>
+            <div v-else class="col-12 text-h6">
+              {{
+                currencyName === 'BCH'
+                  ? (form.quantity * formattedCurrency).toFixed(8)
+                  : (form.quantity * formattedCurrency).toFixed(2)
+              }}
+              {{ currencyName }}
+            </div>
           </div>
         </div>
       </div>
+
     </div>
 
     <!-- Action buttons -->

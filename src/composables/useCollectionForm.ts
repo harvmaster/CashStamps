@@ -3,10 +3,13 @@ import { computed, ref, watch } from 'vue'
 import { app } from 'src/boot/app'
 import { StampCollection, GenerateOptions } from 'src/services/stamp-collection'
 
+import dateToString from 'src/utils/DateToString'
+
 export const useCollectionForm = () => {
   const collectionForm = ref<Required<GenerateOptions>>({
     name: '',
     quantity: 1,
+    expiry: dateToString(new Date()),
     funding: {
       value: 0,
       currency: 'BCH',
@@ -21,6 +24,7 @@ export const useCollectionForm = () => {
     app.stampCollection.value = StampCollection.generate({ 
       quantity: collectionForm.value.quantity,
       name: collectionForm.value.name,
+      expiry: collectionForm.value.expiry,
       mnemonic,
       funding: {
         value: collectionForm.value?.funding.value,
@@ -39,6 +43,7 @@ export const useCollectionForm = () => {
     collectionForm.value = {
       name: app.stampCollection.value?.getName() || '',
       quantity: app.stampCollection.value?.getStamps().length || 1,
+      expiry: dateToString(app.stampCollection.value?.getExpiry()),
       funding: {
         value: app.stampCollection.value?.getFundingOptions()?.value || 0,
         currency: app.stampCollection.value?.getFundingOptions()?.currency || 'BCH',
@@ -50,12 +55,6 @@ export const useCollectionForm = () => {
 
   const stampCollction = computed(() => app.stampCollection.value)
   const fundingOptions = computed(() => stampCollction.value?.getFundingOptions())
-  watch(() => fundingOptions.value?.currency, () => {
-    // collectionForm.value.funding.currency = fundingOptions.value?.currency || 'BCH'
-  })
-  watch(() => fundingOptions.value?.value, () => {
-    // collectionForm.value.funding.value = fundingOptions.value?.value || 0
-  })
   watch(() => fundingOptions.value?.funded, () => {
     collectionForm.value.funding.funded = fundingOptions.value?.funded || false
   })

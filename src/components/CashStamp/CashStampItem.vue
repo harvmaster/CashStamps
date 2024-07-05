@@ -25,7 +25,7 @@
       <!-- Create-date -->
       <div class="col-auto row justify-center">
         <div class="col-12 no-margin no-padding text-weight-medium text-grey-8">
-          {{ createdAt }}
+          Valid until {{ createdAt }}
         </div>
       </div>
     </div>
@@ -66,7 +66,8 @@ const qrElement = ref<HTMLDivElement | null>(null);
 //
 // Create human readable time and date `hh:MMam/pm DD/MM/YYYY`
 const createdAt = computed(() => {
-  const date = new Date(props.funding.funded || Date.now());
+  // const date = new Date(props. || Date.now());
+  const date = app.stampCollection.value?.getExpiry() || new Date();
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
@@ -77,10 +78,13 @@ const createdAt = computed(() => {
   if (formattedMinutes < 10) formattedMinutes = '0' + formattedMinutes;
 
   // Format date as `hh:MMam/pm DD/MM/YYYY`
-  return `
-          ${formattedHours}:${ formattedMinutes}${hours / 12 < 1 ? 'am' : 'pm'} 
-          ${date.toLocaleDateString()}
-        `;
+  // return `
+  //         ${formattedHours}:${ formattedMinutes}${hours / 12 < 1 ? 'am' : 'pm'} 
+  //         ${date.toLocaleDateString()}
+  //       `;
+
+  // return `DD/MM/YYYY`;
+  return `${date.toLocaleDateString()}`;
 });
 
 // ----------------------------------

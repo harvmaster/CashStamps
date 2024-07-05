@@ -47,6 +47,7 @@ export const DEFAULT_FUNDING_OPTIONS: FundingOptions = {
 export type GenerateOptions = {
   quantity: number;
   name?: string;
+  expiry?: string;
   mnemonic?: string;
   funding?: FundingOptions;
 };
@@ -56,6 +57,7 @@ export class StampCollection {
     private readonly mnemonic: string,
     private readonly hdNodes: Array<HDPrivateNode> = [],
     private readonly funding: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
+    private expiry: Date = new Date(),
     private name: string = ''
   ) {}
 
@@ -87,16 +89,20 @@ export class StampCollection {
       nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
     }
 
+    // Set the expiry date. Converted from string ('yyyy/mm/dd') to Date Object
+    const expiry = options.expiry ? new Date(options.expiry) : new Date();
+
     // Create instance of StampCollection using generated mnemonic.
     return new StampCollection(
       options.mnemonic,
       nodes,
       fundingOptions,
-      options.name
+      expiry,
+      options.name,
     );
   }
 
-  static async fromMnemonic(mnemonic: string): Promise<StampCollection> {
+  static async fromMnemonic(mnemonic: string, expiry?: Date): Promise<StampCollection> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
@@ -144,7 +150,7 @@ export class StampCollection {
     }
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(mnemonic, nodes, fundingOptions);
+    return new StampCollection(mnemonic, nodes, fundingOptions, expiry);
   }
 
   setName(name: string) {
@@ -226,6 +232,10 @@ export class StampCollection {
     return this.funding;
   }
 
+  getExpiry() {
+    return this.expiry
+  }
+
   // Save stamps into IDB
   async saveStamps() {
     // Get the name or use the mnemonic as the name
@@ -242,14 +252,16 @@ export class StampCollection {
       collections[existingIndex] = {
         name,
         mnemonic: this.mnemonic,
-        version: 2
+        version: 2,
+        expiry: this.expiry.getTime()
       };
     } else {
       // If the collection does not exist, Add it
       collections.push({
         name,
         mnemonic: this.mnemonic,
-        version: 2
+        version: 2,
+        expiry: this.expiry.getTime()
       });
     }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <cash-stamp-item
-      class="col-3 q-pa-sm"
+      class="col-auto q-pa-sm"
       v-for="(stamp, index) in stamps || []"
       :key="stamp.toString()"
       :id="index"

@@ -92,17 +92,11 @@ export class App {
   // Methods
   //---------------------------------------------------------------------------
 
+  // --------------------------------------------------------------------------
+  // Database_Methods
+  //---------------------------------------------------------------------------
+  //
   // Get the StampCollections from the browser's IndexedDB.
-  /*
-    stampCollections: [
-      {  
-        mnemonic: 'mneumonic',
-        name: 'name',
-        veersion: 2,
-        Expiry?: Date
-      }
-    ]
-  */
   async getStampCollections(): Promise<DB_StampCollection[]> {
     const collections: DB_StampCollection[] | undefined = await get('stampCollections');
     return collections || [];
@@ -112,6 +106,7 @@ export class App {
   async getStampCollection(name: string) {
     Loading.show();
 
+    // TODO: Rename this to useStampCollection or something similar.
     // Get the StampCollections from the browser's IndexedDB.
     const collections = await this.getStampCollections();
 
@@ -121,8 +116,10 @@ export class App {
       throw new Error(`StampCollection with name "${name}" not found`);
     }
 
+    const expiry = collection.expiry ? new Date(collection.expiry) : undefined;
+
     // Set the StampCollection to the stampCollection ref.
-    this.stampCollection.value = await StampCollection.fromMnemonic(collection.mnemonic);
+    this.stampCollection.value = await StampCollection.fromMnemonic(collection.mnemonic, expiry);
     
     Loading.hide();
   }
