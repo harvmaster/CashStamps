@@ -1,12 +1,12 @@
 <template>
-  <div class="cash-stamps_form row q-col-gutter-md">
+  <div class="row q-col-gutter-md">
     <div class="col-md col-12 row q-col-gutter-md">
 
+      <!-- First row -->
       <div class="col-12 row q-col-gutter-md">
 
         <!-- Name Input -->
         <div class="col-md col-12 row">
-          <!-- style="max-width: 30em" -->
           <q-input
             class="col"
             v-model.number="form.name"
@@ -40,8 +40,8 @@
 
       </div>
 
+      <!-- Second row -->
       <div class="col-12 row q-col-gutter-md">
-
 
         <!-- Value Input -->
         <div class="col-md col-12 row">
@@ -146,13 +146,13 @@
           @click="showRedeemDialog"
         />
       </div>
+      <!-- Modal for showing Funding TX Qr Code -->
+      <funding-qr-code ref="fundingQrCode" />
+      
+      <!-- Model to display instructions for Redeeming unclaimed wallets -->
+      <redeem-dialog ref="redeemDialog" />
     </div>
 
-    <!-- Modal for showing Funding TX Qr Code -->
-    <funding-qr-code ref="fundingQrCode" />
-    
-    <!-- Model to display instructions for Redeeming unclaimed wallets -->
-    <redeem-dialog ref="redeemDialog" />
   </div>
 </template>
 

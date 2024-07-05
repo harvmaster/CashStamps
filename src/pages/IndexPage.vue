@@ -52,9 +52,9 @@
         </div>
 
         <q-slide-transition>
-          <div v-show="showExistingCollections" class="col-12 row q-pb-sm">
+          <div v-show="showExistingCollections" class="col-12 row">
             <q-select
-              class="q-py-sm col-auto"
+              class="q-pb-md col-auto"
               style="width: 20em; max-width: 100%"
               v-model="selectedCollection"
               :options="collections"
