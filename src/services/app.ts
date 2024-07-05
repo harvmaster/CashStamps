@@ -10,8 +10,11 @@ import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 import { StampCollection } from './stamp-collection.js';
 
+// Database Migrations 
+import { migrateCollection_v1_to_v2 } from 'src/utils/Migrations/database_v1_to_v2.js';
+
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
-import { get, set } from 'idb-keyval';
+import { get } from 'idb-keyval';
 
 // Vue and Quasar.
 import { ref } from 'vue';
@@ -56,7 +59,7 @@ export class App {
       this.oracles.start(),
 
       // this.importOldCollections(), // Test code for migration
-      this.migrateCollection_v1_to_v2(),
+      migrateCollection_v1_to_v2(),
     ]);
 
     // Start the Oracle Service.
@@ -122,38 +125,6 @@ export class App {
     this.stampCollection.value = await StampCollection.fromMnemonic(collection.mnemonic);
     
     Loading.hide();
-  }
-
-  async migrateCollection_v1_to_v2() {
-    // Get the StampCollections from the browser's IndexedDB.
-    const collections = await get('stampCollections');
-    console.table(collections)
-
-    // If the collections are already in the new format, then we don't need to do anything.
-    const newCollections = [] as DB_StampCollection[];
-    
-    // Loop through the collections and convert them to the new format. Add them to newCollections
-    Object.entries(collections).forEach(([key, val]) => {
-      const version = (val as DB_StampCollection).version;
-
-      // If the version is not set, then we need to migrate it.
-      if (!version) {
-        console.log('migratinng collection', key)
-        newCollections.push({
-          name: key,
-          mnemonic: val as string,
-          version: 2,
-        });
-      } else {
-        // If the version is already set, then we don't need to do anything.
-        newCollections.push(val as DB_StampCollection);
-      }
-    })
-
-    console.log(newCollections)
-
-    // Save the new format to the browser's IndexedDB.
-    await set('stampCollections', newCollections);
   }
 
   //---------------------------------------------------------------------------
