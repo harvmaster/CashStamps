@@ -40,7 +40,7 @@
     </div>
 
     <div
-      class="col-12 row cash-stamps_page justify-center printable q-pa-xl"
+      class="col-12 row cash-stamps_page justify-center printable q-pa-xl q-col-gutter-y-md"
     >
       <!-- Input form and wallet creator -->
       <div class="col-12 row items-center print-hide">
@@ -150,6 +150,7 @@
           <div class="row col-12">
             <stamp-list 
               v-if="stamps.length"
+              class="col-12"
               :stamps="stamps"
               :usedStamps="usedStamps"
               :funding="collectionForm.funding"
@@ -235,7 +236,7 @@ watch(selectedCollection, (value) => {
 // List of StampCollections that exist in the database
 const collections = ref<string[]>([]);
 const getCollections = async () =>
-  (collections.value = Object.keys(await app.getStampCollections()) || []);
+  (collections.value = (await app.getStampCollections()).map(collection => collection.name) || []);
 
 
 // ---------------------------------------

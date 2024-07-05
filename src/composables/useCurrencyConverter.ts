@@ -5,6 +5,8 @@ const cache = ref<{ [key: string]: number }>({})
 
 export const useCurrencyConverter = () => {
   const convert = async (currencyPublicKey: string, amount: number, timestamp?: number) => {
+    // Return the amount if the currency is BCH (its already in BCH)
+    if (currencyPublicKey === 'BCH') return amount
 
     // Return the latest conversion rate if no timestamp is provided
     if (!timestamp) {
@@ -15,8 +17,6 @@ export const useCurrencyConverter = () => {
     // Convert the timestamp to seconds
     timestamp = Math.floor(timestamp / 1000)
 
-    // Return the amount if the currency is BCH (its already in BCH)
-    if (currencyPublicKey === 'BCH') return amount
  
     // Check the cache for the conversion rate
     const key = `${currencyPublicKey}-${timestamp}`

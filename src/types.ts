@@ -10,6 +10,13 @@ export type Wallet = {
   create_date: string;
 };
 
+export type DB_StampCollection = {
+  mnemonic: string;
+  name: string;
+  version: number
+  expiry?: Date;
+}
+
 export type CashPayServer_Output = {
   address?: string;
   amount: number | string;

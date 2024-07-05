@@ -11,11 +11,12 @@ import { OraclesService } from './oracles.js';
 import { StampCollection } from './stamp-collection.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
-import { get } from 'idb-keyval';
+import { get, set } from 'idb-keyval';
 
 // Vue and Quasar.
 import { ref } from 'vue';
 import { Loading } from 'quasar';
+import { DB_StampCollection } from 'src/types.js';
 
 export class App {
   // Services.
@@ -53,6 +54,9 @@ export class App {
       // Oracles Service
       // TODO: Should try to make this optional in case the Oracles are down.
       this.oracles.start(),
+
+      // this.importOldCollections(), // Test code for migration
+      this.migrateCollection_v1_to_v2(),
     ]);
 
     // Start the Oracle Service.
@@ -88,12 +92,17 @@ export class App {
   // Get the StampCollections from the browser's IndexedDB.
   /*
     stampCollections: [
-      [key]: 'mneumonic',
+      {  
+        mnemonic: 'mneumonic',
+        name: 'name',
+        veersion: 2,
+        Expiry?: Date
+      }
     ]
   */
-  async getStampCollections(): Promise<Record<string, string>> {
-    const collections = await get('stampCollections');
-    return collections || {};
+  async getStampCollections(): Promise<DB_StampCollection[]> {
+    const collections: DB_StampCollection[] | undefined = await get('stampCollections');
+    return collections || [];
   }
 
   // Find a StampCollection by name and set it to the stampCollection ref.
@@ -104,9 +113,47 @@ export class App {
     const collections = await this.getStampCollections();
 
     // Load the StampCollection from the mnemonic.
-    this.stampCollection.value = await StampCollection.fromMnemonic(collections[name])
+    const collection = collections.find((c) => c.name === name);
+    if (!collection) {
+      throw new Error(`StampCollection with name "${name}" not found`);
+    }
+
+    // Set the StampCollection to the stampCollection ref.
+    this.stampCollection.value = await StampCollection.fromMnemonic(collection.mnemonic);
     
     Loading.hide();
+  }
+
+  async migrateCollection_v1_to_v2() {
+    // Get the StampCollections from the browser's IndexedDB.
+    const collections = await get('stampCollections');
+    console.table(collections)
+
+    // If the collections are already in the new format, then we don't need to do anything.
+    const newCollections = [] as DB_StampCollection[];
+    
+    // Loop through the collections and convert them to the new format. Add them to newCollections
+    Object.entries(collections).forEach(([key, val]) => {
+      const version = (val as DB_StampCollection).version;
+
+      // If the version is not set, then we need to migrate it.
+      if (!version) {
+        console.log('migratinng collection', key)
+        newCollections.push({
+          name: key,
+          mnemonic: val as string,
+          version: 2,
+        });
+      } else {
+        // If the version is already set, then we don't need to do anything.
+        newCollections.push(val as DB_StampCollection);
+      }
+    })
+
+    console.log(newCollections)
+
+    // Save the new format to the browser's IndexedDB.
+    await set('stampCollections', newCollections);
   }
 
   //---------------------------------------------------------------------------

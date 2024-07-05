@@ -113,13 +113,18 @@ export class StampCollection {
     usedKeys.forEach((key, i) => {
       nodes.push(key.node);
     })
+
+    if (nodes.length === 0) {
+      return new StampCollection(mnemonic, nodes);
+    }
     
     // Get the blocktime of the first transaction to get the funding date
     // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet
     const firstTransaction = await getTransactionData(usedKeys[0]);
 
     // Get the blocktime of the first transaction (they should all be the same), we can use this to get the price of the stamp from the oracle
-    const blocktime = firstTransaction ? firstTransaction.blocktime : Date.now() / 1000;
+    const blocktime = firstTransaction?.blocktime || Date.now() / 1000;
+    console.log(blocktime)
 
     // Get the transaction's value to set the funding amount
     let txValue = 0
@@ -128,7 +133,7 @@ export class StampCollection {
         return output.scriptPubKey.addresses.some((address: string) => {
           return address == usedKeys[0].address
         })
-      }).value
+      })?.value || 0
     }
 
     // Set funding options to be used in the StampCollection
@@ -227,13 +232,26 @@ export class StampCollection {
     const name = this.getName() || this.mnemonic;
 
     // Get the existing collections or create a new one
-    const collections = (await get('stampCollections')) || [];
+    const collections = await app.getStampCollections();
 
-    // If the value is already in there, no need to put it in there again
-    if (Object.values(collections).includes(this.mnemonic)) return;
+    // Check if the collection already exists
+    const existingIndex = collections.findIndex((c) => c.name === name);
 
-    // Add the mnemonic to the collections
-    collections[name] = this.mnemonic;
+    // If the collection exists, Overwrite it
+    if (existingIndex > -1) {
+      collections[existingIndex] = {
+        name,
+        mnemonic: this.mnemonic,
+        version: 2
+      };
+    } else {
+      // If the collection does not exist, Add it
+      collections.push({
+        name,
+        mnemonic: this.mnemonic,
+        version: 2
+      });
+    }
 
     // Save the collections back to IDB
     await set('stampCollections', collections);
