@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { app } from 'src/boot/app'
 import { StampCollection, GenerateOptions } from 'src/services/stamp-collection'
 
-import dateToString from 'src/utils/DateToString'
+import { dateToString } from 'src/utils/misc'
 
 export const useCollectionForm = () => {
   const collectionForm = ref<Required<GenerateOptions>>({

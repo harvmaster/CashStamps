@@ -10,5 +10,3 @@ export const dateToString = (date = new Date()) => {
   
   return `${year}/${formattedMonth}/${formattedDay}`
 }
-
-export default dateToString

@@ -11,7 +11,7 @@ import { OraclesService } from './oracles.js';
 import { StampCollection } from './stamp-collection.js';
 
 // Database Migrations 
-import { migrateCollection_v1_to_v2 } from 'src/utils/Migrations/database_v1_to_v2.js';
+import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-v2.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get } from 'idb-keyval';
