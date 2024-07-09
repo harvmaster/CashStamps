@@ -16,7 +16,10 @@ export const migrateCollection_v1_to_v2 = async () => {
   const collections = await get('stampCollections');
   console.table(collections)
 
-  // If the collections are already in the new format, then we don't need to do anything.
+  if (collections === undefined) {
+    return;
+  }
+
   const newCollections = [] as DB_StampCollection_v2[];
   
   // Loop through the collections and convert them to the new format. Add them to newCollections
