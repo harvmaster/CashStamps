@@ -265,6 +265,7 @@ watch([stamps, selectedTemplate], async () => {
 
   // To improve legibility, destructure our funding options.
   const { value, currency } = app.stampCollection.value.getFundingOptions();
+  const expiry = app.stampCollection.value.getExpiry();
 
   for (const stamp of stamps.value) {
     const compiledStamp = await compileTemplate(
@@ -272,6 +273,7 @@ watch([stamps, selectedTemplate], async () => {
       {
         value: value.toString(),
         currency,
+        expiry: expiry.toString(),
         wif: stamp.privateKey().toWif(),
       }
     );
@@ -322,27 +324,14 @@ const getCollections = async () =>
 // ---------------------------------------
 // Get used Stamps
 // ---------------------------------------
-//
-// List of stamps that have been used
-const usedStamps = ref<string[]>([]);
-const getUsedStamps = async () => {
+
+const usedStamps = computed(() => {
   if (!collectionForm.value.funding.funded) {
     return [];
   }
 
-  const unspentPromises = stamps.value.map(async (stamp) => {
-    return {
-      stamp: stamp.toString(),
-      unspent: await getKeyUnspent(stamp),
-    };
-  });
-
-  const unspent = await Promise.all(unspentPromises);
-  const used = unspent.filter((address) => !address.unspent.length);
-
-  usedStamps.value = used.map((address) => address.stamp);
-};
-watch(stamps, () => getUsedStamps());
+  return stamps.value.filter((stamp) => stamp.balance == 0).map((stamp) => stamp.privateKey().toWif());
+})
 
 // ---------------------------------------
 // Print Page Actions

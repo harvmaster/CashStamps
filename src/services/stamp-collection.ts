@@ -24,10 +24,11 @@ import { CashPayServer_Invoice } from 'src/types';
 // Import the app instance to access the oracle
 import { app } from 'src/boot/app';
 
-// Import the HDPrivateNode class to derive the private keys
-import { HDPrivateNode } from 'src/utils/hd-private-node.js';
+// Import the Stamp class to derive the private keys
+import { Stamp } from 'src/utils/stamp.js';
 // Import the functions to get the used keys and unspent transactions
 import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
+import { reactive, Reactive, ref, Ref } from 'vue';
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
@@ -52,13 +53,17 @@ export type GenerateOptions = {
 };
 
 export class StampCollection {
+  private readonly stamps: Reactive<Array<Stamp>>;
+
   constructor(
     private readonly mnemonic: string,
-    private readonly hdNodes: Array<HDPrivateNode> = [],
+    private readonly hdNodes: Array<Stamp> = [],
     private readonly funding: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
     private expiry: Date = new Date(),
     private name: string = ''
-  ) {}
+  ) {
+    this.stamps = reactive(hdNodes);
+  }
 
   static generate(options: GenerateOptions): StampCollection {
     // Use default funding options if none are provided.
@@ -78,10 +83,10 @@ export class StampCollection {
     const seed = deriveSeedFromBip39Mnemonic(options.mnemonic);
 
     // Create a node from the seed.
-    const parentNode = HDPrivateNode.fromSeed(seed);
+    const parentNode = Stamp.fromSeed(seed);
 
     // Declare an array to store our nodes.
-    const nodes: Array<HDPrivateNode> = [];
+    const nodes: Array<Stamp> = [];
 
     // Derive a node for each stamp.
     for (let i = 0; i < options.quantity; i++) {
@@ -109,22 +114,26 @@ export class StampCollection {
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
     // Create a node from the seed.
-    const parentNode = HDPrivateNode.fromSeed(seed);
+    const parentNode = Stamp.fromSeed(seed);
 
     // Declare an array to store our nodes.
-    const nodes: Array<HDPrivateNode> = [];
+    const nodes: Array<Stamp> = [];
 
     // Get all the addresses that have been a tx history
     const usedKeys = await getUsedKeys(parentNode);
 
     // Get the nodes from the used keys
     usedKeys.forEach((key, i) => {
-      nodes.push(key.node);
+      nodes.push(new Stamp(key.node.node));
     });
 
+    // Early return, otherwise we get an error when trying to get the blocktime of the first transaction
     if (nodes.length === 0) {
       return new StampCollection(mnemonic, nodes);
     }
+
+    // Get the balance of each node
+    nodes.forEach(async (node) => node.getAvailableBalance())
 
     // Get the blocktime of the first transaction to get the funding date
     // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet
@@ -164,8 +173,8 @@ export class StampCollection {
     return this.mnemonic;
   }
 
-  getStamps(): Array<HDPrivateNode> {
-    return this.hdNodes;
+  getStamps(): Reactive<Array<Stamp>> {
+    return this.stamps;
   }
 
   createFundingTx(): CashPayServer_Invoice {
