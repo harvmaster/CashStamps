@@ -1,161 +1,164 @@
 <template>
-  <q-page class="row items-center justify-evenly printable">
-    <!-- Header -->
-    <div class="col-12 row bg-dark q-pa-md q-py-lg print-hide">
-      <!-- Title -->
-      <div class="col-12 row justify-center">
+  <q-page>
+    <!-- Header Outer -->
+    <div class="header-outer bg-dark">
+      <div class="header-inner">
+        <!-- Title -->
         <div
-          class="col-auto row justify-center text-h2 text-weight-bold text-white"
+          class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
-          <img src="bch.svg" style="height: 1em" />
-          CashStamps
+          <img src="bch.svg" class="q-ma-sm" style="height: 1em" />
+          Cash<span class="text-primary">Stamps</span>
         </div>
-      </div>
 
-      <!-- Subtitle -->
-      <div class="col-12 row justify-center">
-        <div class="col-auto text-h6 text-weight-medium text-white">
+        <!-- Subtitle -->
+        <div class="flex justify-center text-h6 text-weight-medium q-mb-md">
           Create and print Bitcoin Cash stamps
         </div>
-      </div>
 
-      <!-- Description & Instructions -->
-      <div class="col-12 row justify-center q-pt-md">
-        <div class="col-auto text-body1 text-white paragraph">
-          CashStamps are easily redeemable Bitcoin Cash wallets that can be used for gifting BCH with the option to reclaim any unused stamps.
-          <br />
-          <br />
-          <strong>Instructions:</strong>
-          <br />
-          1. Enter the value and quantity of stamps you want to create.
-          <br />
-          2. Click "Create Stamps" to generate a QR code.
-          <br />
-          3. Scan the QR code with your Bitcoin Cash wallet to fund the stamps.
-          <br />
-          4. Print the stamps and give them to your friends, family, or
-          customers.
+        <!-- Description & Instructions -->
+        <div class="flex justify-center">
+          <div class="text-body1 paragraph">
+            <p>CashStamps are easily redeemable Bitcoin Cash wallets that can be
+            used for gifting BCH with the option to reclaim any unused stamps.</p>
+            <strong>Instructions:</strong>
+            <ol>
+              <li>Enter the value and quantity of stamps you want to create.</li>
+              <li>Click "Create Stamps" to generate a QR code.</li>
+              <li>Scan the QR code with your Bitcoin Cash wallet to fund the
+            stamps.</li>
+              <li>Print the stamps and give them to your friends, family, or
+            customers.</li>
+            </ol>
+          </div>
         </div>
       </div>
     </div>
 
-    <div
-      class="col-12 row cash-stamps_page justify-center printable q-pa-xl q-col-gutter-y-md"
-    >
-      <!-- Input form and wallet creator -->
-      <div class="col-12 row items-center print-hide">
-        <div class="col-12 q-py-sm">
+    <!-- Inner page -->
+    <div class="inner-page justify-center">
+      <div class="row q-col-gutter-y-md">
+        <!-- Input form and wallet creator -->
+        <div class="col-12">
           <q-toggle
             label="Use Existing Colection"
             v-model="showExistingCollections"
           />
+
+          <q-slide-transition>
+            <div v-show="showExistingCollections" class="col-12 row">
+              <q-select
+                class="q-pb-md col-auto"
+                style="width: 20em; max-width: 100%"
+                v-model="selectedCollection"
+                :options="collections"
+                label="Select Collection"
+                filled
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey-8">
+                      No collections available
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+
+              <div class="col-auto self-end">
+                <div
+                  v-if="stamps.length"
+                  class="col-auto text-weight-medium q-pa-sm"
+                >
+                  {{ usedStamps.length }}/ {{ stamps.length }} claimed
+                </div>
+              </div>
+            </div>
+          </q-slide-transition>
+
+          <cash-stamps-form
+            :form="collectionForm"
+            @create="createCollection"
+            :disable="showExistingCollections"
+            class="col-12 q-p-sm"
+          />
         </div>
 
-        <q-slide-transition>
-          <div v-show="showExistingCollections" class="col-12 row">
-            <q-select
-              class="q-pb-md col-auto"
-              style="width: 20em; max-width: 100%"
-              v-model="selectedCollection"
-              :options="collections"
-              label="Select Collection"
-              filled
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey-8">
-                    No collections available
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+        <q-separator />
 
-            <div class="col-auto self-end">
-              <div v-if="stamps.length" class="col-auto text-weight-medium q-pa-sm ">
-                {{ usedStamps.length }}/
-                {{ stamps.length }} claimed
+        <!-- Stamp results -->
+        <div class="col-12">
+          <div class="row q-mb-xl">
+            <!-- Controls for print/show mnemonic -->
+            <div class="col-9">
+              <q-btn-group>
+                <q-btn
+                  outline
+                  icon="print"
+                  color="primary"
+                  :disable="!stamps.length"
+                  @click="printElement"
+                >
+                  <q-tooltip class="print-hide">Print Stamps</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  outline
+                  icon="password"
+                  color="secondary"
+                  :disable="!stamps.length"
+                  @click="showMnemonicDialog"
+                >
+                  <q-tooltip>Show Seed phrase</q-tooltip>
+                </q-btn>
+              </q-btn-group>
+            </div>
+
+            <!-- Template selection -->
+            <div class="col-3">
+              <q-select
+                label="Template"
+                :options="templateOptions"
+                v-model="selectedTemplate"
+                dense
+                filled
+              >
+                <template v-slot:after>
+                  <q-btn round dense flat icon="content_copy" @click="copyTemplateLinkToClipboard()">
+                    <q-tooltip>Copy Template Share Link to Clipboard</q-tooltip>
+                  </q-btn>
+                </template>
+              </q-select>
+            </div>
+          </div>
+
+          <!-- Page -->
+          <div class="justify-center">
+            <div class="page shadow-20">
+              <div class="flex">
+                <div v-for="(renderedStamp, i) in renderedStamps" :key="i">
+                  <div v-html="renderedStamp" />
+                </div>
               </div>
             </div>
           </div>
-        </q-slide-transition>
 
-        <cash-stamps-form
-          :form="collectionForm"
-          @create="createCollection"
-          
-          :disable="showExistingCollections"
-          class="col-12 q-p-sm"
-        />
-      </div>
-
-      <!-- Stamp results -->
-      <div class="col-12 row justify-center">
-        <!-- Controls for print -->
-        <div class="col-12 row justify-center q-pb-md">
-
+          <!-- Printable Page -->
+          <!--
           <div
-            class="col-auto row justify-center q-pa-sm rounded-md shadow-2 print-hide"
-            style="background-color: white"
+            class="col-12 paper printable shadow-20 rounded-md q-pa-md items-start"
+            ref="printContent"
           >
-            <!-- Print -->
-            <div class="col-auto q-pa-xs">
-              <q-btn
-                class="shadow-xs rounded-sm"
-                outline
-                icon="print"
-                color="primary"
-                :disable="!stamps.length"
-                @click="printStamps"
-              >
-                <q-tooltip class="print-hide">Print Stamps</q-tooltip>
-              </q-btn>
+            <div class="row col-12">
+              <stamp-list
+                v-if="stamps.length"
+                class="col-12"
+                :stamps="stamps"
+                :usedStamps="usedStamps"
+                :funding="collectionForm.funding"
+              />
             </div>
-
-            <!-- Download -->
-            <div class="col-auto q-pa-xs">
-              <q-btn
-                class="shadow-xs rounded-sm"
-                outline
-                icon="password"
-                color="positive"
-                :disable="!stamps.length"
-                @click="showMnemonicDialog"
-              >
-                <q-tooltip>Show Seed phrase</q-tooltip>
-                <!-- <q-tooltip>Download as Electron Wallet</q-tooltip> -->
-              </q-btn>
-            </div>
-
-            <!-- Clear Stamps -->
-            <!-- <div class="col-auto q-pa-xs">
-              <q-btn
-                class="shadow-xs rounded-sm"
-                outline
-                icon="cancel"
-                color="negative"
-                :disable="!stamps.length"
-                @click="clearForm"
-              >
-                <q-tooltip>Clear Stamps</q-tooltip>
-              </q-btn>
-            </div> -->
           </div>
-        </div>
-
-        <!-- Printable Page -->
-        <div
-          class="col-12 row paper printable shadow-20 rounded-md q-pa-md items-start"
-          ref="printContent"
-        >
-          <div class="row col-12">
-            <stamp-list 
-              v-if="stamps.length"
-              class="col-12"
-              :stamps="stamps"
-              :usedStamps="usedStamps"
-              :funding="collectionForm.funding"
-            />
-          </div>
+          -->
         </div>
       </div>
     </div>
@@ -165,15 +168,31 @@
 </template>
 
 <style lang="scss" scoped>
-.cash-stamps_page {
-  max-width: 992px;
+.header-outer {
+  width: 100%;
 }
 
-.paragraph {
+.header-inner {
+  width: 992px;
+  margin: auto;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  color: #fff;
+}
+
+.header-inner .paragraph {
   width: 40em;
   max-width: 100%;
 }
 
+.inner-page {
+  width: 992px;
+  margin: auto;
+  padding-bottom: 40px;
+}
+
+/*
 @media print {
   .printable {
     display: block;
@@ -184,14 +203,19 @@
     margin: 0 !important;
   }
 }
+*/
 </style>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import { copyToClipboard } from 'quasar';
 
-// Service / App imports
+// Service / App / Utils imports
 import { app } from 'src/boot/app';
 import { StampCollection } from 'src/services/stamp-collection';
+import { getKeyUnspent } from 'src/utils/transaction-helpers';
+import { compileTemplate, printHtml } from 'src/utils/misc';
 
 // Composables Imports
 import { useCollectionForm } from 'src/composables/useCollectionForm';
@@ -200,17 +224,73 @@ import { useCollectionForm } from 'src/composables/useCollectionForm';
 import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
 import StampList from 'src/components/CashStamp/StampList.vue';
 import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
-import { getKeyUnspent } from 'src/utils/transaction-helpers';
+
+// Pre-built Templates
+// NOTE: These are HTML Templates which we compile.
+import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
+import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 
 // List of stamps (as HDPrivateNodes)
-const stamps = computed(() => app.stampCollection.value?.getStamps() || [])
+const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
 
 // Form for creating a new collection and loading an existing collections params into the form
-const {
-  collectionForm,
-  createCollection,
-} = useCollectionForm()
+const { collectionForm, createCollection } = useCollectionForm();
 
+const $route = useRoute();
+
+// console.log($route.query);
+
+// console.log(atob($route.query.test as string));
+
+//---------------------------------------
+// Templates
+//---------------------------------------
+
+const templateOptions = [
+  { label: 'Stamps', value: 'Horizontal3StepTemplate' },
+  { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
+  { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
+];
+const selectedTemplate = ref<{ label: string; value: string }>(
+  templateOptions[0]
+);
+const renderedStamps = ref<Array<string>>([]);
+watch([stamps, selectedTemplate], async () => {
+  // Clear any of our currently rendered stamps.
+  renderedStamps.value = [];
+
+  // If no stampCollection is active, do not do anything.
+  if(!app.stampCollection.value) {
+    return;
+  }
+
+  // To improve legibility, destructure our funding options.
+  const { value, currency } = app.stampCollection.value.getFundingOptions();
+
+  for (const stamp of stamps.value) {
+    const compiledStamp = await compileTemplate(
+      selectedTemplate.value.value,
+      {
+        value: value.toString(),
+        currency,
+        wif: stamp.privateKey().toWif(),
+      }
+    );
+
+    renderedStamps.value.push(compiledStamp);
+  }
+});
+
+const copyTemplateLinkToClipboard = () => {
+  // Stringify the template into JSON.
+  const templateStringified = JSON.stringify(selectedTemplate.value);
+
+  // Encode it as Base64.
+  const templateBase64 = btoa(templateStringified);
+
+  // Copy it to the clipboard.
+  copyToClipboard(templateBase64);
+}
 
 // ---------------------------------------
 // Existing Collections
@@ -221,9 +301,9 @@ const showExistingCollections = ref(false);
 watch(showExistingCollections, () => {
   if (showExistingCollections.value) getCollections();
   else {
-    clearForm()
+    clearForm();
     selectedCollection.value = undefined;
-  };
+  }
 });
 
 // Update app.stampCollection when a collection is selected
@@ -236,8 +316,9 @@ watch(selectedCollection, (value) => {
 // List of StampCollections that exist in the database
 const collections = ref<string[]>([]);
 const getCollections = async () =>
-  (collections.value = (await app.getStampCollections()).map(collection => collection.name) || []);
-
+  (collections.value =
+    (await app.getStampCollections()).map((collection) => collection.name) ||
+    []);
 
 // ---------------------------------------
 // Get used Stamps
@@ -247,23 +328,22 @@ const getCollections = async () =>
 const usedStamps = ref<string[]>([]);
 const getUsedStamps = async () => {
   if (!collectionForm.value.funding.funded) {
-    return [] 
+    return [];
   }
 
   const unspentPromises = stamps.value.map(async (stamp) => {
     return {
       stamp: stamp.toString(),
-      unspent: await getKeyUnspent(stamp)
-    }
+      unspent: await getKeyUnspent(stamp),
+    };
   });
 
   const unspent = await Promise.all(unspentPromises);
-  const used = unspent.filter(address => !address.unspent.length);
+  const used = unspent.filter((address) => !address.unspent.length);
 
-  usedStamps.value = used.map(address => address.stamp)
-}
+  usedStamps.value = used.map((address) => address.stamp);
+};
 watch(stamps, () => getUsedStamps());
-
 
 // ---------------------------------------
 // Print Page Actions
@@ -287,6 +367,13 @@ const showMnemonicDialog = async () => {
   mnemonicDialog.value?.toggleVisible();
 };
 
+function printElement() {
+  // Combined the rendered stamps into a singular HTML.
+  const combinedHtml = renderedStamps.value.join('');
+
+  // Print the HTML.
+  printHtml(combinedHtml);
+}
 
 // ---------------------------------------
 // Lifecycle hooks

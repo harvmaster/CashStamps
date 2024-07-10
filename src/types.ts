@@ -13,9 +13,9 @@ export type Wallet = {
 export type DB_StampCollection = {
   mnemonic: string;
   name: string;
-  version: number
+  version: number;
   expiry?: number;
-}
+};
 
 export type CashPayServer_Output = {
   address?: string;

@@ -10,7 +10,7 @@ import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 import { StampCollection } from './stamp-collection.js';
 
-// Database Migrations 
+// Database Migrations
 import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-v2.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
@@ -92,13 +92,15 @@ export class App {
   // Methods
   //---------------------------------------------------------------------------
 
-  // --------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
   // Database_Methods
   //---------------------------------------------------------------------------
-  //
+
   // Get the StampCollections from the browser's IndexedDB.
   async getStampCollections(): Promise<DB_StampCollection[]> {
-    const collections: DB_StampCollection[] | undefined = await get('stampCollections');
+    const collections: DB_StampCollection[] | undefined = await get(
+      'stampCollections'
+    );
     return collections || [];
   }
 
@@ -119,8 +121,11 @@ export class App {
     const expiry = collection.expiry ? new Date(collection.expiry) : undefined;
 
     // Set the StampCollection to the stampCollection ref.
-    this.stampCollection.value = await StampCollection.fromMnemonic(collection.mnemonic, expiry);
-    
+    this.stampCollection.value = await StampCollection.fromMnemonic(
+      collection.mnemonic,
+      expiry
+    );
+
     Loading.hide();
   }
 

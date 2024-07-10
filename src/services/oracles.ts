@@ -183,13 +183,19 @@ export class OraclesService {
         : oraclePublicKey;
 
     // Fetch price message from the Oracle with a max timestamp of the given timestamp.
-    const { parsedPriceMessage } = await this.oracleClient.getPrice(oraclePublicKeyHex, {
-      maxMessageTimestamp: timestamp,
-      // minMessageTimestamp: (timestamp || 0) - 60 * 60 * 1
-    });
+    const { parsedPriceMessage } = await this.oracleClient.getPrice(
+      oraclePublicKeyHex,
+      {
+        maxMessageTimestamp: timestamp,
+        // minMessageTimestamp: (timestamp || 0) - 60 * 60 * 1
+      }
+    );
 
     // Convert the price to common units.
-    const price = this.toCommonUnits(parsedPriceMessage.priceValue, oraclePublicKeyHex);
+    const price = this.toCommonUnits(
+      parsedPriceMessage.priceValue,
+      oraclePublicKeyHex
+    );
 
     // Return the parsed price message
     return price;

@@ -14,14 +14,17 @@
           <li>5. Select 'I already have a seed' and click next</li>
           <li>6. Input your seed from this collection and click next</li>
           <li>7. Click Next</li>
-          <li>8. You can put a password on it if you would like, but as this is temporary, we wouldnt worry about it for now</li>
+          <li>
+            8. You can put a password on it if you would like, but as this is
+            temporary, we wouldnt worry about it for now
+          </li>
           <li>9. Pay out your BCH to your wallet</li>
         </ul>
         <div class="text-body1 text-grey-7">
-          These instructions will be replaced with a button to automatically redeem the wallets in the future
+          These instructions will be replaced with a button to automatically
+          redeem the wallets in the future
         </div>
       </q-card-section>
-
     </q-card>
   </q-dialog>
 </template>
@@ -35,14 +38,14 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const visible = ref(false)
+const visible = ref(false);
 const toggleVisible = () => {
-  visible.value = !visible.value
-}
+  visible.value = !visible.value;
+};
 
 defineExpose({
   toggleVisible,
-})
+});
 </script>

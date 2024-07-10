@@ -5,7 +5,6 @@
       v-for="(stamp, index) in stamps || []"
       :key="stamp.toString()"
       :id="index"
-      
       :stamp="stamp"
       :funding="stampFunding"
       :loadingFunding="loadingFunding"
@@ -17,7 +16,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
 
-import { app } from 'src/boot/app'
+import { app } from 'src/boot/app';
 
 import { HDPrivateNode } from 'src/utils/hd-private-node';
 import { FundingOptions } from 'src/services/stamp-collection';
@@ -29,7 +28,7 @@ export type StampListProps = {
   stamps: HDPrivateNode[];
   usedStamps: string[];
   funding: FundingOptions;
-}
+};
 
 const props = defineProps<StampListProps>();
 
@@ -37,33 +36,45 @@ const { convert } = useCurrencyConverter();
 
 const loadingFunding = ref(false);
 
-const appFunding = computed(() => app.stampCollection.value?.getFundingOptions());
+const appFunding = computed(() =>
+  app.stampCollection.value?.getFundingOptions()
+);
 
 const stampFunding = ref<FundingOptions>(props.funding);
 const getStampFunding = async () => {
   if (!props.funding.funded) {
     stampFunding.value = appFunding.value || { ...props.funding };
-    return
+    return;
   }
 
   // This case should never happen, but TS gets mad if we don't check
   if (!appFunding.value) {
-    return
+    return;
   }
 
   loadingFunding.value = true;
 
-  const value = await convert(props.funding.currency, appFunding.value.value, props.funding.funded.getTime());
+  const value = await convert(
+    props.funding.currency,
+    appFunding.value.value,
+    props.funding.funded.getTime()
+  );
   stampFunding.value = { ...props.funding, value };
 
   loadingFunding.value = false;
-}
+};
 
-watch(() => props.funding.currency, () => getStampFunding());
-watch(() => props.funding.funded, () => getStampFunding());
+watch(
+  () => props.funding.currency,
+  () => getStampFunding()
+);
+watch(
+  () => props.funding.funded,
+  () => getStampFunding()
+);
 watch(appFunding, () => getStampFunding());
 
 onMounted(() => {
-  getStampFunding()
+  getStampFunding();
 });
 </script>

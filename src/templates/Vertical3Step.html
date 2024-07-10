@@ -1,0 +1,122 @@
+<div class="flyer">
+  <!-- Step 1 - Download Wallet -->
+  <div class="section">
+    <!-- Title -->
+    <div class="title-primary">
+      <span class="primary">Bitcoin</span>
+      <span class="secondary">Cash</span>
+    </div>
+
+    <!-- Download Wallet QR Code -->
+    <img class="qr-code" :src="downloadWalletQrCode" />
+
+    <!-- Details -->
+    <div class="details">
+      <div class="title secondary">Step 1</div>
+      <div class="content">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur.
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 - Redeem Stamp -->
+  <div class="section">
+    <!-- Title -->
+    <div class="title-primary">
+      <span class="primary">Redeem</span>
+      <span class="secondary"> $10</span>
+    </div>
+
+    <!-- Redeem QR Code -->
+    <img class="qr-code" :src="redeemQrCode" />
+
+    <!-- Details -->
+    <div class="details">
+      <div class="title secondary">Step 2</div>
+      <div class="content">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur.
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 - Spend BCH -->
+  <div class="section">
+    <!-- Title -->
+    <div class="title-primary">
+      <span class="primary">Use</span>
+      <span class="secondary"> It!</span>
+    </div>
+
+    <!-- Spend QR Code -->
+    <img class="qr-code" :src="spendQrCode" />
+
+    <!-- Details -->
+    <div class="details">
+      <div class="title secondary">Step 3</div>
+      <div class="content">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur.
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .flyer {
+    display: block;
+    width: 69mm;
+    background: #000;
+    color: #fff;
+    border-right: 1px dashed #46ba4f;
+  }
+
+  .section {
+    text-align: center;
+    padding: 5mm;
+  }
+
+  .primary {
+    color: #fff;
+  }
+
+  .secondary {
+    color: #46ba4f;
+  }
+
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5mm;
+  }
+
+  .title-secondary {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .qr-code {
+    width: 35mm !important;
+    height: 35mm !important;
+    margin-bottom: 5mm;
+  }
+
+  .details .title {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .details .content {
+    font-size: 12px;
+  }
+</style>

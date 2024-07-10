@@ -53,6 +53,7 @@ h6 {
   overflow-x: hidden;
 }
 
+/*
 @media print {
   body {
     padding: 1em;
@@ -60,4 +61,27 @@ h6 {
   .cash-stamp_item {
     page-break-inside: avoid;
   }
+}
+*/
+
+/* Define the A4 page size */
+@page {
+  size: A4;
+  margin: 20mm;
+}
+
+/* Container for the A4 content */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  margin: auto;
+  page-break-after: always; /* Ensure each .page starts on a new page */
+}
+
+/* Optional: Control page breaks within the content */
+.page-element {
+  page-break-inside: avoid; /* Avoid breaking inside these elements */
+  break-inside: avoid;
 }

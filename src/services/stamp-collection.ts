@@ -29,7 +29,6 @@ import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 // Import the functions to get the used keys and unspent transactions
 import { getUsedKeys, getTransactionData } from 'src/utils/transaction-helpers';
 
-
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
@@ -64,7 +63,7 @@ export class StampCollection {
   static generate(options: GenerateOptions): StampCollection {
     // Use default funding options if none are provided.
     const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
-    
+
     // Make sure amount isnt stupid amount of digits
     if (fundingOptions.value?.toString()?.split('.')?.[1]?.length > 8) {
       fundingOptions.value = parseFloat(fundingOptions.value.toFixed(8));
@@ -98,11 +97,14 @@ export class StampCollection {
       nodes,
       fundingOptions,
       expiry,
-      options.name,
+      options.name
     );
   }
 
-  static async fromMnemonic(mnemonic: string, expiry?: Date): Promise<StampCollection> {
+  static async fromMnemonic(
+    mnemonic: string,
+    expiry?: Date
+  ): Promise<StampCollection> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
@@ -118,36 +120,37 @@ export class StampCollection {
     // Get the nodes from the used keys
     usedKeys.forEach((key, i) => {
       nodes.push(key.node);
-    })
+    });
 
     if (nodes.length === 0) {
       return new StampCollection(mnemonic, nodes);
     }
-    
+
     // Get the blocktime of the first transaction to get the funding date
     // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet
     const firstTransaction = await getTransactionData(usedKeys[0]);
 
     // Get the blocktime of the first transaction (they should all be the same), we can use this to get the price of the stamp from the oracle
     const blocktime = firstTransaction?.blocktime || Date.now() / 1000;
-    console.log(blocktime)
+    console.log(blocktime);
 
     // Get the transaction's value to set the funding amount
-    let txValue = 0
+    let txValue = 0;
     if (firstTransaction) {
-      txValue = firstTransaction.vout.find((output: any) => {
-        return output.scriptPubKey.addresses.some((address: string) => {
-          return address == usedKeys[0].address
-        })
-      })?.value || 0
+      txValue =
+        firstTransaction.vout.find((output: any) => {
+          return output.scriptPubKey.addresses.some((address: string) => {
+            return address == usedKeys[0].address;
+          });
+        })?.value || 0;
     }
 
     // Set funding options to be used in the StampCollection
     const fundingOptions = {
       value: txValue,
       currency: 'BCH',
-      funded: new Date(blocktime * 1000)
-    }
+      funded: new Date(blocktime * 1000),
+    };
 
     // Create instance of StampCollection using generated mnemonic.
     return new StampCollection(mnemonic, nodes, fundingOptions, expiry);
@@ -183,7 +186,9 @@ export class StampCollection {
     // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
     if (currency !== 'BCH') {
       // Get the BCH price in the selected currency
-      const bchPrice = app.oracles.getOraclePriceCommonUnits(this.getFundingOptions().currency);
+      const bchPrice = app.oracles.getOraclePriceCommonUnits(
+        this.getFundingOptions().currency
+      );
 
       // Set BCH amount to the equivalent amount in the selected currency
       bchAmount = rawAmount / bchPrice;
@@ -214,7 +219,9 @@ export class StampCollection {
     this.funding.funded = new Date();
 
     if (this.funding.currency !== 'BCH') {
-      const bchPrice = app.oracles.getOraclePriceCommonUnits(this.getFundingOptions().currency);
+      const bchPrice = app.oracles.getOraclePriceCommonUnits(
+        this.getFundingOptions().currency
+      );
       this.funding.value = this.funding.value / bchPrice;
       this.funding.currency = 'BCH';
     }
@@ -233,7 +240,7 @@ export class StampCollection {
   }
 
   getExpiry() {
-    return this.expiry
+    return this.expiry;
   }
 
   // Save stamps into IDB
@@ -253,7 +260,7 @@ export class StampCollection {
         name,
         mnemonic: this.mnemonic,
         version: 2,
-        expiry: this.expiry.getTime()
+        expiry: this.expiry.getTime(),
       };
     } else {
       // If the collection does not exist, Add it
@@ -261,7 +268,7 @@ export class StampCollection {
         name,
         mnemonic: this.mnemonic,
         version: 2,
-        expiry: this.expiry.getTime()
+        expiry: this.expiry.getTime(),
       });
     }
 

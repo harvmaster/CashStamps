@@ -1,16 +1,21 @@
 <template>
   <q-dialog v-model="visible" class="blur-background">
     <div class="square row items-center">
-      <q-card class="q-pa-md col-12 column square justify-center q-col-gutter-y-md">
-
+      <q-card
+        class="q-pa-md col-12 column square justify-center q-col-gutter-y-md"
+      >
         <!-- Ask user to save it somewhere -->
-        <div class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center q-col-gutter-sm">
+        <div
+          class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center q-col-gutter-sm"
+        >
           <q-icon name="info" class="text-primary" />
           <span>Save your seed somewhere safe before proceeding</span>
         </div>
 
         <!-- Mnemonic container -->
-        <div class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center">
+        <div
+          class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center"
+        >
           {{ mnemonic }}
         </div>
 
@@ -25,19 +30,16 @@
         </div>
 
         <!-- Qr code -->
-        <div 
+        <div
           v-if="showQRCode"
           class="col-auto text-h6 no-margin text-weight-medium row justify-center items-center text-center"
         >
           Scan to fill the stamps with BCH
         </div>
-        <div 
-          v-if="showQRCode"
-          class="col-auto row justify-center"
-        >
-          <div ref="qrElement" id="invoice-container" class="full-width"/>
+        <div v-if="showQRCode" class="col-auto row justify-center">
+          <div ref="qrElement" id="invoice-container" class="full-width" />
         </div>
-    
+
         <!-- Small text to inform user the qr code would not work in development -->
         <!-- <div class="row justify-center text-center">
           This QR code is not yet functional.<br />
@@ -87,7 +89,7 @@ const toggleVisible = () => {
   showQRCode.value = false;
   nextTick(() => {
     // Generating the QR code on load to improve performance
-    generateQrCode(); 
+    generateQrCode();
   });
 };
 
@@ -96,9 +98,9 @@ const showQRCode = ref(false);
 const toggleQrCode = () => {
   showQRCode.value = !showQRCode.value;
   nextTick(() => {
-    if (!showQRCode.value) return
-    
-    // Need to generate here because the qrElement is not rendered until showQRCode is true 
+    if (!showQRCode.value) return;
+
+    // Need to generate here because the qrElement is not rendered until showQRCode is true
     generateQrCode();
   });
 };
@@ -113,7 +115,8 @@ const generateQrCode = async () => {
   if (!invoice) return;
 
   // Set QR code to fill QrElement
-  invoice?.intoContainer(qrElement.value)
+  invoice
+    ?.intoContainer(qrElement.value)
 
     // Listen for broadcasted event to update stamps
     .on(['broadcasted'], async (e: unknown) => {

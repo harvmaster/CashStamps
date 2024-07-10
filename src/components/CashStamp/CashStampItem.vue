@@ -2,8 +2,16 @@
   <div class="" style="height: fit-content">
     <div class="cash-stamp_item q-pa-md column items-center relative">
       <!-- Claimed Badge - Absolute, Top-Right-->
-      <div v-if="claimed" class="col-auto row justify-end absolute" style="top: 0; right: 0; padding: 1em;">
-        <q-badge class="q-pa-sm" style="background-color: #1DC18E; font-size: 1rem" label="Claimed" />
+      <div
+        v-if="claimed"
+        class="col-auto row justify-end absolute"
+        style="top: 0; right: 0; padding: 1em"
+      >
+        <q-badge
+          class="q-pa-sm"
+          style="background-color: #1dc18e; font-size: 1rem"
+          label="Claimed"
+        />
       </div>
 
       <!-- QR Code -->
@@ -13,11 +21,17 @@
 
       <!-- Value -->
       <div class="col-auto row justify-center">
-        <div v-if="loadingFunding" class="col-12 text-h5 no-margin no-padding text-weight-medium">
+        <div
+          v-if="loadingFunding"
+          class="col-12 text-h5 no-margin no-padding text-weight-medium"
+        >
           <q-spinner />
         </div>
-        <div v-else class="col-12 text-h5 no-margin no-padding text-weight-medium">
-          {{ stampAmount}}
+        <div
+          v-else
+          class="col-12 text-h5 no-margin no-padding text-weight-medium"
+        >
+          {{ stampAmount }}
           {{ currencyName }}
         </div>
       </div>
@@ -37,7 +51,7 @@
   background-color: white;
   border-radius: 8px;
   padding: 16px;
-  border: dashed 2px #1DC18E;
+  border: dashed 2px #1dc18e;
 }
 </style>
 
@@ -79,7 +93,7 @@ const createdAt = computed(() => {
 
   // Format date as `hh:MMam/pm DD/MM/YYYY`
   // return `
-  //         ${formattedHours}:${ formattedMinutes}${hours / 12 < 1 ? 'am' : 'pm'} 
+  //         ${formattedHours}:${ formattedMinutes}${hours / 12 < 1 ? 'am' : 'pm'}
   //         ${date.toLocaleDateString()}
   //       `;
 
@@ -96,8 +110,10 @@ const currencyName = computed(() => {
   const currency = props.funding?.currency;
   if (currency === 'BCH') return 'BCH';
 
-  return app.oracles.oracleMetadataStore[currency]
-    .sourceNumeratorUnitCode || 'unknown';
+  return (
+    app.oracles.oracleMetadataStore[currency].sourceNumeratorUnitCode ||
+    'unknown'
+  );
 });
 
 // ----------------------------------
@@ -112,10 +128,10 @@ const stampAmount = computed(() => {
   };
 
   // Return the amount with the correct number of decimal places
-  return currencyName.value === 'BCH' ?
-    removeTrailingZeros(props.funding.value.toFixed(8))
-    // props.wallet.funding.amount
-    : props.funding.value.toFixed(2);
+  return currencyName.value === 'BCH'
+    ? removeTrailingZeros(props.funding.value.toFixed(8))
+    : // props.wallet.funding.amount
+      props.funding.value.toFixed(2);
 });
 
 // ----------------------------------
