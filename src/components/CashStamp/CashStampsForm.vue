@@ -169,7 +169,6 @@ import { computed, ref, watch } from 'vue';
 
 import { app } from 'src/boot/app.js';
 import { GenerateOptions } from 'src/services/stamp-collection.js';
-import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 import RedeemDialog from './RedeemDialog.vue';
@@ -184,8 +183,6 @@ const model = defineModel<Required<GenerateOptions>>('form', {
   required: true,
 });
 const emits = defineEmits(['create']);
-
-const { convert } = useCurrencyConverter();
 
 // ----------------------------------
 // Reactive Variables
@@ -265,7 +262,7 @@ const formatCurrency = async () => {
   loadingFormattingCurrency.value = true;
 
   // Convert the value to the selected currency
-  formattedCurrency.value = await convert(
+  formattedCurrency.value = await app.oracles.convertCurrency(
     model.value.funding.currency,
     stampCollectionFunding.value.value,
     stampCollectionFunding.value.funded.getTime()

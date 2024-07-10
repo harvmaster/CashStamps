@@ -20,7 +20,6 @@ import { app } from 'src/boot/app';
 
 import { HDPrivateNode } from 'src/utils/hd-private-node';
 import { FundingOptions } from 'src/services/stamp-collection';
-import { useCurrencyConverter } from 'src/composables/useCurrencyConverter';
 
 import CashStampItem from './CashStampItem.vue';
 
@@ -31,8 +30,6 @@ export type StampListProps = {
 };
 
 const props = defineProps<StampListProps>();
-
-const { convert } = useCurrencyConverter();
 
 const loadingFunding = ref(false);
 
@@ -54,7 +51,7 @@ const getStampFunding = async () => {
 
   loadingFunding.value = true;
 
-  const value = await convert(
+  const value = await app.oracles.convertCurrency(
     props.funding.currency,
     appFunding.value.value,
     props.funding.funded.getTime()
