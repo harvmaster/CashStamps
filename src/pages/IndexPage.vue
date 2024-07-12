@@ -134,8 +134,8 @@
           <!-- Page -->
           <div class="justify-center">
             <div class="page shadow-20">
-              <div class="flex">
-                <div v-for="(renderedStamp, i) in renderedStamps" :key="i">
+              <div class="flex full-width">
+                <div v-for="(renderedStamp, i) in renderedStamps" :key="i" >
                   <div v-html="renderedStamp" />
                 </div>
               </div>
@@ -215,7 +215,7 @@ import { copyToClipboard } from 'quasar';
 import { app } from 'src/boot/app';
 import { StampCollection } from 'src/services/stamp-collection';
 import { getKeyUnspent } from 'src/utils/transaction-helpers';
-import { compileTemplate, printHtml } from 'src/utils/misc';
+import { compileTemplate, printHtml, dateToString, timeToString, formatStampValue } from 'src/utils/misc';
 
 // Composables Imports
 import { useCollectionForm } from 'src/composables/useCollectionForm';
@@ -228,6 +228,7 @@ import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
 // NOTE: These are HTML Templates which we compile.
 import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
 import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
+import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
 
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
@@ -246,7 +247,7 @@ const $route = useRoute();
 //---------------------------------------
 
 const templateOptions = [
-  { label: 'Stamps', value: 'Horizontal3StepTemplate' },
+  { label: 'Stamps', value: RectangleSingeStep },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];
@@ -266,14 +267,17 @@ watch([stamps, selectedTemplate], async () => {
   // To improve legibility, destructure our funding options.
   const { value, currency } = app.stampCollection.value.getFundingOptions();
   const expiry = app.stampCollection.value.getExpiry();
+  const formattedExpiry = dateToString(expiry);
+
+  const stampValue = formatStampValue(value, currency);
 
   for (const stamp of stamps.value) {
     const compiledStamp = await compileTemplate(
       selectedTemplate.value.value,
       {
-        value: value.toString(),
+        value: stampValue,
         currency,
-        expiry: expiry.toString(),
+        expiry: formattedExpiry,
         wif: stamp.privateKey().toWif(),
       }
     );

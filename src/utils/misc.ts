@@ -13,6 +13,29 @@ export const dateToString = (date = new Date()) => {
   return `${year}/${formattedMonth}/${formattedDay}`;
 };
 
+export const timeToString = (date = new Date()) => {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  const formattedHours = hours < 10 ? `0${hours}` : hours;
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
+export const formatStampValue = (value: number, currency: string) => {
+  const removeTrailingZeros = (value: string) => {
+    return value.replace(/\.?0+$/, '');
+  };
+
+  // Return the amount with the correct number of decimal places
+  return currency === 'BCH'
+    ? removeTrailingZeros(value.toFixed(8))
+    : value.toFixed(2);
+}
+
 export const renderQrCode = async (
   content: string,
   logo?: string
@@ -112,7 +135,7 @@ export const compileTemplate = async (
 
     let replacement = '';
 
-    debugger;
+    // debugger;
 
     if (split[0].toLowerCase() === 'qrcode') {
       // Prioritize data variables and, if none exist, just use the value provided.

@@ -54,15 +54,17 @@ export type GenerateOptions = {
 
 export class StampCollection {
   private readonly stamps: Reactive<Array<Stamp>>;
+  private readonly funding: Reactive<FundingOptions>;
 
   constructor(
     private readonly mnemonic: string,
     private readonly hdNodes: Array<Stamp> = [],
-    private readonly funding: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
+    private readonly fundingOptions: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
     private expiry: Date = new Date(),
     private name: string = ''
   ) {
     this.stamps = reactive(hdNodes);
+    this.funding = reactive(fundingOptions);
   }
 
   static generate(options: GenerateOptions): StampCollection {
@@ -244,7 +246,7 @@ export class StampCollection {
     return this.name;
   }
 
-  getFundingOptions() {
+  getFundingOptions(): Reactive<FundingOptions> {
     return this.funding;
   }
 
