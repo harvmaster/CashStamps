@@ -111,6 +111,11 @@
                   <q-tooltip>Show Seed phrase</q-tooltip>
                 </q-btn>
               </q-btn-group>
+
+              <q-toggle
+                v-model="showUsedStamps"
+                label="Show used Stamps"
+              />
             </div>
 
             <!-- Template selection -->
@@ -135,8 +140,17 @@
           <div class="justify-center">
             <div class="page shadow-20">
               <div class="flex full-width">
-                <div v-for="(renderedStamp, i) in renderedStamps" :key="i" style="min-width: fit-content">
-                  <div v-html="renderedStamp" />
+                <div v-for="(visibleStamp, i) in visibleStamps" :key="i" style="position: relative;">
+                  <!-- Stamp Template -->
+                  <div v-html="visibleStamp.html" />
+
+                  <!-- Claimed Badge -->
+                  <q-badge
+                    v-if="visibleStamp.claimed"
+                    style="position: absolute; top: 0; right: 0; background-color: #1dc18e"
+                    label="Claimed"
+                    class="q-ma-md"
+                  />
                 </div>
               </div>
             </div>
@@ -240,6 +254,8 @@ const { collectionForm, createCollection } = useCollectionForm();
 
 const $route = useRoute();
 
+const showUsedStamps = ref<boolean>(true);
+
 // console.log($route.query);
 
 // console.log(atob($route.query.test as string));
@@ -257,10 +273,13 @@ const templateOptions = [
 const selectedTemplate = ref<{ label: string; value: string }>(
   templateOptions[0]
 );
-const renderedStamps = ref<Array<string>>([]);
-watch([stamps, selectedTemplate], async () => {
+const visibleStamps = ref<Array<{
+  html: string;
+  claimed: boolean;
+}>>([]);
+watch([stamps, selectedTemplate, showUsedStamps, () => collectionForm.value.funding.currency], async () => {
   // Clear any of our currently rendered stamps.
-  renderedStamps.value = [];
+  visibleStamps.value = [];
 
   // If no stampCollection is active, do not do anything.
   if(!app.stampCollection.value) {
@@ -268,26 +287,50 @@ watch([stamps, selectedTemplate], async () => {
   }
 
   // To improve legibility, destructure our funding options.
-  const { value, currency } = app.stampCollection.value.getFundingOptions();
+  const { value, currency, funded } = app.stampCollection.value.getFundingOptions();
   const expiry = app.stampCollection.value.getExpiry();
   const formattedExpiry = dateToString(expiry);
 
-  const stampValue = formatStampValue(value, currency);
+  let selectedCurrency = currency
+  let stampValue = value
+
+  // If the collection is funded, convert the value to the selected currency
+  if (funded) {
+    selectedCurrency = collectionForm.value.funding.currency;
+    stampValue = await app.oracles.convertCurrency(selectedCurrency, value, funded.getTime()), selectedCurrency
+  }
 
   for (const stamp of stamps.value) {
+    // Ignore the badge is showUsedStamps is set to false and this stamp is unclaimned
+    if(!showUsedStamps.value && funded && !stamp.balance) {
+      continue;
+    }
+
     const compiledStamp = await compileTemplate(
       selectedTemplate.value.value,
       {
-        value: stampValue,
-        currency,
+        value: formatStampValue(stampValue, selectedCurrency),
+        currency: getCurrencyName(selectedCurrency),
         expiry: formattedExpiry,
         wif: stamp.privateKey().toWif(),
       }
     );
 
-    renderedStamps.value.push(compiledStamp);
+    visibleStamps.value.push({
+      claimed: funded && stamp.balance == 0,
+      html: compiledStamp
+    });
   }
 });
+
+const getCurrencyName = (currency: string) => {
+  if (currency === 'BCH') return 'BCH';
+
+  return (
+    app.oracles.oracleMetadataStore[currency].sourceNumeratorUnitCode ||
+    'unknown'
+  );
+};
 
 const copyTemplateLinkToClipboard = () => {
   // Stringify the template into JSON.
@@ -364,7 +407,7 @@ const showMnemonicDialog = async () => {
 
 function printElement() {
   // Combined the rendered stamps into a singular HTML.
-  const combinedHtml = renderedStamps.value.join('');
+  const combinedHtml = visibleStamps.value.join('');
 
   // Print the HTML.
   printHtml(combinedHtml);
