@@ -223,7 +223,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { copyToClipboard } from 'quasar';
+import { useQuasar, copyToClipboard } from 'quasar';
 
 // Service / App / Utils imports
 import { app } from 'src/boot/app';
@@ -250,6 +250,7 @@ const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
 // Form for creating a new collection and loading an existing collections params into the form
 const { collectionForm, createCollection } = useCollectionForm();
 
+const $q = useQuasar();
 const $route = useRoute();
 
 const showUsedStamps = ref<boolean>(true);
@@ -262,6 +263,11 @@ const showUsedStamps = ref<boolean>(true);
 // Templates
 //---------------------------------------
 
+interface VisibleStamps {
+  html: string;
+  claimed: boolean;
+}
+
 const templateOptions = [
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
@@ -271,53 +277,68 @@ const templateOptions = [
 const selectedTemplate = ref<{ label: string; value: string }>(
   templateOptions[0]
 );
-const visibleStamps = ref<Array<{
-  html: string;
-  claimed: boolean;
-}>>([]);
+const visibleStamps = ref<Array<VisibleStamps>>([]);
 watch([stamps, selectedTemplate, showUsedStamps, () => collectionForm.value.funding.currency], async () => {
-  // Clear any of our currently rendered stamps.
-  visibleStamps.value = [];
+  try {
+    // Show the loading indicator as this can take some time (to render the QR Codes).
+    $q.loading.show();
 
-  // If no stampCollection is active, do not do anything.
-  if(!app.stampCollection.value) {
-    return;
-  }
+    // Clear any of our currently rendered stamps.
+    visibleStamps.value = [];
 
-  // To improve legibility, destructure our funding options.
-  const { value, currency, funded } = app.stampCollection.value.getFundingOptions();
-  const expiry = app.stampCollection.value.getExpiry();
-  const formattedExpiry = dateToString(expiry);
-
-  let selectedCurrency = currency
-  let stampValue = value
-
-  // If the collection is funded, convert the value to the selected currency
-  if (funded) {
-    selectedCurrency = collectionForm.value.funding.currency;
-    stampValue = await app.oracles.convertCurrency(selectedCurrency, value, funded.getTime()), selectedCurrency
-  }
-
-  for (const stamp of stamps.value) {
-    // Ignore the badge is showUsedStamps is set to false and this stamp is unclaimned
-    if(!showUsedStamps.value && funded && !stamp.balance) {
-      continue;
+    // If no stampCollection is active, do not do anything.
+    if(!app.stampCollection.value) {
+      return;
     }
 
-    const compiledStamp = await compileTemplate(
-      selectedTemplate.value.value,
-      {
-        value: formatStampValue(stampValue, selectedCurrency),
-        currency: getCurrencyName(selectedCurrency),
-        expiry: formattedExpiry,
-        wif: stamp.privateKey().toWif(),
-      }
-    );
+    // Declare a variable to store our new visible stamps.
+    const newVisibleStamps: Array<VisibleStamps> = [];
 
-    visibleStamps.value.push({
-      claimed: funded && stamp.balance == 0,
-      html: compiledStamp
-    });
+    // To improve legibility, destructure our funding options.
+    const { value, currency, funded } = app.stampCollection.value.getFundingOptions();
+    const expiry = app.stampCollection.value.getExpiry();
+    const formattedExpiry = dateToString(expiry);
+
+    let selectedCurrency = currency
+    let stampValue = value
+
+    // If the collection is funded, convert the value to the selected currency
+    if (funded) {
+      selectedCurrency = collectionForm.value.funding.currency;
+      stampValue = await app.oracles.convertCurrency(selectedCurrency, value, funded.getTime()), selectedCurrency
+    }
+
+    for (const stamp of stamps.value) {
+      // Ignore the badge is showUsedStamps is set to false and this stamp is unclaimned
+      if(!showUsedStamps.value && funded && !stamp.balance) {
+        continue;
+      }
+
+      // Compile this stamp.
+      const compiledStamp = await compileTemplate(
+        selectedTemplate.value.value,
+        {
+          value: formatStampValue(stampValue, selectedCurrency),
+          currency: getCurrencyName(selectedCurrency),
+          expiry: formattedExpiry,
+          wif: stamp.privateKey().toWif(),
+        }
+      );
+
+      // Add the compiled template to our list of visible stamps.
+      newVisibleStamps.push({
+        claimed: funded && stamp.balance == 0,
+        html: compiledStamp
+      });
+    }
+
+    // Assign our visible stamps.
+    visibleStamps.value = newVisibleStamps;
+  } catch(error) {
+    console.error(error);
+  } finally {
+    // Show the loading indicator as this can take some time.
+    $q.loading.hide();
   }
 });
 
