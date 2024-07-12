@@ -63,15 +63,6 @@
                   </q-item>
                 </template>
               </q-select>
-
-              <div class="col-auto self-end">
-                <div
-                  v-if="stamps.length"
-                  class="col-auto text-weight-medium q-pa-sm"
-                >
-                  {{ usedStamps.length }}/ {{ stamps.length }} claimed
-                </div>
-              </div>
             </div>
           </q-slide-transition>
 
@@ -116,6 +107,14 @@
                 v-model="showUsedStamps"
                 label="Show used Stamps"
               />
+
+              <span
+                v-if="stamps.length && app.stampCollection.value?.getFundingOptions().funded"
+                class="text-weight-medium q-pa-sm q-ml-sm bg-grey-3 rounded-borders"
+                style="width: fit-content"
+              >
+                {{ usedStamps.length }}/ {{ stamps.length }} claimed
+            </span>
             </div>
 
             <!-- Template selection -->
