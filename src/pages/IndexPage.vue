@@ -87,7 +87,7 @@
                   icon="print"
                   color="primary"
                   :disable="!stamps.length"
-                  @click="printElement"
+                  @click="printStamps"
                 >
                   <q-tooltip class="print-hide">Print Stamps</q-tooltip>
                 </q-btn>
@@ -415,7 +415,11 @@ const clearForm = (): void => {
 
 // Print the stamps
 const printStamps = (): void => {
-  window.print();
+  // Combined the rendered stamps into a singular HTML.
+  const combinedHtml = visibleStamps.value.map(stamp => stamp.html).join('');
+
+  // Print the HTML.
+  printHtml(combinedHtml);
 };
 
 // Show the mnemonic dialog
@@ -423,14 +427,6 @@ const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
 const showMnemonicDialog = async () => {
   mnemonicDialog.value?.toggleVisible();
 };
-
-function printElement() {
-  // Combined the rendered stamps into a singular HTML.
-  const combinedHtml = visibleStamps.value.join('');
-
-  // Print the HTML.
-  printHtml(combinedHtml);
-}
 
 // ---------------------------------------
 // Lifecycle hooks
