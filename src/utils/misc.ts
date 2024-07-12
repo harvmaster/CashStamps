@@ -170,7 +170,7 @@ export const printHtml = (html: string) => {
   printWindow.document.write('<html><head><title>Print Element</title>');
   printWindow.document.write('</head><body>');
   printWindow.document.write(
-    '<style>html, body {margin: 0; padding: 0 }</style>'
+    '<style>html, body {margin: 0; padding: 0 } div  { box-sizing: border-box; } .page > * { break-inside: avoid }</style>'
   );
   /*printWindow.document.write(
     '<style>@page { size: A4; margin: 20mm; }</style>'

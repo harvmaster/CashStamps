@@ -31,11 +31,6 @@
   height: fit-content !important;
 }
 
-div {
-  /* This sets the height and width to be calculated inclusive of padding and border */
-  box-sizing: border-box;
-}
-
 .stamp {
   /* 
     A4 Paper is 210mm x 297mm
@@ -53,7 +48,6 @@ div {
   break-inside: avoid;
   
   width: var(--calculated-stamp-width);
-
   height: var(--calculated-stamp-height);
 }
 
@@ -94,6 +88,5 @@ div {
 .qr-code {
   width: 35mm !important;
   height: 35mm !important;
-  /* margin-bottom: 5mm; */
 }
 </style>
