@@ -228,8 +228,7 @@ import { copyToClipboard } from 'quasar';
 // Service / App / Utils imports
 import { app } from 'src/boot/app';
 import { StampCollection } from 'src/services/stamp-collection';
-import { getKeyUnspent } from 'src/utils/transaction-helpers';
-import { compileTemplate, printHtml, dateToString, timeToString, formatStampValue } from 'src/utils/misc';
+import { compileTemplate, printHtml, dateToString, formatStampValue } from 'src/utils/misc';
 
 // Composables Imports
 import { useCollectionForm } from 'src/composables/useCollectionForm';
