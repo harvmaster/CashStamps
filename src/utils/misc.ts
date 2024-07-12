@@ -181,7 +181,7 @@ export const printHtml = (html: string) => {
   printWindow.document.write(html);
   printWindow.document.write('</div>');
   printWindow.document.write('</body></html>');
-  printWindow.document.close();
+  // printWindow.document.close();
 
   printWindow.onload = function () {
     if (!printWindow) {
@@ -191,7 +191,7 @@ export const printHtml = (html: string) => {
     printWindow.focus();
     printWindow.print();
     setTimeout(() => {
-      printWindow.close();
+      // printWindow.close();
     }, 5000);
   };
 };

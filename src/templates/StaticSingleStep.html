@@ -31,28 +31,43 @@
   height: fit-content !important;
 }
 
+div {
+  /* This sets the height and width to be calculated inclusive of padding and border */
+  box-sizing: border-box;
+}
+
 .stamp {
+  /* 
+    A4 Paper is 210mm x 297mm
+  */
+  --stamp-height: 99mm;
+  --stamp-width: 70mm;
+
   --margin-size: 0mm;
   --padding-size: 5mm;
   --border-size: 2px;
-  --column-count: 4;
 
-  --stamp-width: calc((210mm / var(--column-count)) - var(--margin-size) - (var(--margin-size) / var(--column-count)));
+  --calculated-stamp-height: calc(var(--stamp-height) - (2 * var(--margin-size)));
+  --calculated-stamp-width: calc(var(--stamp-width) - (2 * var(--margin-size)));
+
+  break-inside: avoid;
+  
+  width: var(--calculated-stamp-width);
+
+  height: var(--calculated-stamp-height);
+}
+
+.stamp-inner {
+  height: 100%;
+  width: 100%;
+
+  padding: var(--padding-size);
+  border: var(--border-size) dashed #46ba4f;
 
   margin-top: var(--margin-size);
   margin-left: var(--margin-size);
 
-  break-inside: avoid;
   text-align: center;
-
-  aspect-ratio: 1;
-  width: var(--stamp-width) !important;
-}
-
-.stamp-inner {
-  padding: var(--padding-size);
-  border: var(--border-size) dashed #46ba4f;
-
 }
 
 .title-primary {

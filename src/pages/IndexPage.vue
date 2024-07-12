@@ -135,7 +135,7 @@
           <div class="justify-center">
             <div class="page shadow-20">
               <div class="flex full-width">
-                <div v-for="(renderedStamp, i) in renderedStamps" :key="i" >
+                <div v-for="(renderedStamp, i) in renderedStamps" :key="i" style="min-width: fit-content">
                   <div v-html="renderedStamp" />
                 </div>
               </div>
@@ -187,6 +187,7 @@
 }
 
 .inner-page {
+  min-width: 210mm;
   width: 992px;
   margin: auto;
   padding-bottom: 40px;
@@ -229,6 +230,7 @@ import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
 import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
 import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
+import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
 
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
@@ -247,7 +249,8 @@ const $route = useRoute();
 //---------------------------------------
 
 const templateOptions = [
-  { label: 'Stamps', value: RectangleSingeStep },
+  { label: 'Flex Stamps', value: RectangleSingeStep },
+  { label: 'Static Stamps', value: StaticSingleStep },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];
