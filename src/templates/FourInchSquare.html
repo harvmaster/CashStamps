@@ -1,0 +1,92 @@
+<div class="stamp">
+  <div class="stamp-inner">
+    <!-- Redeem QR Code -->
+    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+
+    <!-- Title -->
+    <div class="title-primary">
+
+      <div class="currency">
+        <span class="primary">{{ value }}</span>
+        <span class="secondary">{{ currency }}</span>
+      </div>
+    </div>
+
+    <!-- Expiry -->
+    <div class="title-secondary">
+      <div class="content text-muted text-bold">
+        Valid until {{ expiry }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+
+}
+
+
+.page {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.stamp {
+  --border-size: 1px;
+  --padding-size: 5mm;
+  --margin-size: 5mm;
+
+  /* Stamp size */
+  width: 4in;
+  height: 4in;
+  
+  border: var(--border-size) dashed #46ba4f;
+
+  
+  break-inside: avoid;
+
+  display: grid;
+  place-items: center;
+}
+
+
+.stamp-inner {
+  height: auto;
+  width: auto;
+
+  padding: var(--padding-size);
+
+  margin-top: var(--margin-size);
+  margin-left: var(--margin-size);
+
+  text-align: center;
+}
+
+.title-primary {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.primary {
+  color: #46ba4f;
+}
+
+.secondary {
+  color: #46ba4f;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-muted {
+  color: #686868;
+}
+
+.qr-code {
+  width: 35mm !important;
+  height: 35mm !important;
+}
+</style>

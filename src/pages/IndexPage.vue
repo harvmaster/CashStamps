@@ -244,6 +244,7 @@ import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
 import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
 import AveryLabel from 'src/templates/AveryLabels.html?raw';
+import FourInchSquare from 'src/templates/FourInchSquare.html?raw';
 
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
@@ -273,6 +274,7 @@ const templateOptions = [
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
   { label: 'Avery Label', value: AveryLabel },
+  { label: '4 Inch Square', value: FourInchSquare },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];

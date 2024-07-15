@@ -32,21 +32,12 @@
       A4 Paper is 210mm x 297mm
       A3 Paper is 297mm x 420mm
   */
-  
-}
-.page {
-  align-items: space-between;
-  justify-content: flex-start;
-  /* height: fit-content !important; */
-}
-
-.stamp {
   /* page and stamp sizes in mm */
   --paper-height: 297;
   --paper-width: 210;
 
-  --stamp-height: 101.6;
-  --stamp-width: 101.6;
+  --stamp-height: 50.8;
+  --stamp-width: 50.8;
   
   /* Stamp decoration */
   --padding-size: 5mm;
@@ -68,28 +59,40 @@
   --calculated-y-quantity-per-page: round(down, var(--calculated-y-quantity-per-page-raw), 1);
   --calculated-x-quantity-per-page: round(down, var(--calculated-x-quantity-per-page-raw), 1);
 
+  /* --calculated-y-white-space: calc(var(--paper-height) - (var(--stamp-height) * var(--calculated-y-quantity-per-page))); */
+  
   /* Set sizes to "fill" page. inner stamp will be correct stamp size */
-  --calculated-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
+  --calculated-stamp-height-inc-whitespace: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
+  --calculated-y-white-space: calc(calc(var(--calculated-stamp-height-inc-whitespace) - var(--stamp-height-mm)) / (var(--calculated-x-quantity-per-page) + 1));
+  --calculated-stamp-height: calc(var(--calculated-stamp-height-inc-whitespace) - (var(--calculated-y-white-space)));
+
+  /* Stamp container width */
   --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page));
 
+  /* @page {
+    margin-top: 80mm;
+  } */
+}
+
+
+.page {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.stamp {
   /* Stamp size */
+  
   width: var(--calculated-stamp-width);
   height: var(--calculated-stamp-height);
+
+  padding-top: var(--calculated-y-white-space);
   
   break-inside: avoid;
   
   display: grid;
-  /* place-items: center; */
-
-  align-items: space-between;
-
-  
-}
-
-@page {
-  .stamp:nth-of-type(-n+3) {
-    background-color: red;
-  }
+  align-items: end;
+  justify-content: center;
 }
 
 
