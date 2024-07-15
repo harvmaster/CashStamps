@@ -272,11 +272,11 @@ interface VisibleStamps {
 }
 
 const templateOptions = [
+  { label: 'Avery: 2.5 Inch Square', value: TwoHalfInchSquare },
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
-  { label: 'Avery Label', value: AveryLabel }, // Disabled due to bugs
-  { label: '2.5 Inch Square', value: TwoHalfInchSquare },
-  { label: '4 Inch Square', value: FourInchSquare },
+  // { label: 'Avery Label', value: AveryLabel }, // Disabled due to bugs
+  // { label: '4 Inch Square', value: FourInchSquare },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];
