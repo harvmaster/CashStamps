@@ -71,12 +71,15 @@
         <div class="col-auto row">
           <q-input
             class="col-12 col-md-auto"
+            style="min-width: 10em"
             v-model.number="form.quantity"
             label="Stamp Quantity"
             type="number"
             :disable="disabled"
             filled
             :min="0"
+            :max="100"
+            v-on:blur="clampQuantity"
           />
         </div>
 
@@ -206,7 +209,7 @@ const disabled = computed(
 // ----------------------------------
 // Collection Name Updater
 // ----------------------------------
-//
+
 // Update the collection name dynamically using a setter on the collection
 const updateName = (val: string | number | null) => {
   if (!(typeof val === 'string')) return;
@@ -215,9 +218,19 @@ const updateName = (val: string | number | null) => {
 };
 
 // ----------------------------------
+// Quantity Clamping
+// ----------------------------------
+
+// Clamp the quantity to be between 0 and 100
+const clampQuantity = () => {
+  if (model.value.quantity < 0) model.value.quantity = 0;
+  if (model.value.quantity > 100) model.value.quantity = 100;
+};
+
+// ----------------------------------
 // Currency Name & Options
 // ----------------------------------
-//
+
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
   if (model.value.funding.currency === 'BCH') return 'BCH';
@@ -249,7 +262,7 @@ const currencyOptions = computed((): Array<Option> => {
 // ----------------------------------
 // Currency Conversion for Total Value
 // ----------------------------------
-//
+
 // Show the total value of a transaction in the selected currency. This is used for old collections that have been funded
 const loadingFormattingCurrency = ref(false);
 const formattedCurrency = ref<number>(model.value.funding.value);
@@ -285,7 +298,7 @@ watch(
 // ----------------------------------
 // Dialog Refs & Controls
 // ----------------------------------
-//
+
 // Model for showing funding transaction QR code
 const fundingQrCode = ref<typeof FundingQrCode | null>(null);
 const showFundingQR = async () => {

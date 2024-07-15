@@ -1,0 +1,134 @@
+<div class="stamp">
+  <div class="stamp-inner">
+    <!-- Redeem QR Code -->
+    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+
+    <!-- Title -->
+    <div class="title-primary">
+
+      <div class="currency">
+        <span class="primary">{{ value }}</span>
+        <span class="secondary">{{ currency }}</span>
+      </div>
+    </div>
+
+    <!-- Expiry -->
+    <div class="title-secondary">
+      <div class="content text-muted text-bold">
+        Valid until {{ expiry }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  
+  /* 
+    Set your paper size here
+  
+    Default: A4
+      A4 Paper is 210mm x 297mm
+      A3 Paper is 297mm x 420mm
+  */
+  
+}
+.page {
+  align-items: space-between;
+  justify-content: flex-start;
+  /* height: fit-content !important; */
+}
+
+.stamp {
+  /* page and stamp sizes in mm */
+  --paper-height: 297;
+  --paper-width: 210;
+
+  --stamp-height: 101.6;
+  --stamp-width: 101.6;
+  
+  /* Stamp decoration */
+  --padding-size: 5mm;
+  --border-size: 1px;
+
+
+  /* Computed size helpers in mm */
+  --paper-height-mm: calc(1mm * var(--paper-height));
+  --paper-width-mm: calc(1mm * var(--paper-width));
+
+  --stamp-height-mm: calc(1mm * var(--stamp-height));
+  --stamp-width-mm: calc(1mm * var(--stamp-width));
+
+  /* Get decimal value of division */
+  --calculated-y-quantity-per-page-raw: calc(var(--paper-height) / var(--stamp-height));
+  --calculated-x-quantity-per-page-raw: calc(var(--paper-width) / var(--stamp-width));
+
+  /* Rond down decimal value */
+  --calculated-y-quantity-per-page: round(down, var(--calculated-y-quantity-per-page-raw), 1);
+  --calculated-x-quantity-per-page: round(down, var(--calculated-x-quantity-per-page-raw), 1);
+
+  /* Set sizes to "fill" page. inner stamp will be correct stamp size */
+  --calculated-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
+  --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page));
+
+  /* Stamp size */
+  width: var(--calculated-stamp-width);
+  height: var(--calculated-stamp-height);
+  
+  break-inside: avoid;
+  
+  display: grid;
+  /* place-items: center; */
+
+  align-items: space-between;
+
+  
+}
+
+@page {
+  .stamp:nth-of-type(-n+3) {
+    background-color: red;
+  }
+}
+
+
+.stamp-inner {
+  height: var(--stamp-height-mm);
+  width: var(--stamp-width-mm);
+
+  padding: var(--padding-size);
+  border: var(--border-size) dashed #46ba4f;
+
+  margin-top: var(--margin-size);
+  margin-left: var(--margin-size);
+
+  text-align: center;
+}
+
+.title-primary {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.primary {
+  color: #46ba4f;
+}
+
+.secondary {
+  color: #46ba4f;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-muted {
+  color: #686868;
+}
+
+.qr-code {
+  width: 35mm !important;
+  height: 35mm !important;
+}
+</style>
