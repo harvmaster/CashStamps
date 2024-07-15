@@ -19,6 +19,10 @@
       </div>
     </div>
   </div>
+
+  <span class="text-center text-muted text-bold">
+    Go to <span class="primary">https://stamps.cash/redeem</span> for instructions
+  </span>
 </div>
 
 <style>
@@ -41,11 +45,13 @@
   /* Stamp size */
   width: 4in;
   height: 4in;
-  
-  border: var(--border-size) dashed #46ba4f;
+
+  border: var(--border-size) dashed rgba(172, 172, 172, 0.281);
+  /* border: var(--border-size) dashed #46ba4f; */
 
   
   break-inside: avoid;
+  padding: var(--padding-size);
 
   display: grid;
   place-items: center;
@@ -55,8 +61,6 @@
 .stamp-inner {
   height: auto;
   width: auto;
-
-  padding: var(--padding-size);
 
   margin-top: var(--margin-size);
   margin-left: var(--margin-size);
@@ -83,6 +87,10 @@
 
 .text-muted {
   color: #686868;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .qr-code {

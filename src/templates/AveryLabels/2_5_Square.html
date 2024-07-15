@@ -32,12 +32,11 @@
       A4 Paper is 210mm x 297mm
       A3 Paper is 297mm x 420mm
   */
-  /* page and stamp sizes in mm */
   --paper-height: 297;
   --paper-width: 210;
 
-  --stamp-height: 101.6;
-  --stamp-width:101.6;
+  --stamp-height: 63.5;
+  --stamp-width: 63.5;
   
   /* Stamp decoration */
   --padding-size: 5mm;
@@ -56,37 +55,36 @@
   --calculated-x-quantity-per-page-raw: calc(var(--paper-width) / var(--stamp-width));
 
   /* Rond down decimal value */
-  --calculated-y-quantity-per-page: round(down, var(--calculated-y-quantity-per-page-raw), 1);
-  --calculated-x-quantity-per-page: round(down, var(--calculated-x-quantity-per-page-raw), 1);
-
-  /* --calculated-y-white-space: calc(var(--paper-height) - (var(--stamp-height) * var(--calculated-y-quantity-per-page))); */
+  --calculated-y-quantity-per-page: 3;
+  --calculated-x-quantity-per-page: 3;
+  /* --calculated-y-quantity-per-page: round(down, var(--calculated-y-quantity-per-page-raw), 1); */
+  /* --calculated-x-quantity-per-page: round(down, var(--calculated-x-quantity-per-page-raw), 1); */
   
   /* Set sizes to "fill" page. inner stamp will be correct stamp size */
-  --calculated-stamp-height-inc-whitespace: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
-  --calculated-y-white-space: calc(calc(var(--calculated-stamp-height-inc-whitespace) - var(--stamp-height-mm)) / (var(--calculated-x-quantity-per-page) + 1));
-  --calculated-stamp-height: calc(var(--calculated-stamp-height-inc-whitespace) - (var(--calculated-y-white-space)));
+  --calculated-full-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
+  --calculated-y-white-space: calc(calc(var(--calculated-full-stamp-height) - var(--stamp-height-mm)) / (var(--calculated-x-quantity-per-page)));
+  --calculated-stamp-height: calc(var(--calculated-full-stamp-height) - (var(--calculated-y-white-space)));
 
   /* Stamp container width */
   --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page));
-
-  /* @page {
-    margin-top: 80mm;
-  } */
 }
-
 
 .page {
   align-items: flex-start;
   justify-content: flex-start;
+
+  padding-left: 0.25in;
+  padding-right: 0.25in;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .stamp {
   /* Stamp size */
   
-  width: var(--calculated-stamp-width);
-  height: var(--calculated-stamp-height);
 
-  padding-top: var(--calculated-y-white-space);
+  /* padding-top: var(--calculated-y-white-space); */
+  padding: var(--padding-size);
   
   break-inside: avoid;
   
@@ -97,10 +95,9 @@
 
 
 .stamp-inner {
-  height: var(--stamp-height-mm);
-  width: var(--stamp-width-mm);
+  width: 2.5in;
+  height: 2.5in;
 
-  padding: var(--padding-size);
   border: var(--border-size) dashed #46ba4f;
 
   margin-top: var(--margin-size);
