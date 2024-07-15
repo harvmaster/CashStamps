@@ -228,7 +228,7 @@ import { useQuasar, copyToClipboard } from 'quasar';
 // Service / App / Utils imports
 import { app } from 'src/boot/app';
 import { StampCollection } from 'src/services/stamp-collection';
-import { compileTemplate, printHtml, dateToString, formatStampValue } from 'src/utils/misc';
+import { compileTemplate, printHtml, dateToString, formatStampValue, dateToStampString } from 'src/utils/misc';
 
 // Composables Imports
 import { useCollectionForm } from 'src/composables/useCollectionForm';
@@ -245,7 +245,7 @@ import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
 import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
 import AveryLabel from 'src/templates/AveryLabels.html?raw';
 import FourInchSquare from 'src/templates/FourInchSquare.html?raw';
-// import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
+import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
@@ -275,7 +275,7 @@ const templateOptions = [
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
   { label: 'Avery Label', value: AveryLabel }, // Disabled due to bugs
-  // { label: '2.5 Inch Square', value: TwoHalfInchSquare },
+  { label: '2.5 Inch Square', value: TwoHalfInchSquare },
   { label: '4 Inch Square', value: FourInchSquare },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
@@ -326,7 +326,7 @@ watch([stamps, selectedTemplate, showUsedStamps, () => collectionForm.value.fund
         {
           value: formatStampValue(stampValue, selectedCurrency),
           currency: getCurrencyName(selectedCurrency),
-          expiry: new Date(formattedExpiry).toLocaleDateString(),
+          expiry: dateToStampString(expiry),
           wif: stamp.privateKey().toWif(),
         }
       );

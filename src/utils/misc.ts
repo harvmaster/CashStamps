@@ -25,6 +25,15 @@ export const timeToString = (date = new Date()) => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
+// returns a string in the format of "dd MMM YYYY"
+export const dateToStampString = (date = new Date()) => {
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'short' });
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
 export const formatStampValue = (value: number, currency: string) => {
   const removeTrailingZeros = (value: string) => {
     return value.replace(/\.?0+$/, '');
@@ -176,12 +185,12 @@ export const printHtml = (html: string) => {
     '<style>@page { size: A4; margin: 20mm; }</style>'
   );*/
   printWindow.document.write(
-    '<div class="page" style="display:flex; flex-wrap: wrap; width: 100%; height: 100%;">'
+    '<div class="page" style="display:flex; flex-wrap: wrap; width: 100%;">'
   );
   printWindow.document.write(html);
   printWindow.document.write('</div>');
   printWindow.document.write('</body></html>');
-  printWindow.document.close();
+  // printWindow.document.close();
 
   printWindow.onload = function () {
     if (!printWindow) {
@@ -191,7 +200,7 @@ export const printHtml = (html: string) => {
     printWindow.focus();
     printWindow.print();
     setTimeout(() => {
-      printWindow.close();
+      // printWindow.close();
     }, 5000);
   };
 };

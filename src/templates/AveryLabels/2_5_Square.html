@@ -1,23 +1,31 @@
 <div class="stamp">
   <div class="stamp-inner">
-    <!-- Redeem QR Code -->
-    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+    <div class="stamp-content">
+      <!-- Redeem QR Code -->
+      <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
 
-    <!-- Title -->
-    <div class="title-primary">
-
-      <div class="currency">
-        <span class="primary">{{ value }}</span>
-        <span class="secondary">{{ currency }}</span>
-      </div>
     </div>
 
-    <!-- Expiry -->
-    <div class="title-secondary">
-      <div class="content text-muted text-bold">
+    <!-- Stamp Value -->
+    <div class="title-primary currency">
+      <span class="primary">{{ value }}</span>
+      <span class="secondary">{{ currency }}</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer text-sm">
+      <!-- Expiry -->
+      <div class="title-secondary content text-muted text-bold">
         Valid until {{ expiry }}
       </div>
+
+      <!-- Redeem link -->
+      <div class="content text-muted text-bold">
+        Go to <span class="primary">https://stamps.cash/redeem</span> for instructions
+      </div>
     </div>
+
+
   </div>
 </div>
 
@@ -39,9 +47,11 @@
   --stamp-width: 63.5;
   
   /* Stamp decoration */
-  --padding-size: 5mm;
+  --padding-size: 2.5mm;
   --border-size: 1px;
 
+  --page-margin-x: 5mm;
+  --page-margin-y: 24.7mm; /* 24.7mm is a magic number. Not sure why its this exact value */
 
   /* Computed size helpers in mm */
   --paper-height-mm: calc(1mm * var(--paper-height));
@@ -50,60 +60,81 @@
   --stamp-height-mm: calc(1mm * var(--stamp-height));
   --stamp-width-mm: calc(1mm * var(--stamp-width));
 
-  /* Get decimal value of division */
-  --calculated-y-quantity-per-page-raw: calc(var(--paper-height) / var(--stamp-height));
-  --calculated-x-quantity-per-page-raw: calc(var(--paper-width) / var(--stamp-width));
-
-  /* Rond down decimal value */
+  /* Define the grid axis lengths */
   --calculated-y-quantity-per-page: 3;
   --calculated-x-quantity-per-page: 3;
-  /* --calculated-y-quantity-per-page: round(down, var(--calculated-y-quantity-per-page-raw), 1); */
-  /* --calculated-x-quantity-per-page: round(down, var(--calculated-x-quantity-per-page-raw), 1); */
   
   /* Set sizes to "fill" page. inner stamp will be correct stamp size */
-  --calculated-full-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page));
+  --calculated-full-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page) - ((var(--page-margin-y)) / (var(--calculated-y-quantity-per-page) + 0.5)));
   --calculated-y-white-space: calc(calc(var(--calculated-full-stamp-height) - var(--stamp-height-mm)) / (var(--calculated-x-quantity-per-page)));
   --calculated-stamp-height: calc(var(--calculated-full-stamp-height) - (var(--calculated-y-white-space)));
 
   /* Stamp container width */
-  --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page));
+  --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page) - ((var(--page-margin-x) * 2) / var(--calculated-x-quantity-per-page)));
+}
+
+/**
+* Page Settings
+*/
+@page {
+  size: 210mm 297mm; 
+  /* Chrome sets own margins, we change these printer settings */
+  margin: var(--page-margin-y) 0 0 0;
 }
 
 .page {
   align-items: flex-start;
   justify-content: flex-start;
 
-  padding-left: 0.25in;
-  padding-right: 0.25in;
-  margin-left: auto;
-  margin-right: auto;
+  padding-left: var(--page-margin-x);
+  padding-right: var(--page-margin-x);
 }
 
 .stamp {
   /* Stamp size */
+  width: var(--calculated-stamp-width);
+  height: var(--calculated-stamp-height);
   
-
-  /* padding-top: var(--calculated-y-white-space); */
-  padding: var(--padding-size);
-  
+  /* Stop stamps from being broken in half between pages */
   break-inside: avoid;
   
+  /* Center the stamp inside of the stamp container */
   display: grid;
-  align-items: end;
-  justify-content: center;
+  place-items: center;
+
+  /* Remove text formatting from quasar */
+  line-height: 1;
 }
 
 
 .stamp-inner {
-  width: 2.5in;
-  height: 2.5in;
+  /* Set stamp size */
+  width: var(--stamp-width-mm);
+  height: var(--stamp-height-mm);
 
+  /* Set stamp border */
   border: var(--border-size) dashed #46ba4f;
 
-  margin-top: var(--margin-size);
-  margin-left: var(--margin-size);
+  /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
+  padding-top: var(--padding-size);
+  padding-bottom: calc(var(--padding-size) / 2);
+  padding-left: var(--padding-size);
+  padding-right: var(--padding-size);
 
+  /* Center text */
   text-align: center;
+
+  /* Define layout inside of the stamp */
+  /* 
+    Stamp content is laid out as follows on this template:
+    - QR Code
+    - Stamp Value
+    - Footer
+  */
+  display: grid;
+  grid-template-rows: auto auto auto;
+  grid-template-columns: 1fr;
+  align-items: space-between;
 }
 
 .title-primary {
@@ -125,6 +156,10 @@
 
 .text-muted {
   color: #686868;
+}
+
+.text-sm {
+  font-size: 12px;
 }
 
 .qr-code {
