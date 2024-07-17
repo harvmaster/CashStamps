@@ -26,6 +26,7 @@
     "electrum-cash": "2.0.10-development.3428777728",
     "events": "^3.3.0",
     "idb-keyval": "^6.2.1",
+    "luxon": "^3.4.4",
     "quasar": "^2.6.0",
     "vite-plugin-externals": "^0.6.2",
     "vue": "^3.0.0",

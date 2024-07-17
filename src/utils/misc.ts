@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import QRCode from 'easyqrcodejs';
+import { DateTime } from 'luxon';
 
 // Convert a date to a string in the format of "YYYY/MM/DD"
 export const dateToString = (date = new Date()) => {
@@ -23,6 +24,34 @@ export const timeToString = (date = new Date()) => {
   const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
+export const getDay = (date = new Date()) => {
+  return date.getDate();
+}
+
+export const getDayShort = (date = new Date()) => {
+  return date.toLocaleString('default', { weekday: 'short' });
+}
+
+export const getDayLong = (date = new Date()) => {
+  return date.toLocaleString('default', { weekday: 'long' });
+}
+
+export const getMonth = (date = new Date()) => {
+  return date.getMonth() + 1;
+}
+
+export const getMonthShort = (date = new Date()) => {
+  return date.toLocaleString('default', { month: 'short' });
+}
+
+export const getMonthLong = (date = new Date()) => {
+  return date.toLocaleString('default', { month: 'long' });
+}
+
+export const getYear = (date = new Date()) => {
+  return date.getFullYear();
 }
 
 // returns a string in the format of "dd MMM YYYY"
@@ -174,6 +203,16 @@ export const compileTemplate = async (
 
       // if data[split[0]] is an empty string, use the data value. The above line would ignore an empty string as a value and break some stuff
       replacement = data[split[0]] === undefined ? replacement : data[split[0]];
+    }
+
+    if (split[0].toLowerCase() === 'date') {
+      const dateArg = data[split[1]] || split[1];
+      const formatArg = data[split[2]] || split[2];
+
+      console.log(dateArg, formatArg);
+      const date = DateTime.fromISO(dateArg);
+
+      replacement = date.toFormat(formatArg); 
     }
 
     // Replace the current match in the template

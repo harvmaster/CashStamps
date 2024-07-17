@@ -16,15 +16,15 @@
     <div class="footer text-sm">
       <!-- Expiry -->
       <div class="title-secondary content text-muted text-bold">
-        Valid until {{ expiry }}
+        <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
+        Valid until {{ DATE expiry DD }}
       </div>
 
       <!-- Redeem link -->
       <div class="content text-muted text-bold">
-        Go to <span class="primary">https://stamps.cash/redeem</span> for instructions
+        Redeem at <span class="primary">stamps.cash/redeem</span>
       </div>
     </div>
-
 
   </div>
 </div>
