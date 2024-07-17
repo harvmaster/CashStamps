@@ -94,7 +94,7 @@ export const renderQrCode = async (
 
     // Set the source of the image (replace with your image path)
     if (process.env.BASE_PATH) {
-      img.src = `${process.env.BASE_PATH}/${logo}`
+      img.src = `/${process.env.BASE_PATH}/${logo}`
     } else {
       img.src = logo
     }
