@@ -39,10 +39,23 @@ export const formatStampValue = (value: number, currency: string) => {
     return value.replace(/\.?0+$/, '');
   };
 
+  const formatFiat = (value: number) => {
+    const val = value.toFixed(2);
+    const parts = val.split('.');
+    const integer = parts[0];
+    const decimal = parts[1];
+
+    if (decimal === '00') {
+      return integer;
+    }
+
+    return val;
+  }
+
   // Return the amount with the correct number of decimal places
   return currency === 'BCH'
     ? removeTrailingZeros(value.toFixed(8))
-    : value.toFixed(2);
+    : formatFiat(value)
 }
 
 export const renderQrCode = async (
@@ -154,6 +167,9 @@ export const compileTemplate = async (
       replacement = await renderQrCode(urlArg, logoArg);
     } else {
       replacement = data[split[0]] || split[0] || '';
+
+      // if data[split[0]] is an empty string, use the data value. The above line would ignore an empty string as a value and break some stuff
+      replacement = data[split[0]] === undefined ? replacement : data[split[0]];
     }
 
     // Replace the current match in the template

@@ -320,11 +320,15 @@ watch([stamps, selectedTemplate, showUsedStamps, () => collectionForm.value.fund
         continue;
       }
 
+      const symbol = app.oracles.getOracleSymbol(currency)
+      console.log('symbol', symbol)
+
       // Compile this stamp.
       const compiledStamp = await compileTemplate(
         selectedTemplate.value.value,
         {
           value: formatStampValue(stampValue, selectedCurrency),
+          symbol: app.oracles.getOracleSymbol(currency),
           currency: getCurrencyName(selectedCurrency),
           expiry: dateToStampString(expiry),
           wif: stamp.privateKey().toWif(),
