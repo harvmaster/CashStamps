@@ -93,7 +93,11 @@ export const renderQrCode = async (
     const img = new Image();
 
     // Set the source of the image (replace with your image path)
-    img.src = logo;
+    if (process.env.BASE_PATH) {
+      img.src = `${process.env.BASE_PATH}/${logo}`
+    } else {
+      img.src = logo
+    }
 
     return new Promise((resolve) => {
       // When the image has loaded, draw it on the canvas
