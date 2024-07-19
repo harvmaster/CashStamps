@@ -41,7 +41,7 @@
         <!-- Input form and wallet creator -->
         <div class="col-12">
           <q-toggle
-            label="Use Existing Colection"
+            label="Use Existing Collection"
             v-model="showExistingCollections"
           />
 

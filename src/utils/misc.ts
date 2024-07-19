@@ -26,34 +26,6 @@ export const timeToString = (date = new Date()) => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-export const getDay = (date = new Date()) => {
-  return date.getDate();
-}
-
-export const getDayShort = (date = new Date()) => {
-  return date.toLocaleString('default', { weekday: 'short' });
-}
-
-export const getDayLong = (date = new Date()) => {
-  return date.toLocaleString('default', { weekday: 'long' });
-}
-
-export const getMonth = (date = new Date()) => {
-  return date.getMonth() + 1;
-}
-
-export const getMonthShort = (date = new Date()) => {
-  return date.toLocaleString('default', { month: 'short' });
-}
-
-export const getMonthLong = (date = new Date()) => {
-  return date.toLocaleString('default', { month: 'long' });
-}
-
-export const getYear = (date = new Date()) => {
-  return date.getFullYear();
-}
-
 // returns a string in the format of "dd MMM YYYY"
 export const dateToStampString = (date = new Date()) => {
   const day = date.getDate();
@@ -209,7 +181,6 @@ export const compileTemplate = async (
       const dateArg = data[split[1]] || split[1];
       const formatArg = data[split[2]] || split[2];
 
-      console.log(dateArg, formatArg);
       const date = DateTime.fromISO(dateArg);
 
       replacement = date.toFormat(formatArg); 
