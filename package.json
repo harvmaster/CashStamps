@@ -10,7 +10,7 @@
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
-    "build": "quasar build -m pwa",
+    "build": "quasar build",
     "build_github": "BASE_PATH='CashStamps/' quasar build",
     "favicons": "icongenie generate --theme-color 000 --skip-trim -i ./src/assets/bch.png"
   },
