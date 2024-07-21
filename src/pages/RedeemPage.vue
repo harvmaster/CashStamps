@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-page-container>
       <q-page class="flex bg-dark">
-        <div class="flex col-grow column" style="max-width:992px; margin-left: auto; margin-right: auto;">
+        <div class="flex col-grow column" style="width:992px; max-width:100%; margin-left: auto; margin-right: auto;">
           <div class="col-shrink">
             <q-stepper
               class="full-width"
@@ -94,7 +94,9 @@
                 </div>
 
                 <div>
-                  <q-icon name="map" size="144px" />
+                  <a href="https://maps.bitcoin.com" target="_blank">
+                    <q-icon name="map" size="144px" />
+                  </a>
                 </div>
               </div>
             </div>
