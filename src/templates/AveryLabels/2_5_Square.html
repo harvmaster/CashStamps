@@ -3,7 +3,6 @@
     <div class="stamp-content">
       <!-- Redeem QR Code -->
       <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
-
     </div>
 
     <!-- Stamp Value -->
@@ -26,169 +25,178 @@
       </div>
 
       <!-- Social Media Link -->
-      <div 
+      <div
         class="content text-muted text-bold row-contanier"
-        style="margin-top: 5px;"  
+        style="margin-top: 5px"
       >
-        <img 
+        <img
           src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
           class="social-media-icon"
-        >
+        />
         <span class="">Follow me on X: xxxxxxxxx</span>
       </div>
     </div>
-
   </div>
 </div>
 
 <style>
-:root {
-  font-family: Arial, Helvetica, sans-serif;
-  
-  /* 
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+
+    /* 
     Set your paper size here
   
     Default: A4
       A4 Paper is 210mm x 297mm
       A3 Paper is 297mm x 420mm
   */
-  --paper-height: 297;
-  --paper-width: 210;
+    --paper-height: 297;
+    --paper-width: 210;
 
-  --stamp-height: 63.5;
-  --stamp-width: 63.5;
-  
-  /* Stamp decoration */
-  --padding-size: 2.5mm;
-  --border-size: 1px;
+    --stamp-height: 63.5;
+    --stamp-width: 63.5;
 
-  --page-margin-x: 5mm;
-  --page-margin-y: 24.7mm; /* 24.7mm is a magic number. Not sure why its this exact value */
+    /* Stamp decoration */
+    --padding-size: 2.5mm;
+    --border-size: 1px;
 
-  /* Computed size helpers in mm */
-  --paper-height-mm: calc(1mm * var(--paper-height));
-  --paper-width-mm: calc(1mm * var(--paper-width));
+    --page-margin-x: 5mm;
+    --page-margin-y: 24.7mm; /* 24.7mm is a magic number. Not sure why its this exact value */
 
-  --stamp-height-mm: calc(1mm * var(--stamp-height));
-  --stamp-width-mm: calc(1mm * var(--stamp-width));
+    /* Computed size helpers in mm */
+    --paper-height-mm: calc(1mm * var(--paper-height));
+    --paper-width-mm: calc(1mm * var(--paper-width));
 
-  /* Define the grid axis lengths */
-  --calculated-y-quantity-per-page: 3;
-  --calculated-x-quantity-per-page: 3;
-  
-  /* Set sizes to "fill" page. inner stamp will be correct stamp size */
-  --calculated-full-stamp-height: calc(var(--paper-height-mm) / var(--calculated-y-quantity-per-page) - ((var(--page-margin-y)) / (var(--calculated-y-quantity-per-page) + 0.5)));
-  --calculated-y-white-space: calc(calc(var(--calculated-full-stamp-height) - var(--stamp-height-mm)) / (var(--calculated-x-quantity-per-page)));
-  --calculated-stamp-height: calc(var(--calculated-full-stamp-height) - (var(--calculated-y-white-space)));
+    --stamp-height-mm: calc(1mm * var(--stamp-height));
+    --stamp-width-mm: calc(1mm * var(--stamp-width));
 
-  /* Stamp container width */
-  --calculated-stamp-width: calc(var(--paper-width-mm) / var(--calculated-x-quantity-per-page) - ((var(--page-margin-x) * 2) / var(--calculated-x-quantity-per-page)));
-}
+    /* Define the grid axis lengths */
+    --calculated-y-quantity-per-page: 3;
+    --calculated-x-quantity-per-page: 3;
 
-/**
+    /* Set sizes to "fill" page. inner stamp will be correct stamp size */
+    --calculated-full-stamp-height: calc(
+      var(--paper-height-mm) / var(--calculated-y-quantity-per-page) -
+        ((var(--page-margin-y)) / (var(--calculated-y-quantity-per-page) + 0.5))
+    );
+    --calculated-y-white-space: calc(
+      calc(var(--calculated-full-stamp-height) - var(--stamp-height-mm)) /
+        (var(--calculated-x-quantity-per-page))
+    );
+    --calculated-stamp-height: calc(
+      var(--calculated-full-stamp-height) - (var(--calculated-y-white-space))
+    );
+
+    /* Stamp container width */
+    --calculated-stamp-width: calc(
+      var(--paper-width-mm) / var(--calculated-x-quantity-per-page) -
+        ((var(--page-margin-x) * 2) / var(--calculated-x-quantity-per-page))
+    );
+  }
+
+  /**
 * Page Settings
 */
-@page {
-  size: 210mm 297mm; 
-  /* Chrome sets own margins, we change these printer settings */
-  margin: var(--page-margin-y) 0 0 0;
-}
+  @page {
+    size: 210mm 297mm;
+    /* Chrome sets own margins, we change these printer settings */
+    margin: var(--page-margin-y) 0 0 0;
+  }
 
-.page {
-  align-items: flex-start;
-  justify-content: flex-start;
+  .page {
+    align-items: flex-start;
+    justify-content: flex-start;
 
-  padding-left: var(--page-margin-x);
-  padding-right: var(--page-margin-x);
-}
+    padding-left: var(--page-margin-x);
+    padding-right: var(--page-margin-x);
+  }
 
-.stamp {
-  /* Stamp size */
-  width: var(--calculated-stamp-width);
-  height: var(--calculated-stamp-height);
-  
-  /* Stop stamps from being broken in half between pages */
-  break-inside: avoid;
-  
-  /* Center the stamp inside of the stamp container */
-  display: grid;
-  place-items: center;
+  .stamp {
+    /* Stamp size */
+    width: var(--calculated-stamp-width);
+    height: var(--calculated-stamp-height);
 
-  /* Remove text formatting from quasar */
-  line-height: 1;
-}
+    /* Stop stamps from being broken in half between pages */
+    break-inside: avoid;
 
+    /* Center the stamp inside of the stamp container */
+    display: grid;
+    place-items: center;
 
-.stamp-inner {
-  /* Set stamp size */
-  width: var(--stamp-width-mm);
-  height: var(--stamp-height-mm);
+    /* Remove text formatting from quasar */
+    line-height: 1;
+  }
 
-  /* Set stamp border */
-  border: var(--border-size) dashed #46ba4f;
+  .stamp-inner {
+    /* Set stamp size */
+    width: var(--stamp-width-mm);
+    height: var(--stamp-height-mm);
 
-  /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
-  padding-top: var(--padding-size);
-  padding-bottom: calc(var(--padding-size) / 2);
-  padding-left: var(--padding-size);
-  padding-right: var(--padding-size);
+    /* Set stamp border */
+    border: var(--border-size) dashed #46ba4f;
 
-  /* Center text */
-  text-align: center;
+    /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
+    padding-top: var(--padding-size);
+    padding-bottom: calc(var(--padding-size) / 2);
+    padding-left: var(--padding-size);
+    padding-right: var(--padding-size);
 
-  /* Define layout inside of the stamp */
-  /* 
+    /* Center text */
+    text-align: center;
+
+    /* Define layout inside of the stamp */
+    /* 
     Stamp content is laid out as follows on this template:
     - QR Code
     - Stamp Value
     - Footer
   */
-  display: grid;
-  grid-template-rows: auto auto auto;
-  grid-template-columns: 1fr;
-  align-items: space-between;
-}
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+    align-items: space-between;
+  }
 
-.title-primary {
-  font-size: 32px;
-  font-weight: bold;
-}
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
 
-.primary {
-  color: #46ba4f;
-}
+  .primary {
+    color: #46ba4f;
+  }
 
-.secondary {
-  color: #46ba4f;
-}
+  .secondary {
+    color: #46ba4f;
+  }
 
-.text-bold {
-  font-weight: bold;
-}
+  .text-bold {
+    font-weight: bold;
+  }
 
-.text-muted {
-  color: #686868;
-}
+  .text-muted {
+    color: #686868;
+  }
 
-.text-sm {
-  font-size: 12px;
-}
+  .text-sm {
+    font-size: 12px;
+  }
 
-.qr-code {
-  width: 35mm !important;
-  height: 35mm !important;
-}
+  .qr-code {
+    width: 35mm !important;
+    height: 35mm !important;
+  }
 
-.row-contanier {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-.social-media-icon {
-  width: 1.5em;
-  height: 1.5em;
-  object-fit: contain;
-  border-radius: 4px;
-}
+  .row-contanier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .social-media-icon {
+    width: 1.5em;
+    height: 1.5em;
+    object-fit: contain;
+    border-radius: 4px;
+  }
 </style>

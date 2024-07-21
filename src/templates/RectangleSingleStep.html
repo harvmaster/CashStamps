@@ -5,7 +5,6 @@
 
     <!-- Title -->
     <div class="title-primary">
-
       <div class="currency">
         <span class="primary">{{ value }}</span>
         <span class="secondary">{{ currency }}</span>
@@ -14,71 +13,71 @@
 
     <!-- Expiry -->
     <div class="title-secondary">
-      <div class="content text-muted text-bold">
-        Valid until {{ expiry }}
-      </div>
+      <div class="content text-muted text-bold">Valid until {{ expiry }}</div>
     </div>
   </div>
 </div>
 
 <style>
-:root {
-  font-family: Arial, Helvetica, sans-serif; 
-}
-.page {
-  align-items: flex-start;
-  justify-content: flex-start;
-  height: fit-content !important;
-}
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .page {
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: fit-content !important;
+  }
 
-.stamp {
-  --margin-size: 0mm;
-  --padding-size: 5mm;
-  --border-size: 1px;
-  --column-count: 4;
+  .stamp {
+    --margin-size: 0mm;
+    --padding-size: 5mm;
+    --border-size: 1px;
+    --column-count: 4;
 
-  --stamp-width: calc((210mm / var(--column-count)) - var(--margin-size) - (var(--margin-size) / var(--column-count)));
+    --stamp-width: calc(
+      (210mm / var(--column-count)) - var(--margin-size) -
+        (var(--margin-size) / var(--column-count))
+    );
 
-  margin-top: var(--margin-size);
-  margin-left: var(--margin-size);
+    margin-top: var(--margin-size);
+    margin-left: var(--margin-size);
 
-  break-inside: avoid;
-  text-align: center;
+    break-inside: avoid;
+    text-align: center;
 
-  aspect-ratio: 1;
-  width: var(--stamp-width) !important;
-}
+    aspect-ratio: 1;
+    width: var(--stamp-width) !important;
+  }
 
-.stamp-inner {
-  padding: var(--padding-size);
-  border: var(--border-size) dashed #46ba4f;
+  .stamp-inner {
+    padding: var(--padding-size);
+    border: var(--border-size) dashed #46ba4f;
+  }
 
-}
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
 
-.title-primary {
-  font-size: 32px;
-  font-weight: bold;
-}
+  .primary {
+    color: #46ba4f;
+  }
 
-.primary {
-  color: #46ba4f;
-}
+  .secondary {
+    color: #46ba4f;
+  }
 
-.secondary {
-  color: #46ba4f;
-}
+  .text-bold {
+    font-weight: bold;
+  }
 
-.text-bold {
-  font-weight: bold;
-}
+  .text-muted {
+    color: #686868;
+  }
 
-.text-muted {
-  color: #686868;
-}
-
-.qr-code {
-  width: 35mm !important;
-  height: 35mm !important;
-  /* margin-bottom: 5mm; */
-}
+  .qr-code {
+    width: 35mm !important;
+    height: 35mm !important;
+    /* margin-bottom: 5mm; */
+  }
 </style>

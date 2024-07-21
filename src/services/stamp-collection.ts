@@ -59,7 +59,9 @@ export class StampCollection {
   constructor(
     private readonly mnemonic: string,
     private readonly hdNodes: Array<Stamp> = [],
-    private readonly fundingOptions: FundingOptions = { ...DEFAULT_FUNDING_OPTIONS },
+    private readonly fundingOptions: FundingOptions = {
+      ...DEFAULT_FUNDING_OPTIONS,
+    },
     private expiry: Date = new Date(),
     private name: string = ''
   ) {
@@ -135,7 +137,7 @@ export class StampCollection {
     }
 
     // Get the balance of each node
-    nodes.forEach(async (node) => node.getAvailableBalance())
+    nodes.forEach(async (node) => node.getAvailableBalance());
 
     // Get the blocktime of the first transaction to get the funding date
     // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet

@@ -5,7 +5,6 @@
 
     <!-- Title -->
     <div class="title-primary">
-
       <div class="currency">
         <span class="primary">{{ value }}</span>
         <span class="secondary">{{ currency }}</span>
@@ -14,79 +13,81 @@
 
     <!-- Expiry -->
     <div class="title-secondary">
-      <div class="content text-muted text-bold">
-        Valid until {{ expiry }}
-      </div>
+      <div class="content text-muted text-bold">Valid until {{ expiry }}</div>
     </div>
   </div>
 </div>
 
 <style>
-:root {
-  font-family: Arial, Helvetica, sans-serif; 
-}
-.page {
-  align-items: flex-start;
-  justify-content: flex-start;
-  height: fit-content !important;
-}
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .page {
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: fit-content !important;
+  }
 
-.stamp {
-  /* 
+  .stamp {
+    /* 
     A4 Paper is 210mm x 297mm
   */
-  --stamp-height: 99mm;
-  --stamp-width: 70mm;
+    --stamp-height: 99mm;
+    --stamp-width: 70mm;
 
-  --margin-size: 0mm;
-  --padding-size: 5mm;
-  --border-size: 1px;
+    --margin-size: 0mm;
+    --padding-size: 5mm;
+    --border-size: 1px;
 
-  --calculated-stamp-height: calc(var(--stamp-height) - (2 * var(--margin-size)));
-  --calculated-stamp-width: calc(var(--stamp-width) - (2 * var(--margin-size)));
+    --calculated-stamp-height: calc(
+      var(--stamp-height) - (2 * var(--margin-size))
+    );
+    --calculated-stamp-width: calc(
+      var(--stamp-width) - (2 * var(--margin-size))
+    );
 
-  break-inside: avoid;
-  
-  width: var(--calculated-stamp-width);
-  height: var(--calculated-stamp-height);
-}
+    break-inside: avoid;
 
-.stamp-inner {
-  height: 100%;
-  width: 100%;
+    width: var(--calculated-stamp-width);
+    height: var(--calculated-stamp-height);
+  }
 
-  padding: var(--padding-size);
-  border: var(--border-size) dashed #46ba4f;
+  .stamp-inner {
+    height: 100%;
+    width: 100%;
 
-  margin-top: var(--margin-size);
-  margin-left: var(--margin-size);
+    padding: var(--padding-size);
+    border: var(--border-size) dashed #46ba4f;
 
-  text-align: center;
-}
+    margin-top: var(--margin-size);
+    margin-left: var(--margin-size);
 
-.title-primary {
-  font-size: 32px;
-  font-weight: bold;
-}
+    text-align: center;
+  }
 
-.primary {
-  color: #46ba4f;
-}
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
 
-.secondary {
-  color: #46ba4f;
-}
+  .primary {
+    color: #46ba4f;
+  }
 
-.text-bold {
-  font-weight: bold;
-}
+  .secondary {
+    color: #46ba4f;
+  }
 
-.text-muted {
-  color: #686868;
-}
+  .text-bold {
+    font-weight: bold;
+  }
 
-.qr-code {
-  width: 35mm !important;
-  height: 35mm !important;
-}
+  .text-muted {
+    color: #686868;
+  }
+
+  .qr-code {
+    width: 35mm !important;
+    height: 35mm !important;
+  }
 </style>

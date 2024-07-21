@@ -1,3 +1,19 @@
+// Font imports.
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+.inner-page {
+  min-width: 210mm;
+  width: 992px;
+  margin: auto;
+  padding-bottom: 40px;
+}
+
+.strong {
+  font-family: 'Anton', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 // app global css in SCSS form
 h1,
 h2,
@@ -53,16 +69,9 @@ h6 {
   overflow-x: hidden;
 }
 
-/*
-@media print {
-  body {
-    padding: 1em;
-  }
-  .cash-stamp_item {
-    page-break-inside: avoid;
-  }
-}
-*/
+//-----------------------------------------------------------------------------
+// Component Over-rides
+//-----------------------------------------------------------------------------
 
 /* Define the A4 page size */
 @page {

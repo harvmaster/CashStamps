@@ -1,6 +1,7 @@
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
+  { path: '/redeem', component: () => import('pages/RedeemPage.vue') },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),

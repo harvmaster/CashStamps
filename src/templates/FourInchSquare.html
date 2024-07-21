@@ -5,7 +5,6 @@
 
     <!-- Title -->
     <div class="title-primary">
-
       <div class="currency">
         <span class="primary">{{ value }}</span>
         <span class="secondary">{{ currency }}</span>
@@ -14,87 +13,82 @@
 
     <!-- Expiry -->
     <div class="title-secondary">
-      <div class="content text-muted text-bold">
-        Valid until {{ expiry }}
-      </div>
+      <div class="content text-muted text-bold">Valid until {{ expiry }}</div>
     </div>
   </div>
 
   <span class="text-center text-muted text-bold">
-    Go to <span class="primary">https://stamps.cash/redeem</span> for instructions
+    Go to <span class="primary">https://stamps.cash/redeem</span> for
+    instructions
   </span>
 </div>
 
 <style>
-:root {
-  font-family: Arial, Helvetica, sans-serif;
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-}
+  .page {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
 
+  .stamp {
+    --border-size: 1px;
+    --padding-size: 5mm;
+    --margin-size: 5mm;
 
-.page {
-  align-items: flex-start;
-  justify-content: flex-start;
-}
+    /* Stamp size */
+    width: 4in;
+    height: 4in;
 
-.stamp {
-  --border-size: 1px;
-  --padding-size: 5mm;
-  --margin-size: 5mm;
+    border: var(--border-size) dashed rgba(172, 172, 172, 0.281);
+    /* border: var(--border-size) dashed #46ba4f; */
 
-  /* Stamp size */
-  width: 4in;
-  height: 4in;
+    break-inside: avoid;
+    padding: var(--padding-size);
 
-  border: var(--border-size) dashed rgba(172, 172, 172, 0.281);
-  /* border: var(--border-size) dashed #46ba4f; */
+    display: grid;
+    place-items: center;
+  }
 
-  
-  break-inside: avoid;
-  padding: var(--padding-size);
+  .stamp-inner {
+    height: auto;
+    width: auto;
 
-  display: grid;
-  place-items: center;
-}
+    margin-top: var(--margin-size);
+    margin-left: var(--margin-size);
 
+    text-align: center;
+  }
 
-.stamp-inner {
-  height: auto;
-  width: auto;
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
 
-  margin-top: var(--margin-size);
-  margin-left: var(--margin-size);
+  .primary {
+    color: #46ba4f;
+  }
 
-  text-align: center;
-}
+  .secondary {
+    color: #46ba4f;
+  }
 
-.title-primary {
-  font-size: 32px;
-  font-weight: bold;
-}
+  .text-bold {
+    font-weight: bold;
+  }
 
-.primary {
-  color: #46ba4f;
-}
+  .text-muted {
+    color: #686868;
+  }
 
-.secondary {
-  color: #46ba4f;
-}
+  .text-center {
+    text-align: center;
+  }
 
-.text-bold {
-  font-weight: bold;
-}
-
-.text-muted {
-  color: #686868;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.qr-code {
-  width: 35mm !important;
-  height: 35mm !important;
-}
+  .qr-code {
+    width: 35mm !important;
+    height: 35mm !important;
+  }
 </style>

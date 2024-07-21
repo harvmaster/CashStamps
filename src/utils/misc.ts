@@ -24,7 +24,7 @@ export const timeToString = (date = new Date()) => {
   const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-}
+};
 
 // returns a string in the format of "dd MMM YYYY"
 export const dateToStampString = (date = new Date()) => {
@@ -33,7 +33,7 @@ export const dateToStampString = (date = new Date()) => {
   const year = date.getFullYear();
 
   return `${day} ${month} ${year}`;
-}
+};
 
 export const formatStampValue = (value: number, currency: string) => {
   const removeTrailingZeros = (value: string) => {
@@ -51,13 +51,13 @@ export const formatStampValue = (value: number, currency: string) => {
     }
 
     return val;
-  }
+  };
 
   // Return the amount with the correct number of decimal places
   return currency === 'BCH'
     ? removeTrailingZeros(value.toFixed(8))
-    : formatFiat(value)
-}
+    : formatFiat(value);
+};
 
 export const renderQrCode = async (
   content: string,
@@ -95,9 +95,9 @@ export const renderQrCode = async (
 
     // Set the source of the image (replace with your image path)
     if (process.env.BASE_PATH) {
-      img.src = `/${process.env.BASE_PATH}/${logo}`
+      img.src = `/${process.env.BASE_PATH}/${logo}`;
     } else {
-      img.src = logo
+      img.src = logo;
     }
 
     return new Promise((resolve) => {
@@ -183,7 +183,7 @@ export const compileTemplate = async (
 
       const date = DateTime.fromISO(dateArg);
 
-      replacement = date.toFormat(formatArg); 
+      replacement = date.toFormat(formatArg);
     }
 
     // Replace the current match in the template

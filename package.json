@@ -1,9 +1,9 @@
 {
-  "name": "www.cashstamps",
+  "name": "StampsCash",
   "version": "0.0.1",
   "description": "Create reclaimable BCH wallets",
-  "productName": "Cash Stamps",
-  "author": "Harveyy Zuccon (hzuccon@gmail.com)",
+  "productName": "StampsCash",
+  "author": "Harvey Zuccon (hzuccon@gmail.com)",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
