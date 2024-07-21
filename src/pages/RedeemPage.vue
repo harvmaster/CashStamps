@@ -94,8 +94,8 @@
                 </div>
 
                 <div>
-                  <a href="https://maps.bitcoin.com" target="_blank">
-                    <q-icon name="map" size="144px" />
+                  <a class="text-primary" href="https://maps.bitcoin.com" target="_blank">
+                    <q-icon name="store" size="144px" />
                   </a>
                 </div>
               </div>
