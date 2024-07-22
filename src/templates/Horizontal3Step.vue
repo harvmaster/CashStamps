@@ -128,7 +128,7 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref } from 'vue';
 import QRCode from 'easyqrcodejs';
 
 import { HDPrivateNode } from 'src/utils/hd-private-node.js';

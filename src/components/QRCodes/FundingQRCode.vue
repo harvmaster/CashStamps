@@ -77,14 +77,12 @@
 
 <script setup lang="ts">
 import { nextTick, ref, computed } from 'vue';
+import { App } from 'src/services/app'
 
 // Import the CashPayServer library for generating transactions
 import CashPayServer from '@developers.cash/cash-pay-server-js';
-
 // Made type for CashPayServer as it was not defined in the library
 import { CashPayServer_Invoice } from 'src/types';
-
-import { App } from 'src/services/app'
 
 const props = defineProps<{
   app: App;
@@ -139,6 +137,9 @@ const generateQrCode = async () => {
       const stampCollection = app.stampCollection.value;
       if (!stampCollection) throw new Error('No stamp collection found');
       app.saveStamps(stampCollection);
+
+      // refresh the stamp balances. This may need a delay
+      // app.stampCollection.value?.refreshStampValues();
       
       console.log(e);
     });

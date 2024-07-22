@@ -275,8 +275,13 @@ import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 const $q = useQuasar();
 const $route = useRoute();
 
+$q.loading.show();
+
 const app = new App();
 await app.start();
+
+$q.loading.hide();
+
 
 // HACK: Set to light mode in case user has come from redeem page.
 // TODO: Fix this in future.

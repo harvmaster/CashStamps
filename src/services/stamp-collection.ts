@@ -180,6 +180,11 @@ export class StampCollection {
     this.funding.funded = new Date();
   }
 
+  async refreshStampValues () {
+    // Get the balance of each node
+    this.stamps.forEach(async (node) => node.getAvailableBalance());
+  } 
+
   redeemRemainingStamps() {
     console.log('redeem stamps');
   }
