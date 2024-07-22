@@ -81,6 +81,9 @@ import { nextTick, ref, computed } from 'vue';
 // Import the CashPayServer library for generating transactions
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
+// Made type for CashPayServer as it was not defined in the library
+import { CashPayServer_Invoice } from 'src/types';
+
 import { App } from 'src/services/app'
 
 const props = defineProps<{
@@ -129,18 +132,20 @@ const generateQrCode = async () => {
 
     // Listen for broadcasted event to update stamps
     .on(['broadcasted'], async (e: unknown) => {
+      lockStampCollection();
+      
       console.log(e);
-      await app.stampCollection.value?.fundStamps();
-      await app.stampCollection.value?.saveStamps();
+      // await app.stampCollection.value?.fundStamps();
+      // await app.stampCollection.value?.saveStamps();
     });
 
   // Create the QR code by sending request to CashPayServer
   await invoice.create();
 };
 
-const createFundingTx = async () => {
+const createFundingTx = async (): Promise<CashPayServer_Invoice> => {
   const fundingOptions = app.stampCollection.value?.getFundingOptions();
-  if (!fundingOptions) return;
+  if (!fundingOptions) throw new Error('No funding options found');
 
   if (fundingOptions.funded) {
     throw new Error('Collection is already funded');
@@ -195,6 +200,25 @@ const createFundingTx = async () => {
   // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
   return invoice;
 };
+
+const lockStampCollection = async () => {
+  const stampCollection = app.stampCollection.value;
+  if (!stampCollection) throw new Error('No stamp collection found');
+
+  const fundingOptions = stampCollection.getFundingOptions();
+  if (!fundingOptions) throw new Error('No funding options found');
+
+  if (fundingOptions.currency !== 'BCH') {
+    const bchPrice = app.oracles.getOraclePriceCommonUnits(
+      fundingOptions.currency
+    );
+
+    stampCollection.lockStampOptions({
+      value: fundingOptions.value / bchPrice,
+      currency: 'BCH',
+    })
+  }
+}
 
 // Vue function to allow parent component to call toggleVisible
 defineExpose({

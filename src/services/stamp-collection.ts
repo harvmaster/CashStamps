@@ -9,12 +9,6 @@ import {
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
 
-// ---------------
-//  Type imports
-// ---------------
-// Made type for CashPayServer as it was not defined in the library
-import { CashPayServer_Invoice } from 'src/types';
-
 // -------------------
 //  Local imports
 // -------------------
@@ -178,18 +172,26 @@ export class StampCollection {
     return this.stamps;
   }
 
-  // Set stamp as funded to disable funding button. Convert the value to BCH if it is not already in BCH
-  async fundStamps() {
+  // Set the funding options to the BCH value and the date it was funded.
+  // This is generated after the funding tx is completed
+  lockStampOptions(funding: { currency: 'BCH'; value: number }) {
+    this.funding.currency = funding.currency;
+    this.funding.value = funding.value;
     this.funding.funded = new Date();
-
-    if (this.funding.currency !== 'BCH') {
-      const bchPrice = app.oracles.getOraclePriceCommonUnits(
-        this.getFundingOptions().currency
-      );
-      this.funding.value = this.funding.value / bchPrice;
-      this.funding.currency = 'BCH';
-    }
   }
+
+  // Set stamp as funded to disable funding button. Convert the value to BCH if it is not already in BCH
+  // async fundStamps() {
+  //   this.funding.funded = new Date();
+
+  //   if (this.funding.currency !== 'BCH') {
+  //     const bchPrice = app.oracles.getOraclePriceCommonUnits(
+  //       this.getFundingOptions().currency
+  //     );
+  //     this.funding.value = this.funding.value / bchPrice;
+  //     this.funding.currency = 'BCH';
+  //   }
+  // }
 
   redeemRemainingStamps() {
     console.log('redeem stamps');
