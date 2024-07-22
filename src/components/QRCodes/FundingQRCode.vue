@@ -139,7 +139,7 @@ const generateQrCode = async () => {
       app.saveStamps(stampCollection);
 
       // refresh the stamp balances. This may need a delay
-      // app.stampCollection.value?.refreshStampValues();
+      app.stampCollection.value?.refreshStampValues();
       
       console.log(e);
     });

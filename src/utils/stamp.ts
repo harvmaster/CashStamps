@@ -1,13 +1,12 @@
 import { HdPrivateNodeValid } from '@bitauth/libauth';
 import { HDPrivateNode } from './hd-private-node';
-import { ref, Ref } from 'vue';
 
 import { AddressListUnspent } from 'src/services/electrum-types';
 import { ElectrumService } from 'src/services/electrum';
 
 export class Stamp extends HDPrivateNode {
-  public balance: Ref<number> = ref(0);
-  private electrum: ElectrumService;
+  public balance = 0;
+  public electrum: ElectrumService;
 
   constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
     super(node);
@@ -50,12 +49,12 @@ export class Stamp extends HDPrivateNode {
 
   async getAvailableBalance(): Promise<number> {
     const unspentTransactions = await this.getUnspentTransactions();
-    this.balance.value = unspentTransactions.reduce(
+    this.balance = unspentTransactions.reduce(
       (acc, { value }) => acc + value,
       0
     );
 
-    return this.balance.value;
+    return this.balance;
   }
 }
 
