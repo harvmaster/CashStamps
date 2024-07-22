@@ -14,10 +14,10 @@ import { StampCollection } from './stamp-collection.js';
 import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-v2.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
-import { get } from 'idb-keyval';
+import { get, set } from 'idb-keyval';
 
 // Vue and Quasar.
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 import { Loading } from 'quasar';
 import { DB_StampCollection } from 'src/types.js';
 
@@ -27,9 +27,10 @@ export class App {
   oracles: OraclesService;
 
   // stampCollection?: StampCollection | undefined = reactive<{value: InstanceType<StampCollection> | undefined }>({ value:  undefined });
-  stampCollection = ref<StampCollection | undefined>(
-    StampCollection.generate({ quantity: 0 })
-  );
+  // stampCollection = ref<StampCollection | undefined>(
+  //   StampCollection.generate(this.electrum, { quantity: 0 })
+  // );
+  stampCollection: Ref<StampCollection | undefined> = ref(undefined);
 
   // Flags.
   debug = ref(false);
@@ -44,6 +45,11 @@ export class App {
 
     // Setup our Electrum Service.
     this.electrum = new ElectrumService(ELECTRUM_SERVERS);
+
+    // Set the stampCollection to a new StampCollection instance.
+    this.stampCollection.value = StampCollection.generate(this.electrum, {
+      quantity: 0
+    });
   }
 
   async start(): Promise<void> {
@@ -58,7 +64,6 @@ export class App {
       // TODO: Should try to make this optional in case the Oracles are down.
       this.oracles.start(),
 
-      // this.importOldCollections(), // Test code for migration
       migrateCollection_v1_to_v2(),
     ]);
 
@@ -122,11 +127,46 @@ export class App {
 
     // Set the StampCollection to the stampCollection ref.
     this.stampCollection.value = await StampCollection.fromMnemonic(
+      this.electrum,
       collection.mnemonic,
       expiry
     );
 
     Loading.hide();
+  }
+
+  async saveStamps (stampCollection: StampCollection) {
+    // Get the name or use the mnemonic as the name
+    const name = stampCollection.getName() || stampCollection.getMnemonic();
+    const mnemonic = stampCollection.getMnemonic();
+    const expiry = stampCollection.getExpiry();
+
+    // Get the existing collections or create a new one
+    const collections = await this.getStampCollections();
+
+    // Check if the collection already exists
+    const existingIndex = collections.findIndex((c) => c.name === name);
+
+    // If the collection exists, Overwrite it
+    if (existingIndex > -1) {
+      collections[existingIndex] = {
+        name,
+        mnemonic,
+        version: 2,
+        expiry: expiry.getTime(),
+      };
+    } else {
+      // If the collection does not exist, Add it
+      collections.push({
+        name,
+        mnemonic,
+        version: 2,
+        expiry: expiry.getTime(),
+      });
+    }
+
+    // Save the collections back to IDB
+    await set('stampCollections', collections);
   }
 
   //---------------------------------------------------------------------------

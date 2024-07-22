@@ -276,7 +276,7 @@ import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
 
 // Form for creating a new collection and loading an existing collections params into the form
-const { collectionForm, createCollection } = useCollectionForm();
+const { collectionForm, createCollection } = useCollectionForm(app);  // This will likely need fixing when moving app to setup
 
 const $q = useQuasar();
 const $route = useRoute();
@@ -462,7 +462,7 @@ const usedStamps = computed(() => {
 const clearForm = (): void => {
   if (!app.stampCollection) return;
 
-  app.stampCollection.value = StampCollection.generate({ quantity: 0 });
+  app.stampCollection.value = StampCollection.generate(app.electrum, { quantity: 0 });
 };
 
 // Print the stamps

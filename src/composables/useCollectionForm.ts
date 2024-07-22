@@ -1,14 +1,14 @@
 import { computed, ref, watch } from 'vue';
 
-import { app } from 'src/boot/app';
 import {
   StampCollection,
   GenerateOptions,
 } from 'src/services/stamp-collection';
 
 import { dateToString } from 'src/utils/misc';
+import { App } from 'src/services/app';
 
-export const useCollectionForm = () => {
+export const useCollectionForm = (app: App) => {
   const collectionForm = ref<Required<GenerateOptions>>({
     name: '',
     quantity: 1,
@@ -26,7 +26,7 @@ export const useCollectionForm = () => {
       ? app.stampCollection.value?.getMnemonic()
       : undefined;
 
-    app.stampCollection.value = StampCollection.generate({
+    app.stampCollection.value = StampCollection.generate(app.electrum,{
       quantity: collectionForm.value.quantity,
       name: collectionForm.value.name,
       expiry: collectionForm.value.expiry,
@@ -40,7 +40,7 @@ export const useCollectionForm = () => {
   };
 
   const clearCollection = () => {
-    app.stampCollection.value = StampCollection.generate({ quantity: 0 });
+    app.stampCollection.value = StampCollection.generate(app.electrum, { quantity: 0 });
   };
 
   // Watch for changes in the stamp collection, and update the form accordingly.

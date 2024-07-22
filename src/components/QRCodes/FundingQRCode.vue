@@ -132,11 +132,15 @@ const generateQrCode = async () => {
 
     // Listen for broadcasted event to update stamps
     .on(['broadcasted'], async (e: unknown) => {
+      // set the collection to funded and use BCH as the currency
       lockStampCollection();
+
+      // save the stamps to local storage with IDB
+      const stampCollection = app.stampCollection.value;
+      if (!stampCollection) throw new Error('No stamp collection found');
+      app.saveStamps(stampCollection);
       
       console.log(e);
-      // await app.stampCollection.value?.fundStamps();
-      // await app.stampCollection.value?.saveStamps();
     });
 
   // Create the QR code by sending request to CashPayServer

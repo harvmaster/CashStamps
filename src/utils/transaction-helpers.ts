@@ -2,9 +2,9 @@ import {
   AddressGetHistory,
   AddressListUnspent,
 } from 'src/services/electrum-types';
-import { app } from '../boot/app';
 import { DERIVATION_PATH, ADDRESS_GAP } from 'src/services/stamp-collection';
 import { HDPrivateNode } from './hd-private-node';
+import { ElectrumService } from 'src/services/electrum';
 
 export type KeyHistory = {
   history: AddressGetHistory['response'];
@@ -37,6 +37,7 @@ export const getAddresses = (
 };
 
 export const getUsedKeys = async (
+  electrum: ElectrumService,
   parentNode: HDPrivateNode,
   offset = 0,
   count = ADDRESS_GAP
@@ -46,7 +47,7 @@ export const getUsedKeys = async (
   const historyPromises: Promise<KeyHistory>[] = addresses.map(
     async ({ address, node }) => {
       // Get the history of the key from electrum
-      const res = (await app.electrum.request(
+      const res = (await electrum.request(
         'blockchain.address.get_history',
         address
       )) as AddressGetHistory['response'];
@@ -64,7 +65,7 @@ export const getUsedKeys = async (
   // If all the keys are used, check the next batch of keys and append to the array of used jeys
   if (history.every((key) => key.history.length)) {
     history.push(
-      ...(await getUsedKeys(parentNode, offset + ADDRESS_GAP, count))
+      ...(await getUsedKeys(electrum, parentNode, offset + ADDRESS_GAP, count))
     );
   }
 
@@ -73,6 +74,7 @@ export const getUsedKeys = async (
 };
 
 export const getKeyUnspent = async (
+  electrum: ElectrumService,
   key: HDPrivateNode
 ): Promise<AddressListUnspent['response']> => {
   const address = key
@@ -80,7 +82,7 @@ export const getKeyUnspent = async (
     .publicKey()
     .deriveAddress()
     .toCashAddr();
-  const res = (await app.electrum.request(
+  const res = (await electrum.request(
     'blockchain.address.listunspent',
     address
   )) as AddressListUnspent['response'];
@@ -88,8 +90,8 @@ export const getKeyUnspent = async (
   return res;
 };
 
-export const getTransactionData = async (key: KeyHistory) => {
-  const res = (await app.electrum.request(
+export const getTransactionData = async (electrum: ElectrumService, key: KeyHistory) => {
+  const res = (await electrum.request(
     'blockchain.transaction.get',
     key.history[0].tx_hash,
     true
@@ -98,8 +100,9 @@ export const getTransactionData = async (key: KeyHistory) => {
 };
 
 export const getTransactionBlocktime = async (
+  electrum: ElectrumService,
   key: KeyHistory
 ): Promise<number> => {
-  const res = await getTransactionData(key);
+  const res = await getTransactionData(electrum, key);
   return res.blocktime;
 };
