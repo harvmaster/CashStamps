@@ -220,8 +220,15 @@ const lockStampCollection = async () => {
     stampCollection.lockStampOptions({
       value: fundingOptions.value / bchPrice,
       currency: 'BCH',
-    })
+    });
+
+    return
   }
+
+  stampCollection.lockStampOptions({ 
+    value: fundingOptions.value,
+    currency: 'BCH',
+   });
 }
 
 // Vue function to allow parent component to call toggleVisible
