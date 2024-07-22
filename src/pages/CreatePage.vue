@@ -224,13 +224,6 @@
   max-width: 100%;
 }
 
-.inner-page {
-  min-width: 210mm;
-  width: 992px;
-  margin: auto;
-  padding-bottom: 40px;
-}
-
 /*
 @media print {
   .printable {
