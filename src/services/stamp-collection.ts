@@ -1,7 +1,7 @@
 // -------------------
 // 3rd party imports
 // -------------------
-import { reactive, Reactive, ref, Ref } from 'vue';
+import { reactive, Reactive, shallowRef } from 'vue';
 
 import {
   deriveSeedFromBip39Mnemonic,
@@ -41,24 +41,26 @@ export type GenerateOptions = {
 };
 
 export class StampCollection {
-  public readonly stamps: Ref<Array<Stamp>> = ref([]);
+  public readonly stamps = shallowRef<Array<Stamp>>([]);
   public readonly funding: Reactive<FundingOptions>;
 
   constructor(
-    private readonly electrum: ElectrumService,
     private readonly mnemonic: string,
-    private readonly hdNodes: Array<Stamp> = [],
-    private readonly fundingOptions: FundingOptions = {
-      ...DEFAULT_FUNDING_OPTIONS,
-    },
     private expiry: Date = new Date(),
-    private name: string = ''
+    private name: string = '',
+    stamps: Array<Stamp> = [],
+    fundingOptions: FundingOptions = {
+      ...DEFAULT_FUNDING_OPTIONS,
+    }
   ) {
-    this.stamps.value = hdNodes;
+    this.stamps.value = stamps;
     this.funding = reactive(fundingOptions);
   }
 
-  static generate(electrum: ElectrumService, options: GenerateOptions): StampCollection {
+  static generate(
+    electrum: ElectrumService,
+    options: GenerateOptions
+  ): StampCollection {
     // Use default funding options if none are provided.
     const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
 
@@ -91,12 +93,11 @@ export class StampCollection {
 
     // Create instance of StampCollection using generated mnemonic.
     return new StampCollection(
-      electrum,
       options.mnemonic,
-      nodes,
-      fundingOptions,
       expiry,
-      options.name
+      options.name,
+      nodes,
+      fundingOptions
     );
   }
 
@@ -118,13 +119,13 @@ export class StampCollection {
     const usedKeys = await getUsedKeys(electrum, parentNode);
 
     // Get the nodes from the used keys
-    usedKeys.forEach((key, i) => {
+    usedKeys.forEach((key, _i) => {
       nodes.push(new Stamp(key.node.node, electrum));
     });
 
     // Early return, otherwise we get an error when trying to get the blocktime of the first transaction
     if (nodes.length === 0) {
-      return new StampCollection(electrum, mnemonic, nodes);
+      return new StampCollection(mnemonic, new Date(), '', nodes);
     }
 
     // Get the balance of each node
@@ -157,7 +158,7 @@ export class StampCollection {
     };
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(electrum, mnemonic, nodes, fundingOptions, expiry);
+    return new StampCollection(mnemonic, expiry, '', nodes, fundingOptions);
   }
 
   setName(name: string) {
@@ -168,10 +169,6 @@ export class StampCollection {
     return this.mnemonic;
   }
 
-  getStamps(): Array<Stamp> {
-    return this.stamps.value;
-  }
-
   // Set the funding options to the BCH value and the date it was funded.
   // This is generated after the funding tx is completed
   lockStampOptions(funding: { currency: 'BCH'; value: number }) {
@@ -180,10 +177,10 @@ export class StampCollection {
     this.funding.funded = new Date();
   }
 
-  async refreshStampValues () {
+  async refreshStampValues() {
     // Get the balance of each node
     this.stamps.value.forEach(async (node) => node.getAvailableBalance());
-  } 
+  }
 
   redeemRemainingStamps() {
     console.log('redeem stamps');
@@ -191,10 +188,6 @@ export class StampCollection {
 
   getName() {
     return this.name;
-  }
-
-  getFundingOptions(): Reactive<FundingOptions> {
-    return this.funding;
   }
 
   getExpiry() {

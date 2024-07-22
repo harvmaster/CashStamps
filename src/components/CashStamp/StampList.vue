@@ -35,9 +35,7 @@ const app = props.app;
 
 const loadingFunding = ref(false);
 
-const appFunding = computed(() =>
-  app.stampCollection.value?.getFundingOptions()
-);
+const appFunding = computed(() => app.stampCollection.value?.funding);
 
 const stampFunding = ref<FundingOptions>(props.funding);
 const getStampFunding = async () => {

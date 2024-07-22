@@ -3,18 +3,24 @@ import { HDPrivateNode } from './hd-private-node';
 
 import { AddressListUnspent } from 'src/services/electrum-types';
 import { ElectrumService } from 'src/services/electrum';
-import { Ref, ref } from 'vue';
+import { ref } from 'vue';
 
 export class Stamp extends HDPrivateNode {
-  public balance: Ref<number> = ref(0);
+  // Dependencies/Services
   public electrum: ElectrumService;
+
+  // Reactive State
+  public balance = ref<number>(0);
 
   constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
     super(node);
     this.electrum = electrum;
   }
 
-  static fromHDPrivateNode(node: HDPrivateNode, electrum: ElectrumService): Stamp {
+  static fromHDPrivateNode(
+    node: HDPrivateNode,
+    electrum: ElectrumService
+  ): Stamp {
     return new Stamp(node.node, electrum);
   }
 

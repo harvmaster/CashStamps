@@ -118,8 +118,7 @@
 
               <span
                 v-if="
-                  stamps.length &&
-                  app.stampCollection.value?.getFundingOptions().funded
+                  stamps.length && app.stampCollection.value?.funding.funded
                 "
                 class="text-weight-medium q-pa-sm q-ml-sm bg-grey-3 rounded-borders"
                 style="width: fit-content"
@@ -202,7 +201,7 @@
       </div>
     </div>
 
-    <mnemonic-dialog ref="mnemonicDialog" :mnemonic="mnemonic"/>
+    <mnemonic-dialog ref="mnemonicDialog" :mnemonic="mnemonic" />
   </q-page>
 </template>
 
@@ -241,7 +240,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
 import { useQuasar, copyToClipboard } from 'quasar';
 
 // Service / App / Utils imports
@@ -271,9 +269,7 @@ import AveryLabel from 'src/templates/AveryLabels.html?raw';
 import FourInchSquare from 'src/templates/FourInchSquare.html?raw';
 import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 
-
 const $q = useQuasar();
-const $route = useRoute();
 
 $q.loading.show();
 
@@ -282,16 +278,15 @@ await app.start();
 
 $q.loading.hide();
 
-
 // HACK: Set to light mode in case user has come from redeem page.
 // TODO: Fix this in future.
 $q.dark.set(false);
 
 // List of stamps (as HDPrivateNodes)
-const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
+const stamps = computed(() => app.stampCollection.value?.stamps.value || []);
 
 // Form for creating a new collection and loading an existing collections params into the form
-const { collectionForm, createCollection } = useCollectionForm(app);  // This will likely need fixing when moving app to setup
+const { collectionForm, createCollection } = useCollectionForm(app); // This will likely need fixing when moving app to setup
 
 const showUsedStamps = ref<boolean>(true);
 
@@ -345,10 +340,8 @@ watch(
       const newVisibleStamps: Array<VisibleStamps> = [];
 
       // To improve legibility, destructure our funding options.
-      const { value, currency, funded } =
-        app.stampCollection.value.getFundingOptions();
+      const { value, currency, funded } = app.stampCollection.value.funding;
       const expiry = app.stampCollection.value.getExpiry();
-      const formattedExpiry = dateToString(expiry);
 
       let selectedCurrency = currency;
       let stampValue = value;
@@ -470,7 +463,9 @@ const usedStamps = computed(() => {
 const clearForm = (): void => {
   if (!app.stampCollection) return;
 
-  app.stampCollection.value = StampCollection.generate(app.electrum, { quantity: 0 });
+  app.stampCollection.value = StampCollection.generate(app.electrum, {
+    quantity: 0,
+  });
 };
 
 // Print the stamps

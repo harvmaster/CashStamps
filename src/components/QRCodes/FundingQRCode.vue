@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { nextTick, ref, computed } from 'vue';
-import { App } from 'src/services/app'
+import { App } from 'src/services/app';
 
 // Import the CashPayServer library for generating transactions
 import CashPayServer from '@developers.cash/cash-pay-server-js';
@@ -140,7 +140,7 @@ const generateQrCode = async () => {
 
       // refresh the stamp balances. This may need a delay
       app.stampCollection.value?.refreshStampValues();
-      
+
       console.log(e);
     });
 
@@ -149,7 +149,7 @@ const generateQrCode = async () => {
 };
 
 const createFundingTx = async (): Promise<CashPayServer_Invoice> => {
-  const fundingOptions = app.stampCollection.value?.getFundingOptions();
+  const fundingOptions = app.stampCollection.value?.funding;
   if (!fundingOptions) throw new Error('No funding options found');
 
   if (fundingOptions.funded) {
@@ -171,16 +171,14 @@ const createFundingTx = async (): Promise<CashPayServer_Invoice> => {
   // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
   if (currency !== 'BCH') {
     // Get the BCH price in the selected currency
-    const bchPrice = app.oracles.getOraclePriceCommonUnits(
-      currency
-    );
+    const bchPrice = app.oracles.getOraclePriceCommonUnits(currency);
 
     // Set BCH amount to the equivalent amount in the selected currency
     bchAmount = rawAmount / bchPrice;
   }
 
   // Get all stamps to iterate over
-  const stamps = app.stampCollection.value?.getStamps();
+  const stamps = app.stampCollection.value?.stamps.value;
   if (!stamps) {
     throw new Error('No stamps found');
   }
@@ -210,7 +208,7 @@ const lockStampCollection = async () => {
   const stampCollection = app.stampCollection.value;
   if (!stampCollection) throw new Error('No stamp collection found');
 
-  const fundingOptions = stampCollection.getFundingOptions();
+  const fundingOptions = stampCollection.funding;
   if (!fundingOptions) throw new Error('No funding options found');
 
   if (fundingOptions.currency !== 'BCH') {
@@ -223,14 +221,14 @@ const lockStampCollection = async () => {
       currency: 'BCH',
     });
 
-    return
+    return;
   }
 
-  stampCollection.lockStampOptions({ 
+  stampCollection.lockStampOptions({
     value: fundingOptions.value,
     currency: 'BCH',
-   });
-}
+  });
+};
 
 // Vue function to allow parent component to call toggleVisible
 defineExpose({

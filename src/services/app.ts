@@ -17,7 +17,7 @@ import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-
 import { get, set } from 'idb-keyval';
 
 // Vue and Quasar.
-import { Ref, ref } from 'vue';
+import { ref, shallowRef } from 'vue';
 import { Loading } from 'quasar';
 import { DB_StampCollection } from 'src/types.js';
 
@@ -26,11 +26,9 @@ export class App {
   electrum: ElectrumService;
   oracles: OraclesService;
 
-  // stampCollection?: StampCollection | undefined = reactive<{value: InstanceType<StampCollection> | undefined }>({ value:  undefined });
-  // stampCollection = ref<StampCollection | undefined>(
-  //   StampCollection.generate(this.electrum, { quantity: 0 })
-  // );
-  stampCollection: Ref<StampCollection | undefined> = ref(undefined);
+  // State.
+  // NOTE: We use a shallow refs so that nested refs are not unwrapped.
+  stampCollection = shallowRef<StampCollection | undefined>(undefined);
 
   // Flags.
   debug = ref(false);
@@ -48,7 +46,7 @@ export class App {
 
     // Set the stampCollection to a new StampCollection instance.
     this.stampCollection.value = StampCollection.generate(this.electrum, {
-      quantity: 0
+      quantity: 0,
     });
   }
 
@@ -98,7 +96,7 @@ export class App {
   //---------------------------------------------------------------------------
 
   //--------------------------------------------------------------------------
-  // Database_Methods
+  // Database Methods
   //---------------------------------------------------------------------------
 
   // Get the StampCollections from the browser's IndexedDB.
@@ -135,7 +133,7 @@ export class App {
     Loading.hide();
   }
 
-  async saveStamps (stampCollection: StampCollection) {
+  async saveStamps(stampCollection: StampCollection) {
     // Get the name or use the mnemonic as the name
     const name = stampCollection.getName() || stampCollection.getMnemonic();
     const mnemonic = stampCollection.getMnemonic();

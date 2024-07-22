@@ -187,7 +187,7 @@ const model = defineModel<Required<GenerateOptions>>('form', {
   required: true,
 });
 const props = defineProps<{ app: App }>();
-const app = props.app
+const app = props.app;
 
 const emits = defineEmits(['create']);
 
@@ -197,18 +197,14 @@ const emits = defineEmits(['create']);
 //
 // Get the current StampCollection. Have to get them individually because the variables are private on the stamp collection object
 const stampCollection = computed(() => app.stampCollection.value);
-const stampCollectionStamps = computed(() =>
-  stampCollection.value?.getStamps()
+const stampCollectionStamps = computed(
+  () => stampCollection.value?.stamps.value
 );
 const stampCollectionName = computed(() => stampCollection.value?.getName());
-const stampCollectionFunding = computed(() =>
-  stampCollection.value?.getFundingOptions()
-);
+const stampCollectionFunding = computed(() => stampCollection.value?.funding);
 
 // Disable buttons if funded
-const disabled = computed(
-  () => !!app.stampCollection.value?.getFundingOptions().funded
-);
+const disabled = computed(() => !!app.stampCollection.value?.funding.funded);
 
 // ----------------------------------
 // Collection Name Updater

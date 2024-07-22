@@ -22,11 +22,11 @@ export const useCollectionForm = (app: App) => {
   });
 
   const createCollection = async () => {
-    const mnemonic = !app.stampCollection.value?.getFundingOptions()?.funded
+    const mnemonic = !app.stampCollection.value?.funding?.funded
       ? app.stampCollection.value?.getMnemonic()
       : undefined;
 
-    app.stampCollection.value = StampCollection.generate(app.electrum,{
+    app.stampCollection.value = StampCollection.generate(app.electrum, {
       quantity: collectionForm.value.quantity,
       name: collectionForm.value.name,
       expiry: collectionForm.value.expiry,
@@ -40,33 +40,28 @@ export const useCollectionForm = (app: App) => {
   };
 
   const clearCollection = () => {
-    app.stampCollection.value = StampCollection.generate(app.electrum, { quantity: 0 });
+    app.stampCollection.value = StampCollection.generate(app.electrum, {
+      quantity: 0,
+    });
   };
 
   // Watch for changes in the stamp collection, and update the form accordingly.
   watch(app.stampCollection, async () => {
-    console.log(app.stampCollection.value?.stamps.value)
-    
-    debugger;
-
     collectionForm.value = {
       name: app.stampCollection.value?.getName() || '',
       quantity: app.stampCollection.value?.stamps.value.length || 1,
       expiry: dateToString(app.stampCollection.value?.getExpiry()),
       funding: {
-        value: app.stampCollection.value?.getFundingOptions()?.value || 0,
-        currency:
-          app.stampCollection.value?.getFundingOptions()?.currency || 'BCH',
-        funded: app.stampCollection.value?.getFundingOptions()?.funded || false,
+        value: app.stampCollection.value?.funding?.value || 0,
+        currency: app.stampCollection.value?.funding?.currency || 'BCH',
+        funded: app.stampCollection.value?.funding?.funded || false,
       },
       mnemonic: '',
     };
   });
 
-  const stampCollction = computed(() => app.stampCollection.value);
-  const fundingOptions = computed(() =>
-    stampCollction.value?.getFundingOptions()
-  );
+  const stampCollection = computed(() => app.stampCollection.value);
+  const fundingOptions = computed(() => stampCollection.value?.funding);
   watch(
     () => fundingOptions.value?.funded,
     () => {

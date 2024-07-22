@@ -90,7 +90,10 @@ export const getKeyUnspent = async (
   return res;
 };
 
-export const getTransactionData = async (electrum: ElectrumService, key: KeyHistory) => {
+export const getTransactionData = async (
+  electrum: ElectrumService,
+  key: KeyHistory
+) => {
   const res = (await electrum.request(
     'blockchain.transaction.get',
     key.history[0].tx_hash,
