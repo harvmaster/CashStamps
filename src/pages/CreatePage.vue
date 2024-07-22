@@ -245,14 +245,13 @@ import { useRoute } from 'vue-router';
 import { useQuasar, copyToClipboard } from 'quasar';
 
 // Service / App / Utils imports
-import { app } from 'src/boot/app';
+import { App } from 'src/services/app';
 import { StampCollection } from 'src/services/stamp-collection';
 import {
   compileTemplate,
   printHtml,
   dateToString,
   formatStampValue,
-  dateToStampString,
 } from 'src/utils/misc';
 
 // Composables Imports
@@ -272,18 +271,22 @@ import AveryLabel from 'src/templates/AveryLabels.html?raw';
 import FourInchSquare from 'src/templates/FourInchSquare.html?raw';
 import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 
+
+const $q = useQuasar();
+const $route = useRoute();
+
+const app = new App();
+await app.start();
+
+// HACK: Set to light mode in case user has come from redeem page.
+// TODO: Fix this in future.
+$q.dark.set(false);
+
 // List of stamps (as HDPrivateNodes)
 const stamps = computed(() => app.stampCollection.value?.getStamps() || []);
 
 // Form for creating a new collection and loading an existing collections params into the form
 const { collectionForm, createCollection } = useCollectionForm(app);  // This will likely need fixing when moving app to setup
-
-const $q = useQuasar();
-const $route = useRoute();
-
-// HACK: Set to light mode in case user has come from redeem page.
-// TODO: Fix this in future.
-$q.dark.set(false);
 
 const showUsedStamps = ref<boolean>(true);
 
