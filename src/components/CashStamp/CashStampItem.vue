@@ -59,11 +59,12 @@
 import { onMounted, ref, computed } from 'vue';
 import QRCode from 'easyqrcodejs';
 
-import { app } from 'src/boot/app';
 import { HDPrivateNode } from 'src/utils/hd-private-node';
 import { FundingOptions } from 'src/services/stamp-collection';
+import { App } from 'src/services/app';
 
 export type CashStampItemProps = {
+  app: App;
   id: number;
   stamp: HDPrivateNode;
   funding: FundingOptions;
@@ -72,6 +73,8 @@ export type CashStampItemProps = {
 };
 
 const props = defineProps<CashStampItemProps>();
+const app = props.app;
+
 const qrElement = ref<HTMLDivElement | null>(null);
 
 // ----------------------------------

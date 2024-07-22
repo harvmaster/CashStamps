@@ -131,7 +131,6 @@
 import { onMounted, ref, computed } from 'vue';
 import QRCode from 'easyqrcodejs';
 
-import { app } from 'src/boot/app.js';
 import { HDPrivateNode } from 'src/utils/hd-private-node.js';
 import { FundingOptions } from 'src/services/stamp-collection.js';
 

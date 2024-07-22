@@ -76,7 +76,7 @@ export class StampCollection {
     const seed = deriveSeedFromBip39Mnemonic(options.mnemonic);
 
     // Create a node from the seed.
-    const parentNode = Stamp.fromSeed(seed);
+    const parentNode = Stamp.fromStampSeed(seed, electrum);
 
     // Declare an array to store our nodes.
     const nodes: Array<Stamp> = [];
@@ -109,7 +109,7 @@ export class StampCollection {
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
     // Create a node from the seed.
-    const parentNode = Stamp.fromSeed(seed);
+    const parentNode = Stamp.fromStampSeed(seed, electrum);
 
     // Declare an array to store our nodes.
     const nodes: Array<Stamp> = [];
@@ -119,7 +119,7 @@ export class StampCollection {
 
     // Get the nodes from the used keys
     usedKeys.forEach((key, i) => {
-      nodes.push(new Stamp(key.node.node));
+      nodes.push(new Stamp(key.node.node, electrum));
     });
 
     // Early return, otherwise we get an error when trying to get the blocktime of the first transaction

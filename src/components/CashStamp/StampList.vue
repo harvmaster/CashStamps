@@ -4,6 +4,7 @@
       class="col-auto q-pa-sm"
       v-for="(stamp, index) in stamps || []"
       :key="stamp.toString()"
+      :app="app"
       :id="index"
       :stamp="stamp"
       :funding="stampFunding"
@@ -16,20 +17,21 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
 
-import { app } from 'src/boot/app';
-
 import { HDPrivateNode } from 'src/utils/hd-private-node';
 import { FundingOptions } from 'src/services/stamp-collection';
 
 import CashStampItem from './CashStampItem.vue';
+import { App } from 'src/services/app';
 
 export type StampListProps = {
+  app: App;
   stamps: HDPrivateNode[];
   usedStamps: string[];
   funding: FundingOptions;
 };
 
 const props = defineProps<StampListProps>();
+const app = props.app;
 
 const loadingFunding = ref(false);
 

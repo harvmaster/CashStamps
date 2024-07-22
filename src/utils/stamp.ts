@@ -1,36 +1,37 @@
-import { app } from '../boot/app';
-
 import { HdPrivateNodeValid } from '@bitauth/libauth';
 import { HDPrivateNode } from './hd-private-node';
 import { ref, Ref } from 'vue';
 
 import { AddressListUnspent } from 'src/services/electrum-types';
+import { ElectrumService } from 'src/services/electrum';
 
 export class Stamp extends HDPrivateNode {
   public balance: Ref<number> = ref(0);
+  private electrum: ElectrumService;
 
-  constructor(node: HdPrivateNodeValid) {
+  constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
     super(node);
+    this.electrum = electrum;
   }
 
-  static fromHDPrivateNode(node: HDPrivateNode): Stamp {
-    return new Stamp(node.node);
+  static fromHDPrivateNode(node: HDPrivateNode, electrum: ElectrumService): Stamp {
+    return new Stamp(node.node, electrum);
   }
 
-  static fromSeed(seed: Uint8Array): Stamp {
-    return new Stamp(HDPrivateNode.fromSeed(seed).node);
+  static fromStampSeed(seed: Uint8Array, electrum: ElectrumService): Stamp {
+    return new Stamp(HDPrivateNode.fromSeed(seed).node, electrum);
   }
 
-  static fromXPriv(xpriv: string): Stamp {
-    return new Stamp(HDPrivateNode.fromXPriv(xpriv).node);
+  static fromStampXPriv(xpriv: string, electrum: ElectrumService): Stamp {
+    return new Stamp(HDPrivateNode.fromXPriv(xpriv).node, electrum);
   }
 
-  static generateRandom(): Stamp {
-    return new Stamp(HDPrivateNode.generateRandom().node);
+  static generateRandomStamp(electrum: ElectrumService): Stamp {
+    return new Stamp(HDPrivateNode.generateRandom().node, electrum);
   }
 
   derivePath(path: string): Stamp {
-    return new Stamp(super.derivePath(path).node);
+    return new Stamp(super.derivePath(path).node, this.electrum);
   }
 
   async getUnspentTransactions() {
@@ -39,7 +40,7 @@ export class Stamp extends HDPrivateNode {
       .deriveAddress()
       .toCashAddr();
 
-    const unspentTransactions = (await app.electrum.request(
+    const unspentTransactions = (await this.electrum.request(
       'blockchain.address.listunspent',
       address
     )) as AddressListUnspent['response'];

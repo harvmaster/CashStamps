@@ -202,7 +202,7 @@
       </div>
     </div>
 
-    <mnemonic-dialog ref="mnemonicDialog" />
+    <mnemonic-dialog ref="mnemonicDialog" :mnemonic="mnemonic"/>
   </q-page>
 </template>
 
@@ -482,6 +482,7 @@ const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
 const showMnemonicDialog = async () => {
   mnemonicDialog.value?.toggleVisible();
 };
+const mnemonic = computed(() => app.stampCollection.value?.getMnemonic());
 
 // ---------------------------------------
 // Lifecycle hooks

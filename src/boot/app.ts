@@ -9,12 +9,12 @@ export const app = new App();
 // Boot (initialize) the service:
 // For more info on params: https://v2.quasar.dev/quasar-cli/boot-files
 export default boot(async () => {
-  // Show the Loading Indicator.
-  Loading.show();
+  // // Show the Loading Indicator.
+  // Loading.show();
 
-  // Start the App service.
-  await app.start();
+  // // Start the App service.
+  // await app.start();
 
-  // Hide the loading indicator.
-  Loading.hide();
+  // // Hide the loading indicator.
+  // Loading.hide();
 });

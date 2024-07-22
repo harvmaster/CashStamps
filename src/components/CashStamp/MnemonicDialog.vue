@@ -9,10 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { app } from 'src/boot/app';
+import { ref } from 'vue';
 
-const mnemonic = computed(() => app.stampCollection.value?.getMnemonic());
+type MnemonicDialogProps = {
+  mnemonic?: string;
+};
+const props = defineProps<MnemonicDialogProps>();
 
 const visible = ref(false);
 const toggleVisible = () => {
