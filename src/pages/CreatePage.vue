@@ -248,7 +248,6 @@ import { StampCollection } from 'src/services/stamp-collection';
 import {
   compileTemplate,
   printHtml,
-  dateToString,
   formatStampValue,
 } from 'src/utils/misc';
 
@@ -256,8 +255,8 @@ import {
 import { useCollectionForm } from 'src/composables/useCollectionForm';
 
 // Component Imports
-import CashStampsForm from 'components/CashStamp/CashStampsForm.vue';
-import MnemonicDialog from 'src/components/CashStamp/MnemonicDialog.vue';
+import CashStampsForm from 'components/CashStampsForm.vue';
+import MnemonicDialog from 'components/MnemonicDialog.vue';
 
 // Pre-built Templates
 // NOTE: These are HTML Templates which we compile.
@@ -265,8 +264,6 @@ import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
 import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
 import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
-import AveryLabel from 'src/templates/AveryLabels.html?raw';
-import FourInchSquare from 'src/templates/FourInchSquare.html?raw';
 import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 
 const $q = useQuasar();
@@ -286,13 +283,9 @@ $q.dark.set(false);
 const stamps = computed(() => app.stampCollection.value?.stamps.value || []);
 
 // Form for creating a new collection and loading an existing collections params into the form
-const { collectionForm, createCollection } = useCollectionForm(app); // This will likely need fixing when moving app to setup
+const { collectionForm, createCollection } = useCollectionForm(app);
 
 const showUsedStamps = ref<boolean>(true);
-
-// console.log($route.query);
-
-// console.log(atob($route.query.test as string));
 
 //---------------------------------------
 // Templates
@@ -307,8 +300,6 @@ const templateOptions = [
   { label: 'Avery: 2.5 Inch Square', value: TwoHalfInchSquare },
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
-  // { label: 'Avery Label', value: AveryLabel }, // Disabled due to bugs
-  // { label: '4 Inch Square', value: FourInchSquare },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];
@@ -377,7 +368,7 @@ watch(
 
         // Add the compiled template to our list of visible stamps.
         newVisibleStamps.push({
-          claimed: funded && stamp.balance == 0,
+          claimed: funded && stamp.balance.value == 0,
           html: compiledStamp,
         });
       }
@@ -451,7 +442,7 @@ const usedStamps = computed(() => {
   }
 
   return stamps.value
-    .filter((stamp) => stamp.balance == 0)
+    .filter((stamp) => stamp.balance.value == 0)
     .map((stamp) => stamp.privateKey().toWif());
 });
 

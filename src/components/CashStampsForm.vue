@@ -173,7 +173,7 @@ import { computed, ref, watch } from 'vue';
 // import { app } from 'src/boot/app.js';
 import { GenerateOptions } from 'src/services/stamp-collection.js';
 
-import FundingQrCode from '../QRCodes/FundingQRCode.vue';
+import FundingQrCode from './FundingQRCode.vue';
 import RedeemDialog from './RedeemDialog.vue';
 import { App } from 'src/services/app';
 
