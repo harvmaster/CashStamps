@@ -280,6 +280,10 @@ const { collectionForm, createCollection } = useCollectionForm();
 const $q = useQuasar();
 const $route = useRoute();
 
+// HACK: Set to light mode in case user has come from redeem page.
+// TODO: Fix this in future.
+$q.dark.set(false);
+
 const showUsedStamps = ref<boolean>(true);
 
 // console.log($route.query);
