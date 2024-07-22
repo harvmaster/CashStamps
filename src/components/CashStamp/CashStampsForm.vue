@@ -170,11 +170,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-import { app } from 'src/boot/app.js';
+// import { app } from 'src/boot/app.js';
 import { GenerateOptions } from 'src/services/stamp-collection.js';
 
 import FundingQrCode from '../QRCodes/FundingQRCode.vue';
 import RedeemDialog from './RedeemDialog.vue';
+import { App } from 'src/services/app';
 
 // TODO: This interface is probably available in Quasar somewhere.
 interface Option {
@@ -185,6 +186,9 @@ interface Option {
 const model = defineModel<Required<GenerateOptions>>('form', {
   required: true,
 });
+const props = defineProps<{ app: App }>();
+const app = props.app
+
 const emits = defineEmits(['create']);
 
 // ----------------------------------

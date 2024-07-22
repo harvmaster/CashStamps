@@ -77,6 +77,7 @@
           </q-slide-transition>
 
           <cash-stamps-form
+            :app="app"
             :form="collectionForm"
             @create="createCollection"
             :disable="showExistingCollections"
