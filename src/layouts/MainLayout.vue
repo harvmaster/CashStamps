@@ -18,7 +18,15 @@
             flat
             icon="img:telegram.svg"
             type="a"
-            href="https://t.me/harvmaster"
+            href="https://t.me/stampscash"
+            target="_blank"
+          />
+          <q-btn
+            round
+            flat
+            icon="img:x.svg"
+            type="a"
+            href="https://x.com/cashstamps"
             target="_blank"
           />
           <q-btn
