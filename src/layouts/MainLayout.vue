@@ -3,10 +3,12 @@
     <q-header class="bg-dark">
       <q-toolbar class="row">
         <q-toolbar-title class="col-grow">
-          <q-avatar>
-            <img src="/bch.svg" />
-          </q-avatar>
-          Stamps.<span class="text-primary">Cash</span>
+          <span @click="$router.push('/')" class="cursor-pointer">
+            <q-avatar>
+              <img src="/bch.svg" />
+            </q-avatar>
+            Stamps.<span class="text-primary">Cash</span>
+          </span>
         </q-toolbar-title>
 
         <!-- Right Buttons -->
@@ -59,4 +61,8 @@
 }
 </style>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
+
+const $router = useRouter();
+</script>
