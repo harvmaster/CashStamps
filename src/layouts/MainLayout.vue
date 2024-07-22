@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header class="bg-dark">
       <q-toolbar class="row">
-        <q-toolbar-title class="col">
+        <q-toolbar-title class="col-grow">
           <q-avatar>
             <img src="/bch.svg" />
           </q-avatar>
@@ -10,7 +10,7 @@
         </q-toolbar-title>
 
         <!-- Right Buttons -->
-        <div class="col text-right q-gutter-x-xs">
+        <div class="col-shrink text-right q-gutter-x-xs">
           <q-btn
             round
             flat
