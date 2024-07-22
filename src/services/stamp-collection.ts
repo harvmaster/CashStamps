@@ -1,7 +1,7 @@
 // -------------------
 // 3rd party imports
 // -------------------
-import { reactive, Reactive } from 'vue';
+import { reactive, Reactive, ref, Ref } from 'vue';
 
 import {
   deriveSeedFromBip39Mnemonic,
@@ -41,8 +41,8 @@ export type GenerateOptions = {
 };
 
 export class StampCollection {
-  private readonly stamps: Reactive<Array<Stamp>>;
-  private readonly funding: Reactive<FundingOptions>;
+  public readonly stamps: Ref<Array<Stamp>> = ref([]);
+  public readonly funding: Reactive<FundingOptions>;
 
   constructor(
     private readonly electrum: ElectrumService,
@@ -54,7 +54,7 @@ export class StampCollection {
     private expiry: Date = new Date(),
     private name: string = ''
   ) {
-    this.stamps = reactive(hdNodes);
+    this.stamps.value = hdNodes;
     this.funding = reactive(fundingOptions);
   }
 
@@ -168,8 +168,8 @@ export class StampCollection {
     return this.mnemonic;
   }
 
-  getStamps(): Reactive<Array<Stamp>> {
-    return this.stamps;
+  getStamps(): Array<Stamp> {
+    return this.stamps.value;
   }
 
   // Set the funding options to the BCH value and the date it was funded.
@@ -182,7 +182,7 @@ export class StampCollection {
 
   async refreshStampValues () {
     // Get the balance of each node
-    this.stamps.forEach(async (node) => node.getAvailableBalance());
+    this.stamps.value.forEach(async (node) => node.getAvailableBalance());
   } 
 
   redeemRemainingStamps() {

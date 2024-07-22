@@ -3,9 +3,10 @@ import { HDPrivateNode } from './hd-private-node';
 
 import { AddressListUnspent } from 'src/services/electrum-types';
 import { ElectrumService } from 'src/services/electrum';
+import { Ref, ref } from 'vue';
 
 export class Stamp extends HDPrivateNode {
-  public balance = 0;
+  public balance: Ref<number> = ref(0);
   public electrum: ElectrumService;
 
   constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
@@ -49,12 +50,12 @@ export class Stamp extends HDPrivateNode {
 
   async getAvailableBalance(): Promise<number> {
     const unspentTransactions = await this.getUnspentTransactions();
-    this.balance = unspentTransactions.reduce(
+    this.balance.value = unspentTransactions.reduce(
       (acc, { value }) => acc + value,
       0
     );
 
-    return this.balance;
+    return this.balance.value;
   }
 }
 
