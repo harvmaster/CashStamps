@@ -77,7 +77,16 @@
 
 <script setup lang="ts">
 import { nextTick, ref, computed } from 'vue';
-import { app } from 'src/boot/app';
+
+// Import the CashPayServer library for generating transactions
+import CashPayServer from '@developers.cash/cash-pay-server-js';
+
+import { App } from 'src/services/app'
+
+const props = defineProps<{
+  app: App;
+}>();
+const app = props.app;
 
 // Stamp collection and mnemonic
 const collection = computed(() => app.stampCollection.value);
@@ -111,7 +120,7 @@ const generateQrCode = async () => {
   if (!qrElement.value) return;
 
   // Create funding tx template
-  const invoice = app.stampCollection.value?.createFundingTx();
+  const invoice = await createFundingTx();
   if (!invoice) return;
 
   // Set QR code to fill QrElement
@@ -127,6 +136,64 @@ const generateQrCode = async () => {
 
   // Create the QR code by sending request to CashPayServer
   await invoice.create();
+};
+
+const createFundingTx = async () => {
+  const fundingOptions = app.stampCollection.value?.getFundingOptions();
+  if (!fundingOptions) return;
+
+  if (fundingOptions.funded) {
+    throw new Error('Collection is already funded');
+  }
+
+  // Create BIP70 invoice instance
+  const invoice = new CashPayServer.Invoice();
+
+  // Get amount without currency reference
+  const rawAmount = fundingOptions.value;
+
+  // Get currency
+  const currency = fundingOptions.currency;
+
+  // Initialise the output amount to be in BCH
+  let bchAmount = rawAmount;
+
+  // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
+  if (currency !== 'BCH') {
+    // Get the BCH price in the selected currency
+    const bchPrice = app.oracles.getOraclePriceCommonUnits(
+      currency
+    );
+
+    // Set BCH amount to the equivalent amount in the selected currency
+    bchAmount = rawAmount / bchPrice;
+  }
+
+  // Get all stamps to iterate over
+  const stamps = app.stampCollection.value?.getStamps();
+  if (!stamps) {
+    throw new Error('No stamps found');
+  }
+
+  // Add addresses to transaction
+  for (const node of stamps) {
+    const address = node
+      .deriveHDPublicNode()
+      .publicKey()
+      .deriveAddress()
+      .toCashAddr();
+    invoice.addAddress(
+      address,
+      `${bchAmount}BCH` // Amount sent to CashPayServer is in BCH
+    );
+  }
+
+  // Name invoice to show up in cryptocurrency wallet
+  const collectionName = app.stampCollection.value?.getName();
+  invoice.setMemo(`CashStamps: ${collectionName}`);
+
+  // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
+  return invoice;
 };
 
 // Vue function to allow parent component to call toggleVisible

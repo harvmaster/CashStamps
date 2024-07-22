@@ -9,9 +9,6 @@ import {
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
 
-// Import the CashPayServer library for generating transactions
-import CashPayServer from '@developers.cash/cash-pay-server-js';
-
 // ---------------
 //  Type imports
 // ---------------
@@ -179,52 +176,6 @@ export class StampCollection {
 
   getStamps(): Reactive<Array<Stamp>> {
     return this.stamps;
-  }
-
-  createFundingTx(): CashPayServer_Invoice {
-    if (this.funding.funded) throw new Error('Funding already complete');
-
-    // Create BIP70 invoice instance
-    const invoice = new CashPayServer.Invoice();
-
-    // Get amount without currency reference
-    const rawAmount = this.getFundingOptions().value;
-
-    // Get currency
-    const currency = this.getFundingOptions().currency;
-
-    // Initialise the output amount to be in BCH
-    let bchAmount = rawAmount;
-
-    // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
-    if (currency !== 'BCH') {
-      // Get the BCH price in the selected currency
-      const bchPrice = app.oracles.getOraclePriceCommonUnits(
-        this.getFundingOptions().currency
-      );
-
-      // Set BCH amount to the equivalent amount in the selected currency
-      bchAmount = rawAmount / bchPrice;
-    }
-
-    // Add addresses to transaction
-    for (const node of this.hdNodes) {
-      const address = node
-        .deriveHDPublicNode()
-        .publicKey()
-        .deriveAddress()
-        .toCashAddr();
-      invoice.addAddress(
-        address,
-        `${bchAmount}BCH` // Amount sent to CashPayServer is in BCH
-      );
-    }
-
-    // Name invoice to show up in cryptocurrency wallet
-    invoice.setMemo(`CashStamps: ${this.name}`);
-
-    // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
-    return invoice;
   }
 
   // Set stamp as funded to disable funding button. Convert the value to BCH if it is not already in BCH

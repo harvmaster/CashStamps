@@ -157,7 +157,7 @@
         />
       </div>
       <!-- Modal for showing Funding TX Qr Code -->
-      <funding-qr-code ref="fundingQrCode" />
+      <funding-qr-code ref="fundingQrCode" :app="app" />
 
       <!-- Model to display instructions for Redeeming unclaimed wallets -->
       <redeem-dialog ref="redeemDialog" />
