@@ -24,7 +24,8 @@
     display: flex;
     flex: 1;
     color: #fff;
-    font-size: 48px;
+    font-size: clamp(15px, 10vw, 48px); /* Scalable font size */
+    // font-size: 48px;
 }
 
 .left, .right {
