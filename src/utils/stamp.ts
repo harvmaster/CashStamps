@@ -3,14 +3,18 @@ import { HDPrivateNode } from './hd-private-node';
 
 import { AddressListUnspent } from 'src/services/electrum-types';
 import { ElectrumService } from 'src/services/electrum';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 export class Stamp extends HDPrivateNode {
   // Dependencies/Services
   public electrum: ElectrumService;
 
   // Reactive State
-  public balance = ref<number>(0);
+  public readonly state = reactive<{
+    balance: number;
+  }>({
+    balance: 0,
+  });
 
   constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
     super(node);
@@ -56,12 +60,12 @@ export class Stamp extends HDPrivateNode {
 
   async getAvailableBalance(): Promise<number> {
     const unspentTransactions = await this.getUnspentTransactions();
-    this.balance.value = unspentTransactions.reduce(
+    this.state.balance = unspentTransactions.reduce(
       (acc, { value }) => acc + value,
       0
     );
 
-    return this.balance.value;
+    return this.state.balance;
   }
 }
 

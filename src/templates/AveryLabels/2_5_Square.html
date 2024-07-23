@@ -16,12 +16,12 @@
       <!-- Expiry -->
       <div class="title-secondary content text-muted text-bold">
         <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
-        Valid until {{ DATE expiry DD }}
+        Valid until {{ expiry }}
       </div>
 
       <!-- Redeem link -->
       <div class="content text-muted text-bold">
-        Redeem at <span class="primary">stamps.cash/redeem</span>
+        Redeem at <span class="primary">{{ redeemLink }}</span>
       </div>
 
       <!-- Social Media Link -->
@@ -33,7 +33,7 @@
           src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
           class="social-media-icon"
         />
-        <span class="">Follow me on X: xxxxxxxxx</span>
+        <span class="">Follow me on X: {{ followMe }}</span>
       </div>
     </div>
   </div>

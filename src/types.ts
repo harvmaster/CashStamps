@@ -10,11 +10,17 @@ export type Wallet = {
   create_date: string;
 };
 
+export type StampMetadata = { [key: string]: string };
+
 export type DB_StampCollection = {
+  version: 3;
   mnemonic: string;
   name: string;
-  version: number;
-  expiry?: number;
+  amount: number;
+  currency: string;
+  quantity?: number;
+  maybeFunded: boolean;
+  metadata: StampMetadata;
 };
 
 export type CashPayServer_Output = {

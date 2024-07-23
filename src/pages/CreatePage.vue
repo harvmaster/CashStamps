@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <!-- Header Outer -->
+    <!-- Header -->
     <div class="header-outer bg-dark">
       <div class="header-inner">
         <!-- Title -->
@@ -48,39 +48,27 @@
     <!-- Inner page -->
     <div class="inner-page justify-center">
       <div class="row q-col-gutter-y-md">
+        <!-- Collection Selection -->
+        <div class="col-12">
+          <q-select
+            label="Collection"
+            :options="stampCollectionsOptions"
+            v-model="state.selectedCollection"
+            @update:model-value="renderStamps"
+            map-options
+            filled
+          />
+        </div>
+
         <!-- Input form and wallet creator -->
         <div class="col-12">
-          <q-toggle
-            label="Use Existing Collection"
-            v-model="showExistingCollections"
-          />
-
-          <q-slide-transition>
-            <div v-show="showExistingCollections" class="col-12 row">
-              <q-select
-                class="q-pb-md col-auto"
-                style="width: 20em; max-width: 100%"
-                v-model="selectedCollection"
-                :options="collections"
-                label="Select Collection"
-                filled
-              >
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey-8">
-                      No collections available
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-            </div>
-          </q-slide-transition>
-
           <cash-stamps-form
-            :app="app"
-            :form="collectionForm"
-            @create="createCollection"
-            :disable="showExistingCollections"
+            :oracles="app.oracles"
+            :disabled="false"
+            v-model="state.selectedCollection"
+            @create="renderStamps"
+            @fund="showFundingDialog"
+            @redeem="showRedeemDialog"
             class="col-12 q-p-sm"
           />
         </div>
@@ -89,7 +77,7 @@
 
         <!-- Stamp results -->
         <div class="col-12">
-          <div class="row q-mb-xl">
+          <div class="row">
             <!-- Controls for print/show mnemonic -->
             <div class="col-9">
               <q-btn-group>
@@ -97,7 +85,7 @@
                   outline
                   icon="print"
                   color="primary"
-                  :disable="!stamps.length"
+                  :disable="!state.renderedStamps.length"
                   @click="printStamps"
                 >
                   <q-tooltip class="print-hide">Print Stamps</q-tooltip>
@@ -107,23 +95,23 @@
                   outline
                   icon="password"
                   color="secondary"
-                  :disable="!stamps.length"
+                  :disable="!state.renderedStamps.length"
                   @click="showMnemonicDialog"
                 >
                   <q-tooltip>Show Seed phrase</q-tooltip>
                 </q-btn>
               </q-btn-group>
 
-              <q-toggle v-model="showUsedStamps" label="Show used Stamps" />
+              <q-toggle
+                v-model="state.showUsedStamps"
+                label="Show used Stamps"
+              />
 
               <span
-                v-if="
-                  stamps.length && app.stampCollection.value?.funding.funded
-                "
                 class="text-weight-medium q-pa-sm q-ml-sm bg-grey-3 rounded-borders"
                 style="width: fit-content"
               >
-                {{ usedStamps.length }}/ {{ stamps.length }} claimed
+                {{ usedStamps.length }} / {{ state.renderedStamps.length }} claimed
               </span>
             </div>
 
@@ -131,8 +119,9 @@
             <div class="col-3">
               <q-select
                 label="Template"
-                :options="templateOptions"
-                v-model="selectedTemplate"
+                :options="templates"
+                v-model="state.selectedTemplate"
+                @update:model-value="renderStamps"
                 dense
                 filled
               >
@@ -150,8 +139,15 @@
               </q-select>
             </div>
           </div>
+        </div>
 
-          <!-- Page -->
+        <!-- Template Metadata -->
+        <div v-if="state.selectedCollection" class="col-12 q-mb-xl">
+          <metadata-form v-model="state.selectedCollection.metadata" :template="state.selectedTemplate.value" @update:model-value="renderStamps" />
+        </div>
+
+        <!-- Page -->
+        <div class="col-12">
           <div class="justify-center">
             <div class="page shadow-20">
               <div class="flex full-width">
@@ -179,29 +175,15 @@
               </div>
             </div>
           </div>
-
-          <!-- Printable Page -->
-          <!--
-          <div
-            class="col-12 paper printable shadow-20 rounded-md q-pa-md items-start"
-            ref="printContent"
-          >
-            <div class="row col-12">
-              <stamp-list
-                v-if="stamps.length"
-                class="col-12"
-                :stamps="stamps"
-                :usedStamps="usedStamps"
-                :funding="collectionForm.funding"
-              />
-            </div>
-          </div>
-          -->
         </div>
       </div>
     </div>
 
-    <mnemonic-dialog ref="mnemonicDialog" :mnemonic="mnemonic" />
+    <!-- Modal for showing Funding TX Qr Code -->
+    <funding-qr-code ref="fundingQrCode" :app="app" />
+
+    <!-- Model to display instructions for Redeeming unclaimed wallets -->
+    <redeem-dialog ref="redeemDialog" />
   </q-page>
 </template>
 
@@ -223,40 +205,27 @@
   width: 40em;
   max-width: 100%;
 }
-
-/*
-@media print {
-  .printable {
-    display: block;
-    page-break-after: always;
-    box-shadow: none;
-    border: none;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-}
-*/
 </style>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 import { useQuasar, copyToClipboard } from 'quasar';
 
 // Service / App / Utils imports
-import { App } from 'src/services/app';
-import { StampCollection } from 'src/services/stamp-collection';
+import type { DB_StampCollection } from 'src/types.js';
+import { App } from 'src/services/app.js';
+import { StampCollection } from 'src/services/stamp-collection.js';
 import {
   compileTemplate,
-  printHtml,
   formatStampValue,
-} from 'src/utils/misc';
-
-// Composables Imports
-import { useCollectionForm } from 'src/composables/useCollectionForm';
+  printHtml,
+} from 'src/utils/misc.js';
 
 // Component Imports
-import CashStampsForm from 'components/CashStampsForm.vue';
-import MnemonicDialog from 'components/MnemonicDialog.vue';
+import CashStampsForm from 'src/components/CashStampsForm.vue';
+import MetadataForm from 'src/components/MetadataForm.vue';
+import FundingQrCode from 'src/components/FundingQRCode.vue';
+import RedeemDialog from 'src/components/RedeemDialog.vue';
 
 // Pre-built Templates
 // NOTE: These are HTML Templates which we compile.
@@ -266,220 +235,213 @@ import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
 import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
 import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
 
+interface RenderedStamp {
+  html: string;
+  claimed: boolean;
+}
+
+interface SelectOption<T> {
+  label: string;
+  value: T;
+}
+
 const $q = useQuasar();
 
-$q.loading.show();
-
+// Initialize and start the app so that we have access to Oracles, Electrum, etc.
 const app = new App();
 await app.start();
-
-$q.loading.hide();
 
 // HACK: Set to light mode in case user has come from redeem page.
 // TODO: Fix this in future.
 $q.dark.set(false);
 
-// List of stamps (as HDPrivateNodes)
-const stamps = computed(() => app.stampCollection.value?.stamps.value || []);
+//---------------------------------------------------------------------------
+// State
+//---------------------------------------------------------------------------
 
-// Form for creating a new collection and loading an existing collections params into the form
-const { collectionForm, createCollection } = useCollectionForm(app);
-
-const showUsedStamps = ref<boolean>(true);
-
-//---------------------------------------
-// Templates
-//---------------------------------------
-
-interface VisibleStamps {
-  html: string;
-  claimed: boolean;
-}
-
-const templateOptions = [
+// Built-in Templates.
+const predefinedTemplates = [
   { label: 'Avery: 2.5 Inch Square', value: TwoHalfInchSquare },
   { label: 'Flex Stamps', value: RectangleSingeStep },
   { label: 'Static Stamps', value: StaticSingleStep },
   { label: 'Horizontal - 3 Step', value: Horizontal3StepTemplate },
   { label: 'Vertical - 3 Step', value: Vertical3StepTemplate },
 ];
-const selectedTemplate = ref<{ label: string; value: string }>(
-  templateOptions[0]
-);
-const visibleStamps = ref<Array<VisibleStamps>>([]);
-watch(
-  [
-    stamps,
-    selectedTemplate,
-    showUsedStamps,
-    () => collectionForm.value.funding.currency,
-  ],
-  async () => {
-    try {
-      // Show the loading indicator as this can take some time (to render the QR Codes).
-      $q.loading.show();
 
-      // Clear any of our currently rendered stamps.
-      visibleStamps.value = [];
+// Reactive State.
+const state = reactive<{
+  selectedCollection?: DB_StampCollection;
+  renderedStamps: Array<RenderedStamp>;
+  showUsedStamps: boolean;
+  selectedTemplate: SelectOption<string>;
+}>({
+  selectedCollection: undefined,
+  renderedStamps: [],
+  showUsedStamps: true,
+  selectedTemplate: predefinedTemplates[0],
+});
 
-      // If no stampCollection is active, do not do anything.
-      if (!app.stampCollection.value) {
-        return;
+const templates = computed(() => {
+  // TODO: Allow custom templates.
+  return predefinedTemplates;
+});
+
+const stampCollectionsOptions = computed((): Array<SelectOption<DB_StampCollection>> => {
+  const newCollection: Array<SelectOption<DB_StampCollection>> = [
+    {
+      label: '[New Stamp Collection]',
+      value: {
+        version: 3,
+        mnemonic: app.nextMnemonic.value,
+        name: '[New Stamp Collection]',
+        amount: 0,
+        currency: 'BCH',
+        maybeFunded: false,
+        metadata: {},
       }
-
-      // Declare a variable to store our new visible stamps.
-      const newVisibleStamps: Array<VisibleStamps> = [];
-
-      // To improve legibility, destructure our funding options.
-      const { value, currency, funded } = app.stampCollection.value.funding;
-      const expiry = app.stampCollection.value.getExpiry();
-
-      let selectedCurrency = currency;
-      let stampValue = value;
-
-      // If the collection is funded, convert the value to the selected currency
-      if (funded) {
-        selectedCurrency = collectionForm.value.funding.currency;
-        (stampValue = await app.oracles.convertCurrency(
-          selectedCurrency,
-          value,
-          funded.getTime()
-        )),
-          selectedCurrency;
-      }
-
-      for (const stamp of stamps.value) {
-        // Ignore the badge is showUsedStamps is set to false and this stamp is unclaimned
-        if (!showUsedStamps.value && funded && !stamp.balance) {
-          continue;
-        }
-
-        // Compile this stamp.
-        const compiledStamp = await compileTemplate(
-          selectedTemplate.value.value,
-          {
-            value: formatStampValue(stampValue, selectedCurrency),
-            symbol: app.oracles.getOracleSymbol(currency),
-            currency: getCurrencyName(selectedCurrency),
-            expiry: expiry.toISOString(),
-            wif: stamp.privateKey().toWif(),
-          }
-        );
-
-        // Add the compiled template to our list of visible stamps.
-        newVisibleStamps.push({
-          claimed: funded && stamp.balance.value == 0,
-          html: compiledStamp,
-        });
-      }
-
-      // Assign our visible stamps.
-      visibleStamps.value = newVisibleStamps;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      // Show the loading indicator as this can take some time.
-      $q.loading.hide();
     }
+  ];
+
+  const existingCollections: Array<SelectOption<DB_StampCollection>> = app.stampCollections.map((collection) => {
+    return {
+      label: collection.name,
+      value: collection,
+    };
+  });
+
+  return [...newCollection, ...existingCollections];
+});
+
+const visibleStamps = computed(() => {
+  return state.renderedStamps.filter((stamp) => (!state.showUsedStamps && stamp.claimed) ? false : true);
+});
+
+const usedStamps = computed(() => {
+  return state.renderedStamps.filter((stamp) => stamp.claimed);
+});
+
+// Elements
+const fundingQrCode = ref<typeof FundingQrCode | null>(null);
+const redeemDialog = ref<typeof RedeemDialog | null>(null);
+
+//---------------------------------------------------------------------------
+// Methods
+//---------------------------------------------------------------------------
+
+async function renderStamps() {
+  try {
+    // Show the loading indicator as this can take some time (to render the QR Codes).
+    $q.loading.show();
+
+    // If no collection is selected, return to prevent further execution.
+    if(!state.selectedCollection) {
+      return;
+    }
+
+    // To improve legibility, destructure our selected collection.
+    const { mnemonic, amount, currency, quantity, maybeFunded, metadata } = state.selectedCollection;
+
+    // Initialize the Stamp Collection.
+    const stampCollection = await StampCollection.fromMnemonic(app.electrum, mnemonic, quantity);
+
+    // Clear any of our currently rendered stamps.
+    state.renderedStamps = [];
+
+    // Declare a variable to store our new rendered stamps.
+    const newRenderedStamps: Array<RenderedStamp> = [];
+
+    // If the collection is funded, convert the value to the selected currency
+    /*
+    if (funded) {
+      selectedCurrency = state.generateOptions.funding?.currency || '';
+      (stampValue = await app.oracles.convertCurrency(
+        selectedCurrency,
+        value,
+        funded.getTime()
+      )),
+        selectedCurrency;
+    }
+    */
+
+    for (const stamp of stampCollection.state.stamps) {
+      // Compile this stamp.
+      const compiledStamp = await compileTemplate(
+        state.selectedTemplate.value,
+        {
+          value: formatStampValue(amount, currency),
+          symbol: app.oracles.getOracleSymbol(currency),
+          currency: getCurrencyName(currency),
+          wif: stamp.privateKey().toWif(),
+          ...metadata
+        }
+      );
+
+      // Add the compiled template to our list of visible stamps.
+      newRenderedStamps.push({
+        claimed: stamp.state.balance <= 0,
+        html: compiledStamp,
+      });
+    }
+
+    // Assign our visible stamps.
+    state.renderedStamps = newRenderedStamps;
+  } catch (error) {
+    console.error(error);
+  } finally {
+    // Show the loading indicator as this can take some time.
+    $q.loading.hide();
   }
-);
+}
 
-const getCurrencyName = (currency: string) => {
-  if (currency === 'BCH') return 'BCH';
+// Print the stamps
+function printStamps() {
+  // Combined the rendered stamps into a singular HTML.
+  const combinedHtml = state.renderedStamps.map((stamp) => stamp.html).join('');
 
-  return (
-    app.oracles.oracleMetadataStore[currency].sourceNumeratorUnitCode ||
-    'unknown'
-  );
-};
+  // Print the HTML.
+  printHtml(combinedHtml);
+}
 
-const copyTemplateLinkToClipboard = () => {
+function copyTemplateLinkToClipboard() {
   // Stringify the template into JSON.
-  const templateStringified = JSON.stringify(selectedTemplate.value);
+  const templateStringified = JSON.stringify(state.selectedTemplate);
 
   // Encode it as Base64.
   const templateBase64 = btoa(templateStringified);
 
   // Copy it to the clipboard.
   copyToClipboard(templateBase64);
-};
+}
 
-// ---------------------------------------
-// Existing Collections
-// ---------------------------------------
-//
-// Data for existing collections
-const showExistingCollections = ref(false);
-watch(showExistingCollections, () => {
-  if (showExistingCollections.value) getCollections();
-  else {
-    clearForm();
-    selectedCollection.value = undefined;
-  }
-});
+function getCurrencyName(currency: string) {
+  if (currency === 'BCH') return 'BCH';
 
-// Update app.stampCollection when a collection is selected
-const selectedCollection = ref<string | undefined>(undefined);
-watch(selectedCollection, (value) => {
-  if (!value) return;
-  app.getStampCollection(value);
-});
+  return (
+    app.oracles.oracleMetadataStore[currency].sourceNumeratorUnitCode ||
+    'unknown'
+  );
+}
 
-// List of StampCollections that exist in the database
-const collections = ref<string[]>([]);
-const getCollections = async () =>
-  (collections.value =
-    (await app.getStampCollections()).map((collection) => collection.name) ||
-    []);
-
-// ---------------------------------------
-// Get used Stamps
-// ---------------------------------------
-
-const usedStamps = computed(() => {
-  if (!collectionForm.value.funding.funded) {
-    return [];
-  }
-
-  return stamps.value
-    .filter((stamp) => stamp.balance.value == 0)
-    .map((stamp) => stamp.privateKey().toWif());
-});
-
-// ---------------------------------------
-// Print Page Actions
-// ---------------------------------------
-//
-// Clear the form and reset the StampCollection
-const clearForm = (): void => {
-  if (!app.stampCollection) return;
-
-  app.stampCollection.value = StampCollection.generate(app.electrum, {
-    quantity: 0,
+async function showMnemonicDialog() {
+  $q.dialog({
+    title: 'Mnemonic',
+    message: state.selectedCollection?.mnemonic || 'No Stamp Collection Selected',
   });
-};
+}
 
-// Print the stamps
-const printStamps = (): void => {
-  // Combined the rendered stamps into a singular HTML.
-  const combinedHtml = visibleStamps.value.map((stamp) => stamp.html).join('');
+async function showFundingDialog() {
+  fundingQrCode.value?.toggleVisible();
+}
 
-  // Print the HTML.
-  printHtml(combinedHtml);
-};
+async function showRedeemDialog() {
+  redeemDialog.value?.toggleVisible();
+}
 
-// Show the mnemonic dialog
-const mnemonicDialog = ref<typeof MnemonicDialog | null>(null);
-const showMnemonicDialog = async () => {
-  mnemonicDialog.value?.toggleVisible();
-};
-const mnemonic = computed(() => app.stampCollection.value?.getMnemonic());
+//---------------------------------------------------------------------------
+// Initialization/Lifecycle Hooks
+//---------------------------------------------------------------------------
 
-// ---------------------------------------
-// Lifecycle hooks
-// ---------------------------------------
-//
-onMounted(() => {
-  getCollections();
-});
+// Set the selected collection to the first one available (which should be "New Collection").
+state.selectedCollection = stampCollectionsOptions.value[0].value;
+
 </script>

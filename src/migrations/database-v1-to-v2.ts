@@ -1,3 +1,5 @@
+import type { DB_StampCollection } from 'src/types.js';
+
 import { get, set } from 'idb-keyval';
 
 export type DB_StampCollection_v1 = {
@@ -9,6 +11,10 @@ export type DB_StampCollection_v2 = {
   name: string;
   version: 2;
   expiry?: number;
+};
+
+export type DB_StampCollection_v3 = {
+  [mnemonic: string]: DB_StampCollection;
 };
 
 export const migrateCollection_v1_to_v2 = async () => {
@@ -45,3 +51,14 @@ export const migrateCollection_v1_to_v2 = async () => {
   // Save the new format to the browser's IndexedDB.
   await set('stampCollections', newCollections);
 };
+
+/*
+export const migrateCollection_v2_to_v3 = async () => {
+  // Get the StampCollections from the browser's IndexedDB.
+  const collections = await get('stampCollections');
+
+  const v3 = [];
+
+
+};
+*/

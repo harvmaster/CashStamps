@@ -133,6 +133,54 @@ export const renderQrCode = async (
   return canvas.toDataURL('image/png');
 };
 
+export const parseMustache = (mustacheContent: string) => {
+  // We split the placeholder and the default value of the placeholder.
+  // NOTE: Example: {{ @qrcode someLink|https://stamps.cash icon|https://stamps.cash/bch.png }}
+  const tokens = mustacheContent
+    .trim()
+    .split(' ')
+    .map((content) => content.trim());
+
+  const parsedTokens = tokens.map((arg) => {
+    // If this is a directive (begins with '@' character)
+    if (arg.startsWith('@')) {
+      return {
+        type: 'directive',
+        value: arg,
+      };
+    } else {
+      const [value, defaultValue] = arg.split('|');
+
+      return {
+        type: 'variable',
+        value,
+        defaultValue,
+      };
+    }
+  });
+
+  return parsedTokens;
+};
+
+export const extractMetadataPlaceholders = (
+  template: string,
+  ignore: Array<string>
+) => {
+  // Define RegEx to capture all mustaches ({{ captureThis }}).
+  const mustacheRegEx = /\{\{(.*?)\}\}/g;
+
+  // Find all placeholders in the template.
+  const matches = [...template.matchAll(mustacheRegEx)].map((match) =>
+    match[1].trim()
+  );
+
+  // Ignore known placeholders.
+  const metadata = matches.filter((match) => !ignore.includes(match));
+
+  // Return the metdata.
+  return metadata;
+};
+
 export const compileTemplate = async (
   template: string,
   data: { [key: string]: string }

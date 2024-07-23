@@ -1,7 +1,7 @@
 // -------------------
 // 3rd party imports
 // -------------------
-import { reactive, Reactive, shallowRef } from 'vue';
+import { reactive, Reactive, shallowReactive, shallowRef } from 'vue';
 
 import {
   deriveSeedFromBip39Mnemonic,
@@ -21,90 +21,25 @@ import { ElectrumService } from './electrum';
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
-export type FundingOptions = {
-  value: number;
-  currency: string;
-  funded: false | Date;
-};
-export const DEFAULT_FUNDING_OPTIONS: FundingOptions = {
-  value: 0,
-  currency: 'BCH',
-  funded: false,
-};
-
-export type GenerateOptions = {
-  quantity: number;
-  name?: string;
-  expiry?: string;
-  mnemonic?: string;
-  funding?: FundingOptions;
-};
-
 export class StampCollection {
-  public readonly stamps = shallowRef<Array<Stamp>>([]);
-  public readonly funding: Reactive<FundingOptions>;
+  public readonly state = shallowReactive<{
+    mnemonic: string;
+    stamps: Array<Stamp>;
+    funded: boolean;
+  }>({
+    mnemonic: '',
+    stamps: [],
+    funded: false,
+  });
 
-  constructor(
-    private readonly mnemonic: string,
-    private expiry: Date = new Date(),
-    private name: string = '',
-    stamps: Array<Stamp> = [],
-    fundingOptions: FundingOptions = {
-      ...DEFAULT_FUNDING_OPTIONS,
-    }
-  ) {
-    this.stamps.value = stamps;
-    this.funding = reactive(fundingOptions);
-  }
-
-  static generate(
-    electrum: ElectrumService,
-    options: GenerateOptions
-  ): StampCollection {
-    // Use default funding options if none are provided.
-    const fundingOptions = options.funding || DEFAULT_FUNDING_OPTIONS;
-
-    // Make sure amount isnt stupid amount of digits
-    if (fundingOptions.value?.toString()?.split('.')?.[1]?.length > 8) {
-      fundingOptions.value = parseFloat(fundingOptions.value.toFixed(8));
-    }
-
-    // Generate a random mnemonic.
-    if (!options.mnemonic) options.mnemonic = generateBip39Mnemonic();
-
-    console.log(options.mnemonic);
-
-    // Derive the seed from the mnemonic.
-    const seed = deriveSeedFromBip39Mnemonic(options.mnemonic);
-
-    // Create a node from the seed.
-    const parentNode = Stamp.fromStampSeed(seed, electrum);
-
-    // Declare an array to store our nodes.
-    const nodes: Array<Stamp> = [];
-
-    // Derive a node for each stamp.
-    for (let i = 0; i < options.quantity; i++) {
-      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
-    }
-
-    // Set the expiry date. Converted from string ('yyyy/mm/dd') to Date Object
-    const expiry = options.expiry ? new Date(options.expiry) : new Date();
-
-    // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(
-      options.mnemonic,
-      expiry,
-      options.name,
-      nodes,
-      fundingOptions
-    );
+  constructor(public readonly mnemonic: string, stamps: Array<Stamp> = []) {
+    this.state.stamps = stamps;
   }
 
   static async fromMnemonic(
     electrum: ElectrumService,
     mnemonic: string,
-    expiry?: Date
+    quantity?: number
   ): Promise<StampCollection> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
@@ -115,82 +50,38 @@ export class StampCollection {
     // Declare an array to store our nodes.
     const nodes: Array<Stamp> = [];
 
-    // Get all the addresses that have been a tx history
-    const usedKeys = await getUsedKeys(electrum, parentNode);
-
-    // Get the nodes from the used keys
-    usedKeys.forEach((key, _i) => {
-      nodes.push(new Stamp(key.node.node, electrum));
-    });
-
-    // Early return, otherwise we get an error when trying to get the blocktime of the first transaction
-    if (nodes.length === 0) {
-      return new StampCollection(mnemonic, new Date(), '', nodes);
+    // If we specify a quantity, we are assuming that this is a new Stamp Collection.
+    if (quantity) {
+      // Derive a node for each stamp.
+      for (let i = 0; i < quantity; i++) {
+        nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
+      }
     }
 
-    // Get the balance of each node
-    nodes.forEach(async (node) => node.getAvailableBalance());
+    // Otherwise, this is an existing collection and we should scan the HD Wallet for addresses.
+    else {
+      // Get all the addresses that have been a tx history
+      const usedKeys = await getUsedKeys(electrum, parentNode);
 
-    // Get the blocktime of the first transaction to get the funding date
-    // Bit of a hack with the Date.now(). Its there for when a transaction has not been confirmed yet
-    const firstTransaction = await getTransactionData(electrum, usedKeys[0]);
+      // Get the nodes from the used keys
+      usedKeys.forEach((key, _i) => {
+        nodes.push(new Stamp(key.node.node, electrum));
+      });
 
-    // Get the blocktime of the first transaction (they should all be the same), we can use this to get the price of the stamp from the oracle
-    const blocktime = firstTransaction?.blocktime || Date.now() / 1000;
-    console.log(blocktime);
-
-    // Get the transaction's value to set the funding amount
-    let txValue = 0;
-    if (firstTransaction) {
-      txValue =
-        firstTransaction.vout.find((output: any) => {
-          return output.scriptPubKey.addresses.some((address: string) => {
-            return address == usedKeys[0].address;
-          });
-        })?.value || 0;
+      // Get the balance of each node
+      nodes.forEach(async (node) => node.getAvailableBalance());
     }
-
-    // Set funding options to be used in the StampCollection
-    const fundingOptions = {
-      value: txValue,
-      currency: 'BCH',
-      funded: new Date(blocktime * 1000),
-    };
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(mnemonic, expiry, '', nodes, fundingOptions);
-  }
-
-  setName(name: string) {
-    this.name = name;
-  }
-
-  getMnemonic(): string {
-    return this.mnemonic;
-  }
-
-  // Set the funding options to the BCH value and the date it was funded.
-  // This is generated after the funding tx is completed
-  lockStampOptions(funding: { currency: 'BCH'; value: number }) {
-    this.funding.currency = funding.currency;
-    this.funding.value = funding.value;
-    this.funding.funded = new Date();
+    return new StampCollection(mnemonic, nodes);
   }
 
   async refreshStampValues() {
     // Get the balance of each node
-    this.stamps.value.forEach(async (node) => node.getAvailableBalance());
+    this.state.stamps.forEach(async (node) => node.getAvailableBalance());
   }
 
   redeemRemainingStamps() {
     console.log('redeem stamps');
-  }
-
-  getName() {
-    return this.name;
-  }
-
-  getExpiry() {
-    return this.expiry;
   }
 }

@@ -6,20 +6,21 @@ import {
 } from 'src/config.js';
 
 // Import services the app may require.
+import type { DB_StampCollection } from 'src/types.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
-import { StampCollection } from './stamp-collection.js';
 
 // Database Migrations
-import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-v2.js';
+import { migrateCollection_v1_to_v2 } from 'src/migrations/database-v1-to-v2.js';
+import type { DB_StampCollection_v3 } from 'src/migrations/database-v1-to-v2.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
 
+import { generateBip39Mnemonic } from '@bitauth/libauth';
+
 // Vue and Quasar.
-import { ref, shallowRef } from 'vue';
-import { Loading } from 'quasar';
-import { DB_StampCollection } from 'src/types.js';
+import { reactive, ref, watch } from 'vue';
 
 export class App {
   // Services.
@@ -27,8 +28,8 @@ export class App {
   oracles: OraclesService;
 
   // State.
-  // NOTE: We use a shallow refs so that nested refs are not unwrapped.
-  stampCollection = shallowRef<StampCollection | undefined>(undefined);
+  stampCollections = reactive<Array<DB_StampCollection>>([]);
+  nextMnemonic = ref<string>('');
 
   // Flags.
   debug = ref(false);
@@ -43,16 +44,14 @@ export class App {
 
     // Setup our Electrum Service.
     this.electrum = new ElectrumService(ELECTRUM_SERVERS);
-
-    // Set the stampCollection to a new StampCollection instance.
-    this.stampCollection.value = StampCollection.generate(this.electrum, {
-      quantity: 0,
-    });
   }
 
   async start(): Promise<void> {
-    // Check that the user's browser is compatible.
-    await this.checkBrowser();
+    // Check that the user's browser is compatible and perform any initialization.
+    await this.initializeBrowser();
+
+    // Initialize IndexedDB by performing and migrations and data setup that is necessary.
+    await this.initializeDatabase();
 
     // Start the following services in parallel as they have no dependency on each other.
     await Promise.all([
@@ -61,17 +60,10 @@ export class App {
       // Oracles Service
       // TODO: Should try to make this optional in case the Oracles are down.
       this.oracles.start(),
-
-      migrateCollection_v1_to_v2(),
     ]);
-
-    // Start the Oracle Service.
-    // await this.electrum.start();
-
-    // console.log('Electrum connected');
   }
 
-  async checkBrowser(): Promise<void> {
+  async initializeBrowser(): Promise<void> {
     // Check that browser supports IndexedDB.
     try {
       // NOTE: It does not matter whether this key exists or not. If the browser does not support IndexedDB, this will throw an error.
@@ -91,83 +83,33 @@ export class App {
     }
   }
 
-  //---------------------------------------------------------------------------
-  // Methods
-  //---------------------------------------------------------------------------
+  async initializeDatabase(): Promise<void> {
+    // Migrate the database to the latest format.
+    migrateCollection_v1_to_v2();
 
-  //--------------------------------------------------------------------------
-  // Database Methods
-  //---------------------------------------------------------------------------
+    // Get stamp collections from IndexedDB and save them to our reactive propery.
+    this.stampCollections = reactive((await get('stampCollections')) || []);
 
-  // Get the StampCollections from the browser's IndexedDB.
-  async getStampCollections(): Promise<DB_StampCollection[]> {
-    const collections: DB_StampCollection[] | undefined = await get(
-      'stampCollections'
+    // Watch for changes to our stamp collection so that we can sync them back to IndexedDB.
+    watch(this.stampCollections, async () => {
+      // TODO: Do a 'get' first and then merge our current state.
+      //       This will prevent problems when accessing across multiple browser instances.
+      await set('stampCollections', this.stampCollections);
+    });
+
+    // Get the next mnemonic that should be used.
+    // NOTE: We do this so that the next mnemonic is preserved across sessions.
+    //       This means if a user prints without funding, they can still fund upon next visit.
+    this.nextMnemonic.value =
+      (await get('nextMnemonic')) || generateBip39Mnemonic();
+
+    // Watch for changes to nextMnemonic so that we can sync it back to IndexedDB.
+    watch(
+      this.nextMnemonic,
+      async () => {
+        await set('nextMnemonic', this.nextMnemonic.value);
+      },
+      { immediate: true }
     );
-    return collections || [];
   }
-
-  // Find a StampCollection by name and set it to the stampCollection ref.
-  async getStampCollection(name: string) {
-    Loading.show();
-
-    // TODO: Rename this to useStampCollection or something similar.
-    // Get the StampCollections from the browser's IndexedDB.
-    const collections = await this.getStampCollections();
-
-    // Load the StampCollection from the mnemonic.
-    const collection = collections.find((c) => c.name === name);
-    if (!collection) {
-      throw new Error(`StampCollection with name "${name}" not found`);
-    }
-
-    const expiry = collection.expiry ? new Date(collection.expiry) : undefined;
-
-    // Set the StampCollection to the stampCollection ref.
-    this.stampCollection.value = await StampCollection.fromMnemonic(
-      this.electrum,
-      collection.mnemonic,
-      expiry
-    );
-
-    Loading.hide();
-  }
-
-  async saveStamps(stampCollection: StampCollection) {
-    // Get the name or use the mnemonic as the name
-    const name = stampCollection.getName() || stampCollection.getMnemonic();
-    const mnemonic = stampCollection.getMnemonic();
-    const expiry = stampCollection.getExpiry();
-
-    // Get the existing collections or create a new one
-    const collections = await this.getStampCollections();
-
-    // Check if the collection already exists
-    const existingIndex = collections.findIndex((c) => c.name === name);
-
-    // If the collection exists, Overwrite it
-    if (existingIndex > -1) {
-      collections[existingIndex] = {
-        name,
-        mnemonic,
-        version: 2,
-        expiry: expiry.getTime(),
-      };
-    } else {
-      // If the collection does not exist, Add it
-      collections.push({
-        name,
-        mnemonic,
-        version: 2,
-        expiry: expiry.getTime(),
-      });
-    }
-
-    // Save the collections back to IDB
-    await set('stampCollections', collections);
-  }
-
-  //---------------------------------------------------------------------------
-  // Events/Callbacks
-  //---------------------------------------------------------------------------
 }

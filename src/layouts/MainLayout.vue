@@ -42,7 +42,13 @@
     </q-header>
 
     <q-page-container>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition appear enter-active-class="animated fadeIn">
+          <Suspense @pending="$q.loading.show()" @resolve="$q.loading.hide()">
+            <component :is="Component" />
+          </Suspense>
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -71,6 +77,8 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 const $router = useRouter();
+const $q = useQuasar();
 </script>
