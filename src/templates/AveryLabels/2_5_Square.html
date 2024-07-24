@@ -100,20 +100,19 @@
   @page {
     size: 210mm 297mm;
     /* Chrome sets own margins, we change these printer settings */
-    margin: var(--page-margin-y) 0 0 0;
+    margin: var(--page-margin-y) var(--page-margin-x) var(--page-margin-y)
+      var(--page-margin-x);
   }
 
   .preview {
     /* Chrome sets own margins, we change these printer settings */
-    padding: var(--page-margin-y) 0 0 0;
+    padding: var(--page-margin-y) var(--page-margin-x) var(--page-margin-y)
+      var(--page-margin-x);
   }
 
   .page {
     align-items: flex-start;
     justify-content: flex-start;
-
-    padding-left: var(--page-margin-x);
-    padding-right: var(--page-margin-x);
   }
 
   .stamp {
@@ -139,7 +138,7 @@
     height: var(--stamp-height-mm);
 
     /* Set stamp border */
-    border: var(--border-size) dashed #46ba4f;
+    border: var(--border-size) dashed #000;
 
     /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
     padding-top: var(--padding-size);
