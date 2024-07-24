@@ -73,15 +73,8 @@ h6 {
 // Component Over-rides
 //-----------------------------------------------------------------------------
 
-/* Define the A4 page size */
-@page {
-  size: A4;
-  margin: 20mm;
-}
-
 /* Container for the A4 content */
 .page {
-  max-width: 210mm;
   width: 210mm;
   min-height: 297mm;
   box-sizing: border-box;
