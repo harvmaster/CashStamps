@@ -153,7 +153,7 @@
 
           <!-- Page -->
           <div class="justify-center">
-            <div class="page shadow-20">
+            <div class="page preview shadow-20">
               <div class="flex full-width">
                 <div
                   v-for="(visibleStamp, i) in visibleStamps"

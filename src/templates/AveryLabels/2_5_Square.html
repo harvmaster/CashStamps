@@ -43,9 +43,9 @@
   :root {
     font-family: Arial, Helvetica, sans-serif;
 
-    /* 
+    /*
     Set your paper size here
-  
+
     Default: A4
       A4 Paper is 210mm x 297mm
       A3 Paper is 297mm x 420mm
@@ -103,6 +103,11 @@
     margin: var(--page-margin-y) 0 0 0;
   }
 
+  .preview {
+    /* Chrome sets own margins, we change these printer settings */
+    padding: var(--page-margin-y) 0 0 0;
+  }
+
   .page {
     align-items: flex-start;
     justify-content: flex-start;
@@ -121,7 +126,8 @@
 
     /* Center the stamp inside of the stamp container */
     display: grid;
-    place-items: center;
+    align-items: start;
+    justify-items: center;
 
     /* Remove text formatting from quasar */
     line-height: 1;
@@ -145,7 +151,7 @@
     text-align: center;
 
     /* Define layout inside of the stamp */
-    /* 
+    /*
     Stamp content is laid out as follows on this template:
     - QR Code
     - Stamp Value
