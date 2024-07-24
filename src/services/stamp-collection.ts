@@ -32,8 +32,13 @@ export class StampCollection {
     funded: false,
   });
 
-  constructor(public readonly mnemonic: string, stamps: Array<Stamp> = []) {
+  constructor(
+    public readonly mnemonic: string,
+    stamps: Array<Stamp> = [],
+    funded = false
+  ) {
     this.state.stamps = stamps;
+    this.state.funded = funded;
   }
 
   static async fromMnemonic(
@@ -50,6 +55,9 @@ export class StampCollection {
     // Declare an array to store our nodes.
     const nodes: Array<Stamp> = [];
 
+    // Declare a variable to store whether this collection has been funded.
+    let funded = false;
+
     // If we specify a quantity, we are assuming that this is a new Stamp Collection.
     if (quantity) {
       // Derive a node for each stamp.
@@ -63,6 +71,10 @@ export class StampCollection {
       // Get all the addresses that have been a tx history
       const usedKeys = await getUsedKeys(electrum, parentNode);
 
+      if (usedKeys.length) {
+        funded = true;
+      }
+
       // Get the nodes from the used keys
       usedKeys.forEach((key, _i) => {
         nodes.push(new Stamp(key.node.node, electrum));
@@ -73,7 +85,7 @@ export class StampCollection {
     }
 
     // Create instance of StampCollection using generated mnemonic.
-    return new StampCollection(mnemonic, nodes);
+    return new StampCollection(mnemonic, nodes, funded);
   }
 
   async refreshStampValues() {

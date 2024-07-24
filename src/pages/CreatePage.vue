@@ -350,24 +350,12 @@ async function renderStamps() {
     // Declare a variable to store our new rendered stamps.
     const newRenderedStamps: Array<RenderedStamp> = [];
 
-    // If the collection is funded, convert the value to the selected currency
-    /*
-    if (funded) {
-      selectedCurrency = state.generateOptions.funding?.currency || '';
-      (stampValue = await app.oracles.convertCurrency(
-        selectedCurrency,
-        value,
-        funded.getTime()
-      )),
-        selectedCurrency;
-    }
-    */
-
     for (const stamp of stampCollection.state.stamps) {
       // Compile this stamp.
       const compiledStamp = await compileTemplate(
         state.selectedTemplate.value,
         {
+          valueBch: formatStampValue(stamp.state.balance, 'BCH'),
           value: formatStampValue(amount, currency),
           symbol: app.oracles.getOracleSymbol(currency),
           currency: getCurrencyName(currency),
@@ -378,7 +366,7 @@ async function renderStamps() {
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
-        claimed: stamp.state.balance <= 0,
+        claimed: (stampCollection.state.funded && stamp.state.balance <= 0),
         html: compiledStamp,
       });
     }
