@@ -1,4 +1,4 @@
-<div class="stamp">
+<div class="stamp-outer">
   <div class="stamp-inner">
     <div class="stamp-content">
       <!-- Redeem QR Code -->
@@ -53,7 +53,7 @@
     */
 
     /* Stamp decoration */
-    --padding-size: 2.5mm;
+    --padding-size: 5mm;
     --border-size: 1px;
 
     /* Computed size helpers in mm */
@@ -68,13 +68,13 @@
     --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
 
     --items-per-row: 3;
-    --rows-per-page: 3;
+
+    --stamp-inner-height-mm: 63.5mm;
+    --stamp-inner-width-mm: 63.5mm;
 
     --stamp-outer-width: calc(var(--page-width-mm) / var(--items-per-row));
-    --stamp-outer-height: calc(var(--page-height-mm) / var(--rows-per-page));
-
-    --stamp-height-mm: 63.5mm;
-    --stamp-width-mm: 63.5mm;
+    /* HACK:  We can't accurately space these, so we just add the 19mm gap manually. This means we need to remove page's bottom margin. */
+    --stamp-outer-height: calc(var(--stamp-inner-height-mm) + 19mm);
 
     /* Define the grid axis lengths */
     --calculated-y-quantity-per-page: 3;
@@ -88,7 +88,8 @@
     size: var(--paper-width-mm) var(--paper-height-mm);
     /* Chrome sets own margins, we change these printer settings */
     margin-top: var(--paper-margin-y);
-    margin-bottom: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    margin-bottom: 0;
     margin-left: var(--paper-margin-x);
     margin-right: var(--paper-margin-x);
   }
@@ -96,8 +97,11 @@
   .preview {
     width: var(--paper-width-mm);
     min-height: var(--paper-height-mm);
-    padding: var(--paper-margin-y) var(--paper-margin-x) var(--paper-margin-y)
-      var(--paper-margin-x);
+    padding-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    padding-bottom: 0;
+    padding-left: var(--paper-margin-x);
+    padding-right: var(--paper-margin-x);
   }
 
   .page {
@@ -105,7 +109,7 @@
     justify-content: flex-start;
   }
 
-  .stamp {
+  .stamp-outer {
     /* Stamp size */
     width: var(--stamp-outer-width);
     height: var(--stamp-outer-height);
@@ -124,8 +128,8 @@
 
   .stamp-inner {
     /* Set stamp size */
-    width: var(--stamp-width-mm);
-    height: var(--stamp-height-mm);
+    width: var(--stamp-inner-width-mm);
+    height: var(--stamp-inner-height-mm);
 
     /* Set stamp border */
     border: var(--border-size) dashed #000;
@@ -145,7 +149,7 @@
     - QR Code
     - Stamp Value
     - Footer
-  */
+    */
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-columns: 1fr;
@@ -178,8 +182,8 @@
   }
 
   .qr-code {
-    width: 35mm !important;
-    height: 35mm !important;
+    width: 30mm !important;
+    height: 30mm !important;
   }
 
   .row-contanier {
