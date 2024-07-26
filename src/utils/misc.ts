@@ -181,6 +181,36 @@ export const extractMetadataPlaceholders = (
   return metadata;
 };
 
+export interface TemplateConfig {
+  name?: string;
+  variables?: {
+    [id: string]: {
+      name?: string;
+      default?: string;
+      class?: string;
+    };
+  };
+}
+
+export const extractTemplateConfig = (template: string): TemplateConfig => {
+  // Define RegEx to capture all content between @config and @endconfig.
+  const configRegEx = /@config([\s\S]*?)@endconfig/;
+
+  // Attempt to find the config.
+  const match = template.match(configRegEx);
+
+  // Return an empty config if no config was found.
+  if (!match) {
+    return {};
+  }
+
+  // Trim the config to remove and spaces.
+  const configRaw = match[1].trim();
+
+  // Parse the config and return it.
+  return JSON.parse(configRaw);
+};
+
 export const compileTemplate = async (
   template: string,
   data: { [key: string]: string }
@@ -239,12 +269,12 @@ export const compileTemplate = async (
   }
 
   // Sanitize the template using DOMPurify.
-  const sanitizedTemplate = DOMPurify.sanitize(compiledTemplate, {
+  /*const sanitizedTemplate = DOMPurify.sanitize(compiledTemplate, {
     USE_PROFILES: { html: true },
-  });
+  });*/
 
   // Return the compiled template.
-  return sanitizedTemplate;
+  return compiledTemplate;
 };
 
 export const printHtml = (html: string) => {

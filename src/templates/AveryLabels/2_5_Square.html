@@ -1,4 +1,4 @@
-<div class="stamp">
+<div class="stamp-outer">
   <div class="stamp-inner">
     <div class="stamp-content">
       <!-- Redeem QR Code -->
@@ -15,25 +15,18 @@
     <div class="footer text-sm">
       <!-- Expiry -->
       <div class="title-secondary content text-muted text-bold">
-        <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
-        Valid until {{ expiry }}
+        {{ validUntil }}
       </div>
 
       <!-- Redeem link -->
-      <div class="content text-muted text-bold">
-        Redeem at <span class="primary">{{ redeemLink }}</span>
-      </div>
+      <div class="content text-muted text-bold">{{ redeemText }}</div>
 
       <!-- Social Media Link -->
       <div
         class="content text-muted text-bold row-contanier"
         style="margin-top: 5px"
       >
-        <img
-          src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
-          class="social-media-icon"
-        />
-        <span class="">Follow me on X: {{ followMe }}</span>
+        {{ additionalText }}
       </div>
     </div>
   </div>
@@ -43,85 +36,84 @@
   :root {
     font-family: Arial, Helvetica, sans-serif;
 
-    /* 
+    /*
     Set your paper size here
-  
+
     Default: A4
       A4 Paper is 210mm x 297mm
       A3 Paper is 297mm x 420mm
-  */
-    --paper-height: 297;
-    --paper-width: 210;
-
-    --stamp-height: 63.5;
-    --stamp-width: 63.5;
+      Letter Paper is 216mm x 279mm
+    */
 
     /* Stamp decoration */
-    --padding-size: 2.5mm;
+    --padding-size: 7mm;
     --border-size: 1px;
 
-    --page-margin-x: 5mm;
-    --page-margin-y: 24.7mm; /* 24.7mm is a magic number. Not sure why its this exact value */
-
     /* Computed size helpers in mm */
-    --paper-height-mm: calc(1mm * var(--paper-height));
-    --paper-width-mm: calc(1mm * var(--paper-width));
+    --paper-width-mm: 216mm;
+    --paper-height-mm: 279mm;
 
-    --stamp-height-mm: calc(1mm * var(--stamp-height));
-    --stamp-width-mm: calc(1mm * var(--stamp-width));
+    --paper-margin-x: 10mm;
+    --paper-margin-y: 25mm;
+
+    /* Page is the internal usable space (i.e. with margins subtracted). */
+    --page-width-mm: calc(var(--paper-width-mm) - var(--paper-margin-x) * 2);
+    --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
+
+    --items-per-row: 3;
+
+    --stamp-inner-height-mm: 63.5mm;
+    --stamp-inner-width-mm: 63.5mm;
+
+    --stamp-outer-width: calc(var(--page-width-mm) / var(--items-per-row));
+    /* HACK:  We can't accurately space these, so we just add the 19mm gap manually. This means we need to remove page's bottom margin. */
+    --stamp-outer-height: calc(var(--stamp-inner-height-mm) + 19mm);
 
     /* Define the grid axis lengths */
     --calculated-y-quantity-per-page: 3;
     --calculated-x-quantity-per-page: 3;
-
-    /* Set sizes to "fill" page. inner stamp will be correct stamp size */
-    --calculated-full-stamp-height: calc(
-      var(--paper-height-mm) / var(--calculated-y-quantity-per-page) -
-        ((var(--page-margin-y)) / (var(--calculated-y-quantity-per-page) + 0.5))
-    );
-    --calculated-y-white-space: calc(
-      calc(var(--calculated-full-stamp-height) - var(--stamp-height-mm)) /
-        (var(--calculated-x-quantity-per-page))
-    );
-    --calculated-stamp-height: calc(
-      var(--calculated-full-stamp-height) - (var(--calculated-y-white-space))
-    );
-
-    /* Stamp container width */
-    --calculated-stamp-width: calc(
-      var(--paper-width-mm) / var(--calculated-x-quantity-per-page) -
-        ((var(--page-margin-x) * 2) / var(--calculated-x-quantity-per-page))
-    );
   }
 
   /**
-* Page Settings
-*/
+   * Page Settings
+   */
   @page {
-    size: 210mm 297mm;
+    size: var(--paper-width-mm) var(--paper-height-mm);
     /* Chrome sets own margins, we change these printer settings */
-    margin: var(--page-margin-y) 0 0 0;
+    margin-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    margin-bottom: 0;
+    margin-left: var(--paper-margin-x);
+    margin-right: var(--paper-margin-x);
+  }
+
+  body {
+    width: var(--paper-width-mm);
+    min-height: var(--paper-height-mm);
+    padding-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    padding-bottom: 0;
+    padding-left: var(--paper-margin-x);
+    padding-right: var(--paper-margin-x);
   }
 
   .page {
     align-items: flex-start;
     justify-content: flex-start;
-
-    padding-left: var(--page-margin-x);
-    padding-right: var(--page-margin-x);
   }
 
-  .stamp {
+  .stamp-outer {
     /* Stamp size */
-    width: var(--calculated-stamp-width);
-    height: var(--calculated-stamp-height);
+    width: var(--stamp-outer-width);
+    height: var(--stamp-outer-height);
 
     /* Stop stamps from being broken in half between pages */
     break-inside: avoid;
 
     /* Center the stamp inside of the stamp container */
     display: grid;
-    place-items: center;
+    align-items: start;
+    justify-items: center;
 
     /* Remove text formatting from quasar */
     line-height: 1;
@@ -129,11 +121,11 @@
 
   .stamp-inner {
     /* Set stamp size */
-    width: var(--stamp-width-mm);
-    height: var(--stamp-height-mm);
+    width: var(--stamp-inner-width-mm);
+    height: var(--stamp-inner-height-mm);
 
     /* Set stamp border */
-    border: var(--border-size) dashed #46ba4f;
+    /* border: var(--border-size) dashed #000; */
 
     /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
     padding-top: var(--padding-size);
@@ -145,12 +137,12 @@
     text-align: center;
 
     /* Define layout inside of the stamp */
-    /* 
+    /*
     Stamp content is laid out as follows on this template:
     - QR Code
     - Stamp Value
     - Footer
-  */
+    */
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-columns: 1fr;
@@ -183,8 +175,8 @@
   }
 
   .qr-code {
-    width: 35mm !important;
-    height: 35mm !important;
+    width: 30mm !important;
+    height: 30mm !important;
   }
 
   .row-contanier {

@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Print Element</title>
+  </head>
+  <body>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      div {
+        box-sizing: border-box;
+      }
+      .page > * {
+        break-inside: avoid;
+      }
+    </style>
+    <div class="page" style="display: flex; flex-wrap: wrap; width: 100%">
+      {{ html }}
+    </div>
+  </body>
+</html>

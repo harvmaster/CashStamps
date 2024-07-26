@@ -1,3 +1,36 @@
+<!--
+@config
+{
+  "name": "3 Step - Horizontal",
+  "variables": {
+    "step1Text": {
+      "name": "Step 1 Text",
+      "default": "Scan the above QR code to Install a Bitcoin Cash Wallet.",
+      "class": "col-12"
+    },
+    "step2Text": {
+      "name": "Step 2 Text",
+      "default": "Use your Wallet to scan the above QR Code to receive free BCH!",
+      "class": "col-12"
+    },
+    "step3Text": {
+      "name": "Step 3 Text",
+      "default": "Scan the above QR Code above to find places near you to spend BCH!",
+      "class": "col-12"
+    },
+    "walletLink": {
+      "name": "Wallet Link",
+      "default": "https://wallet.bitcoin.com/"
+    },
+    "spendLink": {
+      "name": "Spend Link",
+      "default": "https://maps.bitcoin.com/"
+    }
+  }
+}
+@endconfig
+-->
+
 <div class="flyer">
   <!-- Step 1 - Download Wallet -->
   <div class="section">
@@ -7,14 +40,12 @@
     </div>
 
     <!-- Download Wallet QR Code -->
-    <img class="qr-code" src="{{ QRCODE https://wallet.bitcoin.com/ }}" />
+    <img class="qr-code" src="{{ QRCODE walletLink }}" />
 
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 1</div>
-      <div class="content">
-        Scan the above QR code to Install a Bitcoin Cash Wallet.
-      </div>
+      <div class="content">{{ step1Text }}</div>
     </div>
   </div>
 
@@ -32,9 +63,7 @@
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 2</div>
-      <div class="content">
-        Use your Wallet to scan the above QR Code to receive free BCH!
-      </div>
+      <div class="content">{{ step2Text }}</div>
     </div>
   </div>
 
@@ -47,14 +76,12 @@
     </div>
 
     <!-- Spend QR Code -->
-    <img class="qr-code" src="{{ QRCODE https://map.bitcoin.com/ }}" />
+    <img class="qr-code" src="{{ QRCODE spendLink }}" />
 
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 3</div>
-      <div class="content">
-        Scan the above QR Code above to find places near you to spend BCH!
-      </div>
+      <div class="content">{{ step3Text }}</div>
     </div>
   </div>
 </div>

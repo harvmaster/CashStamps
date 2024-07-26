@@ -34,7 +34,7 @@ export const migrateCollection_v1_to_v2 = async () => {
 
     // If the version is not set, then we need to migrate it.
     if (!version) {
-      console.log('migratinng collection', key);
+      console.log('migrating collection', key);
       newCollections.push({
         name: key,
         mnemonic: val as string,

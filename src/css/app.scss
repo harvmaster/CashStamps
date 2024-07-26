@@ -1,6 +1,24 @@
 // Font imports.
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
+.header-outer {
+  width: 100%;
+}
+
+.header-inner {
+  width: 992px;
+  margin: auto;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  color: #fff;
+}
+
+.header-inner .paragraph {
+  width: 40em;
+  max-width: 100%;
+}
+
 .inner-page {
   min-width: 210mm;
   width: 992px;
@@ -73,15 +91,8 @@ h6 {
 // Component Over-rides
 //-----------------------------------------------------------------------------
 
-/* Define the A4 page size */
-@page {
-  size: A4;
-  margin: 20mm;
-}
-
 /* Container for the A4 content */
 .page {
-  max-width: 210mm;
   width: 210mm;
   min-height: 297mm;
   box-sizing: border-box;

@@ -10,7 +10,13 @@ export type Wallet = {
   create_date: string;
 };
 
-export type StampMetadata = { [key: string]: string };
+export interface Template {
+  label: string;
+  value: string;
+  readonly: boolean;
+}
+
+export type TemplateData = { [key: string]: string };
 
 export type DB_StampCollection = {
   version: 3;
@@ -20,7 +26,6 @@ export type DB_StampCollection = {
   currency: string;
   quantity?: number;
   maybeFunded: boolean;
-  metadata: StampMetadata;
 };
 
 export type CashPayServer_Output = {

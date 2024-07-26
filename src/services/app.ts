@@ -6,7 +6,7 @@ import {
 } from 'src/config.js';
 
 // Import services the app may require.
-import type { DB_StampCollection } from 'src/types.js';
+import type { DB_StampCollection, Template } from 'src/types.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
@@ -20,7 +20,7 @@ import { get, set } from 'idb-keyval';
 import { generateBip39Mnemonic } from '@bitauth/libauth';
 
 // Vue and Quasar.
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, toRaw } from 'vue';
 
 export class App {
   // Services.
@@ -29,6 +29,7 @@ export class App {
 
   // State.
   stampCollections = reactive<Array<DB_StampCollection>>([]);
+  templates = reactive<Array<Template>>([]);
   nextMnemonic = ref<string>('');
 
   // Flags.
@@ -91,11 +92,29 @@ export class App {
     this.stampCollections = reactive((await get('stampCollections')) || []);
 
     // Watch for changes to our stamp collection so that we can sync them back to IndexedDB.
-    watch(this.stampCollections, async () => {
-      // TODO: Do a 'get' first and then merge our current state.
-      //       This will prevent problems when accessing across multiple browser instances.
-      await set('stampCollections', this.stampCollections);
-    });
+    watch(
+      this.stampCollections,
+      async () => {
+        // TODO: Do a 'get' first and then merge our current state.
+        //       This will prevent problems when accessing across multiple browser instances.
+        await set('stampCollections', toRaw(this.stampCollections));
+      },
+      { deep: true }
+    );
+
+    // Get templates from IndexedDB and save them to our reactive propery.
+    this.templates = reactive((await get('templates')) || []);
+
+    // Watch for changes to our templates so that we can sync them back to IndexedDB.
+    watch(
+      this.templates,
+      async () => {
+        // TODO: Do a 'get' first and then merge our current state.
+        //       This will prevent problems when accessing across multiple browser instances.
+        await set('templates', toRaw(this.templates));
+      },
+      { deep: true }
+    );
 
     // Get the next mnemonic that should be used.
     // NOTE: We do this so that the next mnemonic is preserved across sessions.

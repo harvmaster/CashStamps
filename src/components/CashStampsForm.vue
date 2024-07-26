@@ -110,7 +110,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-import { DB_StampCollection } from 'src/types.js'
+import { DB_StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 
 // TODO: This interface is probably available in Quasar somewhere.
