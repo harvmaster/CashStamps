@@ -1,10 +1,10 @@
-import {
+import { ElectrumService } from 'src/services/electrum.js';
+import type {
   AddressGetHistory,
   AddressListUnspent,
-} from 'src/services/electrum-types';
-import { DERIVATION_PATH, ADDRESS_GAP } from 'src/services/stamp-collection';
-import { HDPrivateNode } from './hd-private-node';
-import { ElectrumService } from 'src/services/electrum';
+} from 'src/services/electrum-types.js';
+import { HDPrivateNode } from './hd-private-node.js';
+import { DERIVATION_PATH, ADDRESS_GAP } from './wallet-hd.js';
 
 export type KeyHistory = {
   history: AddressGetHistory['response'];

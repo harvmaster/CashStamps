@@ -99,7 +99,7 @@ export interface TransactionBroadcast extends ElectrumRequest {
 export interface TransactionGet extends ElectrumRequest {
   method: 'blockchain.transaction.get';
   params: [string, boolean];
-  response: string | any;
+  response: string;
 }
 
 export interface TransactionGetVerbose extends ElectrumRequest {

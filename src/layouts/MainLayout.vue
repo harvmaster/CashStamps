@@ -13,6 +13,7 @@
 
         <!-- Right Buttons -->
         <div class="col-shrink text-right q-gutter-x-xs">
+          <!-- Telegram -->
           <q-btn
             round
             flat
@@ -20,7 +21,10 @@
             type="a"
             href="https://t.me/stampscash"
             target="_blank"
-          />
+          >
+            <q-tooltip>Telegram</q-tooltip>
+          </q-btn>
+          <!-- X -->
           <q-btn
             round
             flat
@@ -28,7 +32,10 @@
             type="a"
             href="https://x.com/cashstamps"
             target="_blank"
-          />
+          >
+            <q-tooltip>X</q-tooltip>
+          </q-btn>
+          <!-- Git -->
           <q-btn
             round
             flat
@@ -36,7 +43,9 @@
             type="a"
             href="https://github.com/harvmaster/CashStamps"
             target="_blank"
-          />
+          >
+            <q-tooltip>Source Code</q-tooltip>
+          </q-btn>
         </div>
       </q-toolbar>
     </q-header>

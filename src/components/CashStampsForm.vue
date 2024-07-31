@@ -4,20 +4,19 @@
       <!-- First Row -->
       <div class="col-12 row q-col-gutter-md">
         <!-- Value Input -->
-        <div class="col-md col-12 row">
+        <div class="col-md col-12">
           <q-input
-            class="col-12"
             v-model.number="model.amount"
             :label="`Amount (${currencyName})`"
             type="number"
-            :disable="disabled"
+            :disable="funded"
             :min="0"
             filled
           />
         </div>
 
         <!-- list for FIAT/BCH -->
-        <div class="col-md-auto col-8 row">
+        <div class="col-md-auto col-8">
           <q-select
             style="min-width: 10em"
             v-model="model.currency"
@@ -32,33 +31,18 @@
         </div>
 
         <!-- Quantity Input -->
-        <div class="col-auto row">
+        <div class="col-auto">
           <q-input
-            class="col-12 col-md-auto"
             style="min-width: 10em"
             v-model.number="model.quantity"
             label="Stamp Quantity"
             type="number"
-            :disable="disabled"
+            :disable="funded"
             filled
             :min="0"
             :max="100"
             v-on:blur="clampQuantity"
           />
-        </div>
-
-        <!-- New Row -->
-        <div class="col-12 row items-center justify-start q-col-gutter-md">
-          <!-- Total value of the TX -->
-          <div class="col-auto row">
-            <div class="col-12 col-md-auto text-body2">
-              Total Value ({{ currencyName }})
-            </div>
-            <div class="col-12 text-h6">
-              {{ totalAmount }}
-              {{ currencyName }}
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -69,7 +53,7 @@
       <div class="col-auto">
         <q-btn
           class="full-width"
-          :disable="disabled"
+          :disable="funded"
           label="create Stamps"
           color="primary"
           @click="emits('create')"
@@ -80,7 +64,7 @@
       <div class="col-auto">
         <q-btn
           class="full-width"
-          :disable="disabled"
+          :disable="funded"
           label="Fund Stamps"
           color="secondary"
           @click="emits('fund')"
@@ -122,7 +106,7 @@ interface Option {
 const model = defineModel<Required<DB_StampCollection>>({
   required: true,
 });
-const props = defineProps<{ oracles: OraclesService; disabled: boolean }>();
+const props = defineProps<{ oracles: OraclesService; funded: boolean }>();
 
 const emits = defineEmits(['create', 'fund', 'redeem']);
 
@@ -131,7 +115,7 @@ const formError = computed(() => {
     return 'Stamps must be created before you can fund them';
   }
 
-  if (props.disabled) {
+  if (props.funded) {
     return 'Stamps are already funded';
   }
 

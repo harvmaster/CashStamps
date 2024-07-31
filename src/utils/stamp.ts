@@ -1,9 +1,14 @@
 import { HdPrivateNodeValid } from '@bitauth/libauth';
-import { HDPrivateNode } from './hd-private-node';
+import { HDPrivateNode } from './hd-private-node.js';
+import { Transaction } from './transaction.js';
 
-import { AddressListUnspent } from 'src/services/electrum-types';
+import {
+  AddressListUnspent,
+  AddressGetHistory,
+  TransactionGet,
+} from 'src/services/electrum-types';
 import { ElectrumService } from 'src/services/electrum';
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 
 export class Stamp extends HDPrivateNode {
   // Dependencies/Services
@@ -12,8 +17,10 @@ export class Stamp extends HDPrivateNode {
   // Reactive State
   public readonly state = reactive<{
     balance: number;
+    transactions: Array<Transaction>;
   }>({
     balance: 0,
+    transactions: [],
   });
 
   constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
@@ -44,16 +51,53 @@ export class Stamp extends HDPrivateNode {
     return new Stamp(super.derivePath(path).node, this.electrum);
   }
 
+  getAddress() {
+    return this.deriveHDPublicNode().publicKey().deriveAddress().toCashAddr();
+  }
+
+  async refreshHistory() {
+    // Get this node's address.
+    const address = this.getAddress();
+
+    // Get the history of the address from electrum
+    const history = await this.electrum.request<AddressGetHistory>(
+      'blockchain.address.get_history',
+      address,
+      0,
+      -1
+    );
+
+    // Get the transactions for each history item.
+    const transactions = await Promise.all(
+      history.map((item) =>
+        this.electrum.request<TransactionGet>(
+          'blockchain.transaction.get',
+          item.tx_hash,
+          false
+        )
+      )
+    );
+
+    // Decode the transactions.
+    const decodedTransactions = transactions.map((tx) =>
+      Transaction.fromHex(tx)
+    );
+
+    // Set the state.
+    this.state.transactions = decodedTransactions;
+  }
+
   async getUnspentTransactions() {
     const address = this.deriveHDPublicNode()
       .publicKey()
       .deriveAddress()
       .toCashAddr();
 
-    const unspentTransactions = (await this.electrum.request(
+    const unspentTransactions = await this.electrum.request<AddressListUnspent>(
       'blockchain.address.listunspent',
-      address
-    )) as AddressListUnspent['response'];
+      address,
+      'include_tokens'
+    );
 
     return unspentTransactions;
   }
@@ -68,5 +112,3 @@ export class Stamp extends HDPrivateNode {
     return this.state.balance;
   }
 }
-
-export default Stamp;

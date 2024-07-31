@@ -6,20 +6,20 @@
       </q-card-section>
 
       <q-card-section class="">
-        <ul class="text-body1 instructions-list">
-          <li>1. Open Electron Wallet</li>
-          <li>2. Select File > New/Restore</li>
-          <li>3. Name the wallet and click next</li>
-          <li>4. Select 'Standard Wallet' and click next</li>
-          <li>5. Select 'I already have a seed' and click next</li>
-          <li>6. Input your seed from this collection and click next</li>
-          <li>7. Click Next</li>
+        <ol class="text-body1 instructions-list">
+          <li>Open Electron Wallet</li>
+          <li>Select File > New/Restore</li>
+          <li>Name the wallet and click next</li>
+          <li>Select 'Standard Wallet' and click next</li>
+          <li>Select 'I already have a seed' and click next</li>
+          <li>Input your seed from this collection and click next</li>
+          <li>Click Next</li>
           <li>
-            8. You can put a password on it if you would like, but as this is
+            You can put a password on it if you would like, but as this is
             temporary, we wouldnt worry about it for now
           </li>
-          <li>9. Pay out your BCH to your wallet</li>
-        </ul>
+          <li>Pay out your BCH to your wallet</li>
+        </ol>
         <div class="text-body1 text-grey-7">
           These instructions will be replaced with a button to automatically
           redeem the wallets in the future

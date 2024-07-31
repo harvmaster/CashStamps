@@ -7,24 +7,32 @@
 
     <!-- Stamp Value -->
     <div class="title-primary currency">
-      <span class="primary">{{ symbol }}{{ value }}</span>
-      <span class="secondary">{{ currency }}</span>
+      <span class="primary" contenteditable="true"
+        >{{ symbol }}{{ value }}</span
+      >
+      <span class="secondary" contenteditable="true">{{ currency }}</span>
     </div>
 
     <!-- Footer -->
     <div class="footer text-sm">
       <!-- Expiry -->
-      <div class="title-secondary content text-muted text-bold">
+      <div
+        class="title-secondary content text-muted text-bold"
+        contenteditable="true"
+      >
         {{ validUntil }}
       </div>
 
       <!-- Redeem link -->
-      <div class="content text-muted text-bold">{{ redeemText }}</div>
+      <div class="content text-muted text-bold" contenteditable="true">
+        {{ redeemText }}
+      </div>
 
       <!-- Social Media Link -->
       <div
         class="content text-muted text-bold row-contanier"
         style="margin-top: 5px"
+        contenteditable="true"
       >
         {{ additionalText }}
       </div>

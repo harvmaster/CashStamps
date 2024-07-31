@@ -9,19 +9,24 @@
           <div class="col-grow q-gutter-y-md">
             <q-input v-model="state.activeTemplate.label" label="Name" filled />
             <div class="scroll" style="height: 800px">
+              <!-- We cannot enable Simple Mode - it would be a security vulnerability because the WYSIWYG can run arbitrary JS -->
+              <!--
               <q-tabs
                 v-model="state.mode"
                 align="justify"
                 active-color="primary"
               >
+
                 <q-tab name="simple" label="Simple" />
                 <q-tab name="advanced" label="Advanced" />
               </q-tabs>
+              -->
               <q-tab-panels
                 v-model="state.mode"
                 animated
                 class="shadow-2 rounded-borders"
               >
+                <!--
                 <q-tab-panel name="simple">
                   <q-banner class="bg-warning text-white">
                     <strong
@@ -34,6 +39,7 @@
                     min-height="5rem"
                   />
                 </q-tab-panel>
+                -->
                 <q-tab-panel name="advanced">
                   <q-input
                     v-model="state.activeTemplate.value"
@@ -95,7 +101,7 @@ const state = reactive<{
 }>({
   visible: false,
   activeTemplate: { ...props.activeTemplate, readonly: false },
-  mode: 'simple',
+  mode: 'advanced',
 });
 
 const toggleVisible = () => {
@@ -116,6 +122,8 @@ function copyTemplate() {
 
 function deleteTemplate() {
   emits('template:deleted', props.activeTemplate);
+
+  toggleVisible();
 }
 
 defineExpose({

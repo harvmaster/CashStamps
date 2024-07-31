@@ -116,19 +116,36 @@ export class App {
       { deep: true }
     );
 
-    // Get the next mnemonic that should be used.
-    // NOTE: We do this so that the next mnemonic is preserved across sessions.
-    //       This means if a user prints without funding, they can still fund upon next visit.
-    this.nextMnemonic.value =
-      (await get('nextMnemonic')) || generateBip39Mnemonic();
+    // If no collections exist yet, add a default one.
+    if (this.stampCollections.length === 0) {
+      this.addCollection();
+    }
+  }
 
-    // Watch for changes to nextMnemonic so that we can sync it back to IndexedDB.
-    watch(
-      this.nextMnemonic,
-      async () => {
-        await set('nextMnemonic', this.nextMnemonic.value);
-      },
-      { immediate: true }
-    );
+  //---------------------------------------------------------------------------
+  // Methods
+  //---------------------------------------------------------------------------
+
+  addCollection(opts: Partial<DB_StampCollection> = {}): void {
+    this.stampCollections.push({
+      version: 3,
+      mnemonic: opts.mnemonic || generateBip39Mnemonic(),
+      name: opts.name || '[New Stamp Collection]',
+      amountSats: opts.amountSats || 0,
+      amount: opts.amount || 0,
+      currency: opts.currency || 'BCH',
+      quantity: 1,
+      maybeFunded: opts.maybeFunded || false,
+    });
+  }
+
+  deleteCollection(index: number): void {
+    // Delete the collection at the given index.
+    this.stampCollections.splice(index, 1);
+
+    // If we have no collections left, add a new one.
+    if (this.stampCollections.length === 0) {
+      this.addCollection();
+    }
   }
 }

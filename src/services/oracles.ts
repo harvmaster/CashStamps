@@ -32,7 +32,18 @@ export class OraclesService {
 
   constructor(serviceUrl: string, oraclePublicKeys: Array<string>) {
     // Initialize our stores (and make them reactive).
-    this.oracleMetadataStore = reactive({});
+    // NOTE: We add a default entry for Sats/BCH.
+    this.oracleMetadataStore = reactive({
+      BCH: {
+        sourceNumeratorUnitCode: 'Sats',
+        sourceNumeratorUnitName: 'Sats',
+        sourceDenominatorUnitName: 'BCH',
+        sourceDenominatorUnitCode: 'BCH',
+        attestationScaling: 100_000_000,
+        startingTimestamp: 0,
+        endingTimestamp: Number.MAX_SAFE_INTEGER,
+      },
+    });
     this.oraclePriceStore = reactive({});
 
     // Instantiate our OracleClient with the given Service URL and Oracle Public Keys.
@@ -119,6 +130,18 @@ export class OraclesService {
     }
 
     return '';
+  }
+
+  getOracleDecimalPlaces(oraclePublicKey: string | Uint8Array) {
+    const oraclePublicKeyHex =
+      oraclePublicKey instanceof Uint8Array
+        ? binToHex(oraclePublicKey)
+        : oraclePublicKey;
+
+    const oracle = this.oracleMetadataStore[oraclePublicKeyHex];
+
+    // NOTE: This is imperfect and assumes multiples of 10.
+    return oracle.attestationScaling.toString().length - 1;
   }
 
   getOracleScalingFactor(oraclePublicKey: string | Uint8Array) {

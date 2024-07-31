@@ -4,9 +4,13 @@
       <q-card-section>
         <!-- Warning to backup mnemonic -->
         <q-banner class="bg-negative text-white text-center">
-          <p>Save your seed somewhere safe before proceeding</p>
           <p>
-            <strong>{{ stampCollection.mnemonic }}</strong>
+            <strong
+              >Save your mnemonic somewhere safe before proceeding!</strong
+            >
+          </p>
+          <p>
+            {{ stampCollection.mnemonic }}
           </p>
         </q-banner>
       </q-card-section>

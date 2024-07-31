@@ -15,6 +15,12 @@
       .page > * {
         break-inside: avoid;
       }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+      }
     </style>
     <div class="page" style="display: flex; flex-wrap: wrap; width: 100%">
       {{ html }}
