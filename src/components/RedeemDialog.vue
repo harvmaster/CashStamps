@@ -5,7 +5,7 @@
         Redeeming Unclaimed Wallets
       </q-card-section>
 
-      <q-card-section class="">
+      <q-card-section>
         <ol class="text-body1 instructions-list">
           <li>Open Electron Wallet</li>
           <li>Select File > New/Restore</li>
@@ -28,14 +28,6 @@
     </q-card>
   </q-dialog>
 </template>
-
-<style lang="scss" scoped>
-.instructions-list {
-  li {
-    margin-bottom: 8px;
-  }
-}
-</style>
 
 <script setup lang="ts">
 import { ref } from 'vue';

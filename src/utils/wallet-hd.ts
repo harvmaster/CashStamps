@@ -44,7 +44,7 @@ export class WalletHD {
   static async fromMnemonic(
     electrum: ElectrumService,
     mnemonic: string,
-    quantity?: number
+    minQuantity = 0
   ): Promise<WalletHD> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
@@ -58,30 +58,24 @@ export class WalletHD {
     // Declare a variable to store whether this collection has been funded.
     let funded = false;
 
-    // If we specify a quantity, we are assuming that this is a new Stamp Collection.
-    if (quantity) {
-      // Derive a node for each stamp.
-      for (let i = 0; i < quantity; i++) {
-        nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
-      }
+    // Get all the addresses that have been a tx history
+    const usedKeys = await getUsedKeys(electrum, parentNode);
+
+    if (usedKeys.length) {
+      funded = true;
     }
 
-    // Otherwise, this is an existing collection and we should scan the HD Wallet for addresses.
-    else {
-      // Get all the addresses that have been a tx history
-      const usedKeys = await getUsedKeys(electrum, parentNode);
+    // Get the nodes from the used keys
+    usedKeys.forEach((key, _i) => {
+      nodes.push(new Stamp(key.node.node, electrum));
+    });
 
-      if (usedKeys.length) {
-        funded = true;
-      }
+    // Get the balance of each node
+    nodes.forEach(async (node) => node.getAvailableBalance());
 
-      // Get the nodes from the used keys
-      usedKeys.forEach((key, _i) => {
-        nodes.push(new Stamp(key.node.node, electrum));
-      });
-
-      // Get the balance of each node
-      nodes.forEach(async (node) => node.getAvailableBalance());
+    // Derive a node for each stamp.
+    for (let i = nodes.length; i < minQuantity; i++) {
+      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
     }
 
     // Create instance of StampCollection using generated mnemonic.

@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { nextTick, ref, reactive, onMounted } from 'vue';
 
-import { DB_StampCollection, CashPayServer_Invoice } from 'src/types.js';
+import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 
 import { OraclesService } from 'src/services/oracles.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
@@ -70,7 +70,7 @@ const emits = defineEmits(['funded']);
 
 // Props.
 const props = defineProps<{
-  stampCollection: DB_StampCollection;
+  stampCollection: StampCollection;
   wallet: WalletHD;
   oracles: OraclesService;
 }>();

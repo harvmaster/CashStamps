@@ -47,7 +47,7 @@
 
     <!-- Inner page -->
     <div class="inner-page justify-center">
-      <div class="row q-col-gutter-y-md">
+      <div class="row q-col-gutter-y-lg">
         <!-- Collection Selection -->
         <div class="col-12">
           <q-select
@@ -65,9 +65,15 @@
                 <q-menu>
                   <q-list style="min-width: 100px">
                     <q-item clickable v-close-popup @click="onNewCollection">
+                      <q-item-section avatar>
+                        <q-icon name="add" />
+                      </q-item-section>
                       <q-item-section>New</q-item-section>
                     </q-item>
                     <q-item clickable v-close-popup @click="onImportCollection">
+                      <q-item-section avatar>
+                        <q-icon name="create" />
+                      </q-item-section>
                       <q-item-section>Import Mnemonic</q-item-section>
                     </q-item>
                   </q-list>
@@ -75,20 +81,26 @@
               </q-btn>
             </template>
             <template v-slot:after>
+              <q-btn round flat icon="edit" @click="onRenameCollection">
+                <q-tooltip>Rename</q-tooltip>
+              </q-btn>
               <q-btn round flat icon="more_horiz">
                 <q-menu>
                   <q-list style="min-width: 100px">
-                    <q-item clickable v-close-popup @click="onRenameCollection">
-                      <q-item-section>Rename</q-item-section>
-                    </q-item>
                     <q-item
                       clickable
                       v-close-popup
                       @click="onShowMnemonicDialog"
                     >
+                      <q-item-section avatar>
+                        <q-icon name="key" />
+                      </q-item-section>
                       <q-item-section>View Mnemonic</q-item-section>
                     </q-item>
                     <q-item clickable v-close-popup @click="onDeleteCollection">
+                      <q-item-section avatar>
+                        <q-icon name="delete" />
+                      </q-item-section>
                       <q-item-section>Delete</q-item-section>
                     </q-item>
                   </q-list>
@@ -102,48 +114,61 @@
           <q-separator />
         </div>
 
-        <!-- Input form and wallet creator -->
-        <div v-if="activeCollection" class="col-12 q-mb-lg">
-          <cash-stamps-form
-            :oracles="app.oracles"
-            :funded="state.activeWallet?.state.funded || false"
-            v-model="activeCollection"
-            @create="renderStamps"
-            @fund="showFundingDialog"
-            @redeem="showRedeemDialog"
-            class="col-12 q-p-sm"
-          />
+        <!-- Collection Management -->
+        <div class="col-12">
+          <div class="row q-col-gutter-x-md">
+            <!-- Form and Summary -->
+            <div class="col-10">
+              <div class="column q-col-gutter-y-md">
+                <cash-stamps-form
+                  :oracles="app.oracles"
+                  :funded="state.activeWallet?.state.funded || false"
+                  v-model="activeCollection"
+                />
+
+                <SummaryComponent
+                  v-if="state.activeWallet"
+                  :oracles="app.oracles"
+                  :stampCollection="activeCollection"
+                  :wallet="state.activeWallet"
+                />
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-2">
+              <div class="column q-col-gutter-y-md">
+                <!-- Fund Stamps -->
+                <div>
+                  <q-btn
+                    :disable="state.activeWallet?.state.funded || !activeCollection.quantity || !activeCollection.amount"
+                    label="Fund Stamps"
+                    color="primary"
+                    @click="showFundingDialog"
+                    class="full-width"
+                  />
+                </div>
+
+                <!-- Redeem Stamps -->
+                <div>
+                  <q-btn
+                    :disable="!state.activeWallet?.state.funded"
+                    label="Reclaim Stamps"
+                    color="secondary"
+                    @click="showRedeemDialog"
+                    class="full-width"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div v-if="activeCollection" class="col-12">
-          <SummaryComponent :oracles="app.oracles" :stampCollection="activeCollection" />
+        <div class="col-12">
+          <q-separator />
         </div>
 
-        <div v-if="activeCollection" class="col-12 q-gutter-x-md">
-          <!-- Create Stamps -->
-          <q-btn
-            label="Create Stamps"
-            color="primary"
-            @click="renderStamps"
-          />
-
-          <!-- Fund Stamps -->
-          <q-btn
-            v-if="!state.activeWallet?.state.funded"
-            label="Fund Stamps"
-            color="secondary"
-            @click="showFundingDialog"
-          />
-
-          <q-btn
-            v-if="state.activeWallet?.state.funded"
-            label="Redeem Stamps"
-            color="orange-6"
-            @click="showRedeemDialog"
-          />
-        </div>
-
-        <!-- Stamp results -->
+        <!-- Collection Preview -->
         <div v-if="activeCollection" class="col-12 q-mb-lg">
           <div class="row">
             <!-- Controls for print/show mnemonic -->
@@ -159,13 +184,6 @@
                   <q-tooltip class="print-hide">Print Stamps</q-tooltip>
                 </q-btn>
               </q-btn-group>
-
-              <!--
-              <q-chip icon="event">
-                {{ claimedStamps.length }} /
-                {{ state.renderedStamps.length }} claimed
-              </q-chip>
-              -->
 
               <q-toggle
                 v-model="state.showClaimedStamps"
@@ -243,7 +261,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 
 // Service / App / Utils imports
-import type { DB_StampCollection, Template } from 'src/types.js';
+import type { StampCollection, Template } from 'src/types.js';
 import { App } from 'src/services/app.js';
 import { Satoshis } from 'src/utils/satoshis.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
@@ -339,7 +357,7 @@ const templates = computed(() => {
 });
 
 const stampCollectionsOptions = computed(
-  (): Array<SelectOption<DB_StampCollection>> => {
+  (): Array<SelectOption<StampCollection>> => {
     return app.stampCollections.map((collection, i) => {
       return {
         id: i,
@@ -354,10 +372,6 @@ const visibleStamps = computed(() => {
   return state.renderedStamps.filter((stamp) =>
     !state.showClaimedStamps && stamp.claimed ? false : true
   );
-});
-
-const claimedStamps = computed(() => {
-  return state.renderedStamps.filter((stamp) => stamp.claimed);
 });
 
 // Elements
@@ -424,14 +438,15 @@ async function onImportCollection() {
     let amount = 0;
 
     // If there are stamps, attempt to set the amount more accurately.
-    if(quantity) {
+    if (quantity) {
       await wallet.state.stamps[0].refreshHistory();
 
       // Assume the amount based on the first ever transaction of the first ever stamp.
       // NOTE: This is guess-work - we're making a pretty big assumption here.
-      amount =
-        Satoshis.fromSats(wallet.state.stamps[0]?.state.transactions[0]?.getOutputs()[0]
-          ?.valueSatoshis || 0n).toBCH();
+      amount = Satoshis.fromSats(
+        wallet.state.stamps[0]?.state.transactions[0]?.getOutputs()[0]
+          ?.valueSatoshis || 0n
+      ).toBCH();
     }
 
     // Add as a new collection with the given mnemonic.
@@ -550,7 +565,7 @@ async function renderStamps() {
     }
 
     // To improve legibility, destructure our selected collection.
-    const { mnemonic, amount, currency, quantity, maybeFunded } =
+    const { mnemonic, amount, currency, quantity } =
       activeCollection.value;
 
     // Initialize the Stamp Collection.
@@ -604,7 +619,13 @@ function printStamps() {
 //---------------------------------------------------------------------------
 
 // Render the stamps whenever we change collection settings or template.
-watch([() => activeCollection.value, () => state.activeTemplate], () => {
+watch([
+  () => activeCollection.value,
+  () => activeCollection.value.amount,
+  () => activeCollection.value.currency,
+  () => activeCollection.value.quantity,
+  () => state.activeTemplate
+], () => {
   renderStamps();
 });
 

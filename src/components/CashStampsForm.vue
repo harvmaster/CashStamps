@@ -1,90 +1,65 @@
 <template>
   <div class="row q-col-gutter-md">
-    <div class="col-md col-12 row q-col-gutter-md">
-      <!-- First Row -->
-      <div class="col-12 row q-col-gutter-md">
-        <!-- Value Input -->
-        <div class="col-md col-12">
-          <q-input
-            v-model.number="model.amount"
-            :label="`Amount (${currencyName})`"
-            type="number"
-            :disable="funded"
-            :min="0"
-            filled
-          />
-        </div>
-
-        <!-- list for FIAT/BCH -->
-        <div class="col-md-auto col-8">
-          <q-select
-            style="min-width: 10em"
-            v-model="model.currency"
-            :options="currencyOptions"
-            option-value="value"
-            option-label="label"
-            map-options
-            emit-value
-            label="Currency"
-            filled
-          />
-        </div>
-
-        <!-- Quantity Input -->
-        <div class="col-auto">
-          <q-input
-            style="min-width: 10em"
-            v-model.number="model.quantity"
-            label="Stamp Quantity"
-            type="number"
-            :disable="funded"
-            filled
-            :min="0"
-            :max="100"
-            v-on:blur="clampQuantity"
-          />
-        </div>
-      </div>
+    <div class="col-md col-12">
+      <q-input
+        v-model.number="model.amount"
+        :label="`Amount (${currencyName})`"
+        type="number"
+        :disable="funded"
+        :min="0"
+        debounce="1000"
+        filled
+      />
     </div>
 
-    <!-- Action buttons -->
-    <div class="col-auto column q-col-gutter-y-md justify-evenly full-height">
-      <!-- Create -->
-      <div class="col-auto">
-        <q-btn
-          class="full-width"
-          :disable="funded"
-          label="create Stamps"
-          color="primary"
-          @click="emits('create')"
-        />
-      </div>
+    <!-- Currency Selection -->
+    <div class="col-md-auto col-8">
+      <q-select
+        style="min-width: 10em"
+        v-model="model.currency"
+        :options="currencyOptions"
+        option-value="value"
+        option-label="label"
+        map-options
+        emit-value
+        label="Currency"
+        filled
+      />
+    </div>
 
-      <!-- Fund -->
-      <div class="col-auto">
-        <q-btn
-          class="full-width"
-          :disable="funded"
-          label="Fund Stamps"
-          color="secondary"
-          @click="emits('fund')"
-        >
-          <!-- Error message -->
-          <q-tooltip v-if="formError" style="font-size: 0.75rem">{{
-            formError
-          }}</q-tooltip>
-        </q-btn>
-      </div>
+    <!-- Expiry Date -->
+    <div class="col-md">
+          <q-input
+            filled
+            v-model="model.expiry"
+            mask="date"
+            class="col"
+            placeholder="YYYY/MM/DD"
+            label="Expiry Date (YYYY/MM/DD)"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy cover :breakpoint="600">
+                  <q-date v-model="model.expiry" />
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+    </div>
 
-      <!-- Redeem -->
-      <div class="col-auto">
-        <q-btn
-          class="full-width"
-          label="Redeem Stamps"
-          color="orange-6"
-          @click="emits('redeem')"
-        />
-      </div>
+    <!-- Quantity Input -->
+    <div class="col-auto">
+      <q-input
+        style="min-width: 10em"
+        v-model.number="model.quantity"
+        label="Stamp Quantity"
+        type="number"
+        :disable="funded"
+        :min="0"
+        :max="100"
+        debounce="1000"
+        filled
+      />
     </div>
   </div>
 </template>
@@ -94,7 +69,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-import { DB_StampCollection } from 'src/types.js';
+import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 
 // TODO: This interface is probably available in Quasar somewhere.
@@ -103,7 +78,7 @@ interface Option {
   value: string;
 }
 
-const model = defineModel<Required<DB_StampCollection>>({
+const model = defineModel<Required<StampCollection>>({
   required: true,
 });
 const props = defineProps<{ oracles: OraclesService; funded: boolean }>();

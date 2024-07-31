@@ -6,13 +6,12 @@ import {
 } from 'src/config.js';
 
 // Import services the app may require.
-import type { DB_StampCollection, Template } from 'src/types.js';
+import type { StampCollection, Template } from 'src/types.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
 // Database Migrations
 import { migrateCollection_v1_to_v2 } from 'src/migrations/database-v1-to-v2.js';
-import type { DB_StampCollection_v3 } from 'src/migrations/database-v1-to-v2.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
@@ -28,7 +27,7 @@ export class App {
   oracles: OraclesService;
 
   // State.
-  stampCollections = reactive<Array<DB_StampCollection>>([]);
+  stampCollections = reactive<Array<StampCollection>>([]);
   templates = reactive<Array<Template>>([]);
   nextMnemonic = ref<string>('');
 
@@ -126,7 +125,7 @@ export class App {
   // Methods
   //---------------------------------------------------------------------------
 
-  addCollection(opts: Partial<DB_StampCollection> = {}): void {
+  addCollection(opts: Partial<StampCollection> = {}): void {
     this.stampCollections.push({
       version: 3,
       mnemonic: opts.mnemonic || generateBip39Mnemonic(),
@@ -135,7 +134,7 @@ export class App {
       amount: opts.amount || 0,
       currency: opts.currency || 'BCH',
       quantity: 1,
-      maybeFunded: opts.maybeFunded || false,
+      expiry: new Date().toISOString().slice(0, 10),
     });
   }
 

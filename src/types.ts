@@ -18,15 +18,15 @@ export interface Template {
 
 export type TemplateData = { [key: string]: string };
 
-export type DB_StampCollection = {
+export type StampCollection = {
   version: 3;
   mnemonic: string;
   name: string;
   amountSats: number;
   amount: number;
   currency: string;
-  quantity?: number;
-  maybeFunded: boolean;
+  quantity: number;
+  expiry: string;
 };
 
 export type CashPayServer_Output = {
