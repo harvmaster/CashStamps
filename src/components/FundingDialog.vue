@@ -56,7 +56,8 @@
 </style>
 
 <script setup lang="ts">
-import { nextTick, ref, reactive, onMounted } from 'vue';
+import { nextTick, ref, reactive } from 'vue';
+import { useQuasar } from 'quasar';
 
 import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 
@@ -65,8 +66,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
-// Emits.
-const emits = defineEmits(['funded']);
+const $q = useQuasar();
 
 // Props.
 const props = defineProps<{
@@ -107,6 +107,9 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   // Get currency
   const currency = props.stampCollection.currency;
 
+  // Get Currency Unit Code.
+  const unitCode = props.oracles.getOracleUnitCode(currency);
+
   // Initialise the output amount to be in BCH
   let bchAmount = rawAmount;
 
@@ -120,7 +123,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   }
 
   // Add addresses to transaction
-  for (const node of props.wallet.state.stamps) {
+  for (const node of props.wallet.wallets.value) {
     const address = node
       .deriveHDPublicNode()
       .publicKey()
@@ -133,7 +136,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   }
 
   // Name invoice to show up in cryptocurrency wallet
-  invoice.setMemo(`CashStamps: ${props.stampCollection.name}`);
+  invoice.setMemo(`CashStamps: ${props.stampCollection.name}`).setUserCurrency(unitCode);
 
   // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
   return invoice;
@@ -157,7 +160,21 @@ async function generateQrCode() {
 
     // Listen for broadcasted event to update stamps
     .on(['broadcasted'], async (e: unknown) => {
-      emits('funded');
+      $q.loading.show();
+      // NOTE: This is a hack.
+      //       We have to wait for the tx to propagate before refreshing.
+      //       Subscriptions in our current Electrum version are broken.
+      //       So we just wait 5 seconds instead.
+
+      setTimeout(async () => {
+        await props.wallet.refreshChildNodes();
+
+        $q.loading.hide();
+
+        $q.notify({
+          message: 'Stamps funded successfully!',
+        });
+      }, 2500);
     });
 
   // Create the QR code by sending request to CashPayServer

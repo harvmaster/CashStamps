@@ -122,7 +122,7 @@ export class App {
   }
 
   //---------------------------------------------------------------------------
-  // Methods
+  // Collections
   //---------------------------------------------------------------------------
 
   addCollection(opts: Partial<StampCollection> = {}): void {
@@ -146,5 +146,37 @@ export class App {
     if (this.stampCollections.length === 0) {
       this.addCollection();
     }
+  }
+
+  //---------------------------------------------------------------------------
+  // Templates
+  //---------------------------------------------------------------------------
+
+  addTemplate(template: Template) {
+    this.templates.push(template);
+  }
+
+  updateTemplate(newTemplate: Template, oldTemplate: Template) {
+    const indexOfTemplate = this.templates.findIndex(
+      (template) => template === oldTemplate
+    );
+
+    if (indexOfTemplate === -1) {
+      throw new Error('Failed to find existing template');
+    }
+
+    this.templates[indexOfTemplate] = newTemplate;
+  }
+
+  deleteTemplate(templateToDelete: Template) {
+    const indexOfTemplate = this.templates.findIndex(
+      (template) => template === templateToDelete
+    );
+
+    if (indexOfTemplate === -1) {
+      throw new Error('Failed to find existing template');
+    }
+
+    this.templates.splice(indexOfTemplate, 1);
   }
 }
