@@ -11,7 +11,10 @@ import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
 // Database Migrations
-import { migrateCollection_v1_to_v2 } from 'src/migrations/database-v1-to-v2.js';
+import {
+  migrateCollection_v1_to_v2,
+  migrateCollection_v2_to_v3,
+} from 'src/migrations/migrations.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
@@ -86,6 +89,7 @@ export class App {
   async initializeDatabase(): Promise<void> {
     // Migrate the database to the latest format.
     migrateCollection_v1_to_v2();
+    migrateCollection_v2_to_v3();
 
     // Get stamp collections from IndexedDB and save them to our reactive propery.
     this.stampCollections = reactive((await get('stampCollections')) || []);
@@ -130,7 +134,6 @@ export class App {
       version: 3,
       mnemonic: opts.mnemonic || generateBip39Mnemonic(),
       name: opts.name || '[New Stamp Collection]',
-      amountSats: opts.amountSats || 0,
       amount: opts.amount || 0,
       currency: opts.currency || 'BCH',
       quantity: 1,

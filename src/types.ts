@@ -22,7 +22,6 @@ export type StampCollection = {
   version: 3;
   mnemonic: string;
   name: string;
-  amountSats: number;
   amount: number;
   currency: string;
   quantity: number;

@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify';
 import QRCode from 'easyqrcodejs';
 import { DateTime } from 'luxon';
 
@@ -162,55 +161,6 @@ export const parseMustache = (mustacheContent: string) => {
   return parsedTokens;
 };
 
-export const extractMetadataPlaceholders = (
-  template: string,
-  ignore: Array<string>
-) => {
-  // Define RegEx to capture all mustaches ({{ captureThis }}).
-  const mustacheRegEx = /\{\{(.*?)\}\}/g;
-
-  // Find all placeholders in the template.
-  const matches = [...template.matchAll(mustacheRegEx)].map((match) =>
-    match[1].trim()
-  );
-
-  // Ignore known placeholders.
-  const metadata = matches.filter((match) => !ignore.includes(match));
-
-  // Return the metdata.
-  return metadata;
-};
-
-export interface TemplateConfig {
-  name?: string;
-  variables?: {
-    [id: string]: {
-      name?: string;
-      default?: string;
-      class?: string;
-    };
-  };
-}
-
-export const extractTemplateConfig = (template: string): TemplateConfig => {
-  // Define RegEx to capture all content between @config and @endconfig.
-  const configRegEx = /@config([\s\S]*?)@endconfig/;
-
-  // Attempt to find the config.
-  const match = template.match(configRegEx);
-
-  // Return an empty config if no config was found.
-  if (!match) {
-    return {};
-  }
-
-  // Trim the config to remove and spaces.
-  const configRaw = match[1].trim();
-
-  // Parse the config and return it.
-  return JSON.parse(configRaw);
-};
-
 export const compileTemplate = async (
   template: string,
   data: { [key: string]: string }
@@ -268,47 +218,6 @@ export const compileTemplate = async (
     compiledTemplate = compiledTemplate.replace(fullMatch, replacement);
   }
 
-  // Sanitize the template using DOMPurify.
-  /*const sanitizedTemplate = DOMPurify.sanitize(compiledTemplate, {
-    USE_PROFILES: { html: true },
-  });*/
-
   // Return the compiled template.
   return compiledTemplate;
-};
-
-export const printHtml = (html: string) => {
-  const printWindow = window.open('', '_blank');
-
-  if (!printWindow) {
-    throw new Error('Failed to open print window');
-  }
-
-  printWindow.document.write('<html><head><title>Print Element</title>');
-  printWindow.document.write('</head><body>');
-  printWindow.document.write(
-    '<style>html, body {margin: 0; padding: 0 } div  { box-sizing: border-box; } .page > * { break-inside: avoid }</style>'
-  );
-  /*printWindow.document.write(
-    '<style>@page { size: A4; margin: 20mm; }</style>'
-  );*/
-  printWindow.document.write(
-    '<div class="page" style="display:flex; flex-wrap: wrap; width: 100%;">'
-  );
-  printWindow.document.write(html);
-  printWindow.document.write('</div>');
-  printWindow.document.write('</body></html>');
-  printWindow.document.close();
-
-  printWindow.onload = function () {
-    if (!printWindow) {
-      throw new Error('Failed to open print window');
-    }
-
-    printWindow.focus();
-    printWindow.print();
-    setTimeout(() => {
-      printWindow.close();
-    }, 5000);
-  };
 };

@@ -105,15 +105,6 @@ const currencyOptions = computed((): Array<Option> => {
   return options;
 });
 
-const amount = computed({
-  get: () => {
-    return 0;
-  },
-  set: (amount) => {
-    model.value.amount = amount;
-  },
-});
-
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.
 const quantityClamped = computed({
   get: () => {

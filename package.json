@@ -21,7 +21,6 @@
     "@quasar/extras": "^1.16.4",
     "@sanity/eventsource": "^5.0.2",
     "axios": "^1.2.1",
-    "dompurify": "^3.1.6",
     "easyqrcodejs": "^4.6.1",
     "electrum-cash": "2.0.10-development.3428777728",
     "events": "^3.3.0",
