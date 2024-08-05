@@ -136,7 +136,9 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   }
 
   // Name invoice to show up in cryptocurrency wallet
-  invoice.setMemo(`CashStamps: ${props.stampCollection.name}`).setUserCurrency(unitCode);
+  invoice
+    .setMemo(`CashStamps: ${props.stampCollection.name}`)
+    .setUserCurrency(unitCode);
 
   // Return invoice object, Need to call create from here, but we need to be able to call "intoContainer" to load the invoice into the browser
   return invoice;

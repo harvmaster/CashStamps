@@ -111,17 +111,17 @@ const amount = computed({
   },
   set: (amount) => {
     model.value.amount = amount;
-  }
+  },
 });
 
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.
 const quantityClamped = computed({
   get: () => {
-    if(props.wallet?.isFunded.value || false) {
+    if (props.wallet?.isFunded.value || false) {
       return props.wallet.wallets.value.length;
     }
 
-    return model.value.quantity
+    return model.value.quantity;
   },
   set: (quantity: number) =>
     (model.value.quantity = Math.min(Math.max(quantity, 0), 100)),

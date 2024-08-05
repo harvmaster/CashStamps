@@ -23,19 +23,32 @@
       <!-- Balance Fiat -->
       <div v-if="props.wallet?.isFunded.value" class="col-auto">
         <div class="text-body2">Each Stamp</div>
-        <div class="text-h6">{{ convertToFiat(props.stampCollection.currency, eachStampAmount) }} {{ currencyName }}</div>
+        <div class="text-h6">
+          {{ convertToFiat(props.stampCollection.currency, eachStampAmount) }}
+          {{ currencyName }}
+        </div>
       </div>
 
       <!-- Balance Fiat -->
       <div v-if="props.wallet?.isFunded.value" class="col-auto">
         <div class="text-body2">Total Remaining</div>
-        <div class="text-h6">{{ convertToFiat(props.stampCollection.currency, props.wallet?.balance.value) }} {{ currencyName }}</div>
+        <div class="text-h6">
+          {{
+            convertToFiat(
+              props.stampCollection.currency,
+              props.wallet?.balance.value
+            )
+          }}
+          {{ currencyName }}
+        </div>
       </div>
 
       <!-- Balance BCH -->
       <div v-if="props.wallet?.isFunded.value" class="col-auto">
         <div class="text-body2">Total Remaining</div>
-        <div class="text-h6">{{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }} BCH</div>
+        <div class="text-h6">
+          {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }} BCH
+        </div>
       </div>
     </template>
   </div>
@@ -97,12 +110,13 @@ const eachStampAmount = computed(() => {
     return 0;
   }
 
-  if(props.wallet.balance.value <= 0) {
+  if (props.wallet.balance.value <= 0) {
     return 0;
   }
 
   // Calculate the current value of each stamp in BCH.
-  const eachStampBch = props.wallet?.balance.value / (totalStamps.value - claimedStamps.value);
+  const eachStampBch =
+    props.wallet?.balance.value / (totalStamps.value - claimedStamps.value);
 
   return eachStampBch;
 });
