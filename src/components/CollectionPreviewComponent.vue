@@ -275,11 +275,11 @@ function exportAsJson() {
   const formattedStamps = props.wallet.wallets.value.map((wallet) => ({
     wif: wallet.toWif(),
     address: wallet.getAddress(),
-    ...props.stampCollection
+    ...props.stampCollection,
   }));
 
   // Trigger file download.
-  exportFile(filename, JSON.stringify(formattedStamps, null, 2))
+  exportFile(filename, JSON.stringify(formattedStamps, null, 2));
 }
 
 function onIframeResized(event: MessageEvent) {
