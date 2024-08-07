@@ -28,7 +28,7 @@
           </q-btn>
         </q-btn-group>
 
-        <q-toggle v-model="state.showClaimedStamps" label="Show Claimed" />
+        <q-toggle v-model="state.showClaimedStamps" label="Show Claimed Stamps" />
         <q-toggle v-model="state.showCutLines" label="Show Cut Lines" />
       </div>
 
@@ -65,8 +65,8 @@
         <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
         <iframe
           ref="printIFrame"
-          style="width: 0px; height: 0px; border: none"
-          class="shadow-20"
+          style="width: 210mm; height: 297mm; border: none"
+          class="shadow-20 animate fadeIn"
           sandbox="allow-same-origin allow-scripts allow-modals"
           credentialless="true"
         ></iframe>
@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
-import { exportFile } from 'quasar';
+import { debounce, exportFile } from 'quasar';
 
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
@@ -312,15 +312,16 @@ watch(
     () => props.stampCollection.currency,
     () => props.stampCollection.quantity,
     () => props.wallet,
+    () => props.wallet.claimedStamps.value,
     () => state.activeTemplate,
   ],
-  () => {
+  debounce(() => {
     renderStamps();
-  }
+  }, 1000)
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
-watch([visibleStamps, () => state.showCutLines], async () => {
+watch([visibleStamps, () => state.showCutLines], debounce(async () => {
   // Make sure the IFrame element exists..
   if (!printIFrame.value) {
     throw new Error('IFrame element does not exist');
@@ -331,7 +332,7 @@ watch([visibleStamps, () => state.showCutLines], async () => {
     .map((stamp) => {
       const claimedHtml = stamp.claimed ? ClaimedBadge : '';
       const stampHtml = stamp.html;
-      return `<div class="stamp">${stampHtml}${claimedHtml}</div>`;
+      return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''}">${stampHtml}${claimedHtml}</div>`;
     })
     .join('');
 
@@ -342,7 +343,7 @@ watch([visibleStamps, () => state.showCutLines], async () => {
       : '',
     html: stampsHtml,
   });
-});
+}, 1000));
 
 //---------------------------------------------------------------------------
 // Initialization/Lifecycle Hooks

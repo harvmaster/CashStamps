@@ -7,39 +7,27 @@
       <q-card-section class="column">
         <div class="q-gutter-y-md">
           <div class="col-grow q-gutter-y-md">
+            <!-- Name Input -->
             <q-input v-model="state.activeTemplate.label" label="Name" filled />
-            <div class="scroll" style="height: 800px">
-              <!-- We cannot enable Simple Mode - it would be a security vulnerability because the WYSIWYG can run arbitrary JS -->
-              <!--
-              <q-tabs
-                v-model="state.mode"
-                align="justify"
-                active-color="primary"
-              >
 
-                <q-tab name="simple" label="Simple" />
-                <q-tab name="advanced" label="Advanced" />
-              </q-tabs>
-              -->
-              <q-tab-panels
-                v-model="state.mode"
-                animated
-                class="shadow-2 rounded-borders"
-              >
-                <q-tab-panel name="simple"> </q-tab-panel>
-                <q-tab-panel name="advanced">
-                  <q-banner class="bg-negative text-white">
-                    DO NOT paste untrusted content in here. There is a very high
-                    risk that your keys can be stolen.
-                  </q-banner>
-                  <q-input
-                    v-model="state.activeTemplate.value"
-                    label="Code"
-                    autogrow
-                    filled
-                  />
-                </q-tab-panel>
-              </q-tab-panels>
+            <!-- Warning Banner -->
+            <q-banner class="bg-negative text-white">
+              <strong>DO NOT:</strong>
+              <ol>
+                <li>Paste template code in here from people you do not trust.</li>
+                <li>Use external URL-based QR Code generators - they will receive your WIFs (Private Keys) and can then steal your funds.</li>
+              </ol>
+              In future, we hope to revise Template Editing to make this simpler. In the meantime, if you need help, reach out on <a href="https://t.me/stampscash" target="_blank" class="text-white">Telegram</a>.
+            </q-banner>
+
+            <!-- Text Editor -->
+            <div class="scroll" style="height: 800px">
+              <q-input
+                v-model="state.activeTemplate.value"
+                label="Code"
+                autogrow
+                filled
+              />
             </div>
           </div>
           <div class="col-shrink q-gutter-x-md">

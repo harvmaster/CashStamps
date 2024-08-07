@@ -39,7 +39,7 @@
         <div>
           <q-btn
             :disable="
-              !props.wallet.isFunded.value || props.wallet.balance.value <= 0
+              !props.wallet.isFunded.value || props.wallet.isClaimed.value
             "
             label="Reclaim Stamps"
             color="secondary"
@@ -52,7 +52,7 @@
         <div class="flex justify-center">
           <q-chip
             v-if="
-              props.wallet.isFunded.value && props.wallet.balance.value <= 0
+              props.wallet.isClaimed.value
             "
             color="primary"
             text-color="white"

@@ -36,10 +36,19 @@ export class WalletHD extends HDPrivateNode {
       0
     );
   });
+
   public isFunded = computed(() => {
     return this.wallets.value.every(
       (node) => node.transactions.value.length > 0
     );
+  });
+  public isClaimed = computed(() => {
+    return this.isFunded.value && this.balance.value <= 0;
+  });
+  public claimedStamps = computed(() => {
+    return this.wallets.value.filter(
+      (wallet) => wallet.transactions.value.length && wallet.balance.value === 0
+    ).length;
   });
 
   shouldMonitor = false;

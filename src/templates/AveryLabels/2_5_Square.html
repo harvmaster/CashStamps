@@ -53,9 +53,6 @@
       Letter Paper is 216mm x 279mm
     */
 
-    /* Stamp decoration */
-    --padding-size: 7mm;
-
     /* Computed size helpers in mm */
     --paper-width-mm: 216mm;
     --paper-height-mm: 279mm;
@@ -76,9 +73,8 @@
     /* HACK:  We can't accurately space these, so we just add the 19mm gap manually. This means we need to remove page's bottom margin. */
     --stamp-outer-height: calc(var(--stamp-inner-height-mm) + 19mm);
 
-    /* Define the grid axis lengths */
-    --calculated-y-quantity-per-page: 3;
-    --calculated-x-quantity-per-page: 3;
+    /* Stamp decoration */
+    --padding-size: 7mm;
   }
 
   /**

@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { reactive } from 'vue';
 import { useQuasar } from 'quasar';
 
 import { ElectrumService } from 'src/services/electrum.js';
@@ -72,11 +72,6 @@ const state = reactive<{
   payoutAddress: '',
 });
 
-// Computeds.
-const isClaimed = computed(() => {
-  return props.wallet.isFunded.value && props.wallet.balance.value <= 0;
-});
-
 // Expose.
 defineExpose({
   toggleVisible,
@@ -104,7 +99,7 @@ async function sweepStamps() {
     );
 
     // Wait for our collection to be marked as claimed.
-    await waitFor(isClaimed, true);
+    await waitFor(props.wallet.isClaimed, true);
 
     // Hide the dialog
     toggleVisible();

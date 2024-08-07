@@ -14,10 +14,10 @@
 
     <!-- If Wallet IS Funded... -->
     <template v-else>
-      <!-- Number of Claimed Stamps -->
+      <!-- Number of Claimed Stamps/Total Stamps -->
       <div class="col-auto">
         <div class="text-body2">Claimed</div>
-        <div class="text-h6">{{ claimedStamps }} / {{ totalStamps }}</div>
+        <div class="text-h6">{{ props.wallet.claimedStamps.value }} / {{ props.wallet.wallets.value.length }}</div>
       </div>
 
       <!-- Balance Fiat -->
@@ -88,12 +88,6 @@ const totalAmount = computed(() => {
   ).toFixed(decimalPlaces);
 });
 
-const claimedStamps = computed(() => {
-  return props.wallet.wallets.value.filter(
-    (wallet) => wallet.balance.value === 0
-  ).length;
-});
-
 const totalStamps = computed(() => {
   return props.wallet.wallets.value.length;
 });
@@ -102,7 +96,7 @@ const fundingSats = computed(() => {
   const sats = props.wallet.wallets.value.reduce(
     (sats, wallet) =>
       (sats +=
-        wallet.transactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
+        wallet.transactions.value[wallet.transactions.value.length -1]?.getOutputs()[0]?.valueSatoshis || 0n),
     0n
   );
 
@@ -110,10 +104,6 @@ const fundingSats = computed(() => {
 });
 
 const currentStampValue = computed(() => {
-  if (!props.wallet) {
-    return 0;
-  }
-
   // Calculate the current value of each stamp in BCH.
   const eachStampBch = Number(fundingSats.value) / totalStamps.value;
 

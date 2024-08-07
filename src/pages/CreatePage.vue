@@ -69,6 +69,7 @@
               v-model="activeCollection"
               :app="app"
               :wallet="activeWallet"
+              class="animated fadeIn"
             />
           </div>
 
@@ -83,6 +84,7 @@
               :app="app"
               :stampCollection="activeCollection"
               :wallet="activeWallet"
+              class="animated fadeIn"
             />
           </div>
         </template>
@@ -92,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, shallowRef, watch } from 'vue';
+import { onUnmounted, computed, reactive, shallowRef, watch } from 'vue';
 import { useQuasar } from 'quasar';
 
 // Service / App / Utils imports
@@ -190,6 +192,12 @@ watch([() => activeCollection.value], async () => {
 //---------------------------------------------------------------------------
 // Lifecycle/Initialization
 //---------------------------------------------------------------------------
+
+onUnmounted(async () => {
+  if(activeWallet.value) {
+    await activeWallet.value.stopMonitoring();
+  }
+});
 
 await initWallet();
 </script>

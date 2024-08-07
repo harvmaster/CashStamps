@@ -6,7 +6,6 @@
         :label="`Target Amount (${currencyName})`"
         type="number"
         :min="0"
-        debounce="1000"
         filled
       />
     </div>
@@ -57,7 +56,6 @@
         :step="1"
         :min="0"
         :max="100"
-        debounce="1000"
         filled
       />
     </div>
