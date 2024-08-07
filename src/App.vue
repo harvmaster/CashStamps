@@ -25,6 +25,12 @@ onErrorCaptured((error) => {
   $q.loading.hide();
 
   // Show a dialog to the user describing the error.
-  $q.dialog({ title: 'Error', message: error.message });
+  $q.dialog({
+    title: 'Error',
+    message: `${error.message}: This may be a connectivity problem or a service this depends on might be currently unavailable.`,
+    ok: 'Reload',
+  }).onOk(() => {
+    window.location.reload();
+  });
 });
 </script>

@@ -26,21 +26,12 @@
                 animated
                 class="shadow-2 rounded-borders"
               >
-                <!--
-                <q-tab-panel name="simple">
-                  <q-banner class="bg-warning text-white">
-                    <strong
-                      >The Simple Editor should only be used for minor textual
-                      modifications. It is very fragile, so be careful.</strong
-                    >
-                  </q-banner>
-                  <q-editor
-                    v-model="state.activeTemplate.value"
-                    min-height="5rem"
-                  />
-                </q-tab-panel>
-                -->
+                <q-tab-panel name="simple"> </q-tab-panel>
                 <q-tab-panel name="advanced">
+                  <q-banner class="bg-negative text-white">
+                    DO NOT paste untrusted content in here. There is a very high
+                    risk that your keys can be stolen.
+                  </q-banner>
                   <q-input
                     v-model="state.activeTemplate.value"
                     label="Code"

@@ -1,5 +1,7 @@
 import QRCode from 'easyqrcodejs';
 import { DateTime } from 'luxon';
+import { watch } from 'vue';
+import type { ComputedGetter, Ref, WatchStopHandle } from 'vue';
 
 // Convert a date to a string in the format of "YYYY/MM/DD"
 export const dateToString = (date = new Date()) => {
@@ -220,4 +222,45 @@ export const compileTemplate = async (
 
   // Return the compiled template.
   return compiledTemplate;
+};
+
+/**
+ * Waits for the given reactive property to equal the given value.
+ *
+ * @remarks This works by creating a Vue Watcher on the property.
+ *
+ * @param property   The Reactive Property to watch.
+ * @param toEqual    The value we are waiting for the reactive property to equal.
+ */
+export const waitFor = async function <T>(
+  property: Ref<T> | ComputedGetter<T>,
+  toEqual: T
+): Promise<void> {
+  // Declare a handle for our stopWatching function here so that it is in-scope.
+  let stopWatching: WatchStopHandle | undefined;
+
+  // Create a promise that waits for the reactive property to equal the given value.
+  const waitForPromise = new Promise((resolve): void => {
+    // Create a watcher on the reactive property and give it a handle so we can unwatch it later.
+    // NOTE: We use `immediate: true` to eagerly evaluate when `watch` is first called.
+    stopWatching = watch(
+      property,
+      (newValue) => {
+        // If the value of the property equals the value we want it to equal, resolve our promise.
+        if (newValue === toEqual) {
+          resolve(true);
+        }
+      },
+      { immediate: true }
+    );
+  });
+
+  // Wait for our promise to resolve.
+  await waitForPromise;
+
+  // Stop watching this value.
+  // NOTE: This cannot be called inside our watcher as the stopWatching handle won't be instantiated yet.
+  if (stopWatching) {
+    stopWatching();
+  }
 };

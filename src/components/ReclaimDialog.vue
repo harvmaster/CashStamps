@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible">
+  <q-dialog v-model="state.visible">
     <q-card style="max-width: 500px; width: 100%">
       <q-card-section class="text-h6 text-center">
         Reclaim Remaining Stamps
@@ -40,22 +40,22 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 
 import { ElectrumService } from 'src/services/electrum.js';
 import type { TransactionBroadcast } from 'src/services/electrum-types';
 import { Address } from 'src/utils/address.js';
+import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 import { binToHex } from '@bitauth/libauth';
 
 const $q = useQuasar();
 
-const visible = ref(false);
-const toggleVisible = () => {
-  visible.value = !visible.value;
-};
+//---------------------------------------------------------------------------
+// State
+//---------------------------------------------------------------------------
 
 // Props.
 const props = defineProps<{
@@ -63,9 +63,32 @@ const props = defineProps<{
   wallet: WalletHD;
 }>();
 
-const state = reactive({
+// Reactives.
+const state = reactive<{
+  visible: boolean;
+  payoutAddress: string;
+}>({
+  visible: false,
   payoutAddress: '',
 });
+
+// Computeds.
+const isClaimed = computed(() => {
+  return props.wallet.isFunded.value && props.wallet.balance.value <= 0;
+});
+
+// Expose.
+defineExpose({
+  toggleVisible,
+});
+
+//---------------------------------------------------------------------------
+// Methods
+//---------------------------------------------------------------------------
+
+function toggleVisible() {
+  state.visible = !state.visible;
+}
 
 async function sweepStamps() {
   try {
@@ -80,22 +103,20 @@ async function sweepStamps() {
       binToHex(transaction)
     );
 
-    // NOTE: This is a hack.
-    //       We have to wait for the tx to propagate before refreshing.
-    //       Subscriptions in our current Electrum version are broken.
-    //       So we just wait 5 seconds instead.
-    setTimeout(async () => {
-      await props.wallet.refreshChildNodes();
+    // Wait for our collection to be marked as claimed.
+    await waitFor(isClaimed, true);
 
-      $q.loading.hide();
+    // Hide the dialog
+    toggleVisible();
 
-      $q.notify({
-        color: 'primary',
-        message: 'Stamps reclaimed successfully!',
-      });
+    // Hide the loading indicator.
+    $q.loading.hide();
 
-      toggleVisible();
-    }, 2500);
+    // Create a notification to notify user stamps were reclaimed.
+    $q.notify({
+      color: 'primary',
+      message: 'Stamps reclaimed successfully!',
+    });
   } catch (error) {
     console.error(error);
 
@@ -107,8 +128,4 @@ async function sweepStamps() {
     });
   }
 }
-
-defineExpose({
-  toggleVisible,
-});
 </script>

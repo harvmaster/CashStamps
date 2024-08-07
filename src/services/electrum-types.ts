@@ -72,7 +72,8 @@ export interface AddressListUnspent extends ElectrumRequest {
 export interface AddressSubscribe extends ElectrumRequest {
   method: 'blockchain.address.subscribe';
   params: [string];
-  response: string;
+  // [Address, Status]
+  response: [string, string | null];
 }
 
 export interface AddressUnsubscribe extends ElectrumRequest {
@@ -120,4 +121,11 @@ export interface TransactionUnsubscribe extends ElectrumRequest {
   method: 'blockchain.transaction.unsubscribe';
   params: [string];
   response: boolean;
+}
+
+export interface AddressNotification {
+  jsonrpc: '2.0';
+  method: 'blockchain.address.subscribe';
+  // [Address, Status]
+  params: [string, string | null];
 }

@@ -3,7 +3,7 @@
     <div class="col-md col-12">
       <q-input
         v-model.number="model.amount"
-        :label="`Amount (${currencyName})`"
+        :label="`Target Amount (${currencyName})`"
         type="number"
         :min="0"
         debounce="1000"
@@ -50,7 +50,7 @@
     <div class="col-auto">
       <q-input
         style="min-width: 10em"
-        v-model.number="quantityClamped"
+        v-model.number="quantityModel"
         label="Stamp Quantity"
         type="number"
         :disable="props.wallet?.isFunded.value || false"
@@ -82,7 +82,7 @@ const model = defineModel<Required<StampCollection>>({
   required: true,
 });
 
-const props = defineProps<{ oracles: OraclesService; wallet?: WalletHD }>();
+const props = defineProps<{ oracles: OraclesService; wallet: WalletHD }>();
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
@@ -106,15 +106,15 @@ const currencyOptions = computed((): Array<Option> => {
 });
 
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.
-const quantityClamped = computed({
+const quantityModel = computed({
   get: () => {
-    if (props.wallet?.isFunded.value || false) {
+    if (props.wallet.isFunded.value) {
       return props.wallet.wallets.value.length;
     }
 
     return model.value.quantity;
   },
   set: (quantity: number) =>
-    (model.value.quantity = Math.min(Math.max(quantity, 0), 100)),
+    (model.value.quantity = Math.min(Math.max(quantity, 1), 100)),
 });
 </script>

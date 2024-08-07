@@ -56,33 +56,36 @@
           />
         </div>
 
-        <!-- Separator -->
-        <div class="col-12">
-          <q-separator />
-        </div>
+        <!-- Only show if we have an active wallet -->
+        <template v-if="activeWallet">
+          <!-- Separator -->
+          <div class="col-12">
+            <q-separator />
+          </div>
 
-        <!-- Collection Manager -->
-        <div class="col-12">
-          <CollectionManagerComponent
-            v-model="activeCollection"
-            :app="app"
-            :wallet="activeWallet"
-          />
-        </div>
+          <!-- Collection Manager -->
+          <div class="col-12">
+            <CollectionManagerComponent
+              v-model="activeCollection"
+              :app="app"
+              :wallet="activeWallet"
+            />
+          </div>
 
-        <!-- Separator -->
-        <div class="col-12">
-          <q-separator />
-        </div>
+          <!-- Separator -->
+          <div class="col-12">
+            <q-separator />
+          </div>
 
-        <!-- Collection Preview -->
-        <div class="col-12">
-          <CollectionPreviewComponent
-            :app="app"
-            :stampCollection="activeCollection"
-            :wallet="activeWallet"
-          />
-        </div>
+          <!-- Collection Preview -->
+          <div class="col-12">
+            <CollectionPreviewComponent
+              :app="app"
+              :stampCollection="activeCollection"
+              :wallet="activeWallet"
+            />
+          </div>
+        </template>
       </div>
     </div>
   </q-page>
@@ -130,25 +133,63 @@ const activeCollection = computed(() => {
 });
 
 //---------------------------------------------------------------------------
+// Methods
+//---------------------------------------------------------------------------
+
+// TODO: Consider moving to Select Component and emitting the Wallet.
+async function initWallet() {
+  // If there is a wallet active, stop monitoring it to prevent memory leaks.
+  if (activeWallet.value) {
+    activeWallet.value.stopMonitoring();
+  }
+
+  // Set the current wallet to undefined.
+  activeWallet.value = undefined;
+
+  // Initialize the Stamp Collection.
+  const wallet = await WalletHD.fromMnemonic(
+    activeCollection.value.mnemonic,
+    app.electrum
+  );
+
+  // Scan for wallets.
+  await wallet.scan();
+
+  // If this is a fresh wallet, set the quantity to whatever the collection specified.
+  if (!wallet.wallets.value.length) {
+    wallet.setQuantity(activeCollection.value.quantity);
+  }
+
+  // Otherwise, refresh the balances of the child nodes.
+  else {
+    await wallet.refreshChildNodes();
+  }
+
+  // Start monitoring the wallet for transactions.
+  await wallet.startMonitoring();
+
+  // Set the new active wallet.
+  activeWallet.value = wallet;
+}
+
+//---------------------------------------------------------------------------
 // Watchers
 //---------------------------------------------------------------------------
 
-watch(
-  [() => activeCollection.value, () => activeCollection.value.quantity],
-  async () => {
-    // Set the current wallet to undefined.
-    activeWallet.value = undefined;
+watch([() => activeCollection.value], async () => {
+  // Show the loading indicator.
+  $q.loading.show();
 
-    // Initialize the Stamp Collection.
-    const wallet = await WalletHD.fromMnemonic(
-      app.electrum,
-      activeCollection.value.mnemonic,
-      activeCollection.value.quantity
-    );
+  // Initialize the wallet.
+  await initWallet();
 
-    // Set the new active wallet.
-    activeWallet.value = wallet;
-  },
-  { immediate: true }
-);
+  // Hide the loading indicator.
+  $q.loading.hide();
+});
+
+//---------------------------------------------------------------------------
+// Lifecycle/Initialization
+//---------------------------------------------------------------------------
+
+await initWallet();
 </script>

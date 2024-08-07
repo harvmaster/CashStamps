@@ -24,7 +24,7 @@
         <div>
           <q-btn
             :disable="
-              props.wallet?.isFunded.value ||
+              props.wallet.isFunded.value ||
               !collection.quantity ||
               !collection.amount
             "
@@ -39,7 +39,7 @@
         <div>
           <q-btn
             :disable="
-              !props.wallet?.isFunded.value || props.wallet?.balance.value <= 0
+              !props.wallet.isFunded.value || props.wallet.balance.value <= 0
             "
             label="Reclaim Stamps"
             color="secondary"
@@ -52,7 +52,7 @@
         <div class="flex justify-center">
           <q-chip
             v-if="
-              props.wallet?.isFunded.value && props.wallet?.balance.value <= 0
+              props.wallet.isFunded.value && props.wallet.balance.value <= 0
             "
             color="primary"
             text-color="white"
@@ -74,7 +74,6 @@
 
   <!-- Modal for showing Funding TX Qr Code -->
   <FundingDialog
-    v-if="props.wallet"
     ref="fundingQrCode"
     :oracles="app.oracles"
     :stampCollection="collection"
@@ -90,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 // App / Service / Utils Imports
 import type { StampCollection } from 'src/types.js';
@@ -113,7 +112,7 @@ const collection = defineModel<Required<StampCollection>>({
 
 const props = defineProps<{
   app: App;
-  wallet?: WalletHD;
+  wallet: WalletHD;
 }>();
 
 // Elements

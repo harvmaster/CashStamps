@@ -2,28 +2,56 @@
   <head>
     <title>Print Element</title>
   </head>
-  <body>
-    <style>
-      html,
+  <style>
+    html,
+    body {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0;
+      padding: 0;
+    }
+    div {
+      box-sizing: border-box;
+    }
+    .page > * {
+      break-inside: avoid;
+    }
+
+    @media print {
       body {
-        margin: 0;
         padding: 0;
       }
-      div {
-        box-sizing: border-box;
-      }
-      .page > * {
-        break-inside: avoid;
-      }
+    }
 
-      @media print {
-        body {
-          padding: 0;
-        }
-      }
-    </style>
+    .stamp {
+      position: relative;
+    }
+
+    .claimed-badge {
+      position: absolute;
+      top: 2mm;
+      right: 2mm;
+      background-color: #82d853;
+      padding: 5px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 12px;
+    }
+  </style>
+  {{ cutlines }}
+  <body>
     <div class="page" style="display: flex; flex-wrap: wrap; width: 100%">
       {{ html }}
     </div>
+    <script>
+      const postSizeToParent = () => {
+        const width = document.documentElement.scrollWidth;
+        const height = document.documentElement.scrollHeight;
+        window.parent.postMessage({ width, height }, '*');
+      };
+
+      const resizeObserver = new ResizeObserver(postSizeToParent);
+      resizeObserver.observe(document.body);
+    </script>
   </body>
 </html>

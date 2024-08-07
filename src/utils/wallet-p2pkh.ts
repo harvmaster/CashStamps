@@ -1,10 +1,9 @@
 import {
-  HdPrivateNodeValid,
   hexToBin,
   walletTemplateP2pkhNonHd,
   walletTemplateToCompilerBCH,
 } from '@bitauth/libauth';
-import { HDPrivateNode } from './hd-private-node.js';
+import { PrivateKey } from './private-key.js';
 import { Transaction } from './transaction.js';
 
 import {
@@ -15,7 +14,7 @@ import {
 import { ElectrumService } from 'src/services/electrum';
 import { computed, shallowRef } from 'vue';
 
-export class Wallet extends HDPrivateNode {
+export class WalletP2PKH extends PrivateKey {
   // Dependencies/Services
   public electrum: ElectrumService;
 
@@ -31,36 +30,27 @@ export class Wallet extends HDPrivateNode {
     );
   });
 
-  constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
-    super(node);
+  constructor(privateKeyBytes: Uint8Array, electrum: ElectrumService) {
+    super(privateKeyBytes);
     this.electrum = electrum;
   }
 
-  static fromHDPrivateNode(
-    node: HDPrivateNode,
-    electrum: ElectrumService
-  ): Wallet {
-    return new Wallet(node.node, electrum);
+  async startMonitoring() {
+    await this.electrum.subscribeAddress(
+      this.getAddress(),
+      this.onAddressNotification.bind(this)
+    );
   }
 
-  static fromStampSeed(seed: Uint8Array, electrum: ElectrumService): Wallet {
-    return new Wallet(HDPrivateNode.fromSeed(seed).node, electrum);
-  }
-
-  static fromStampXPriv(xpriv: string, electrum: ElectrumService): Wallet {
-    return new Wallet(HDPrivateNode.fromXPriv(xpriv).node, electrum);
-  }
-
-  static generateRandomStamp(electrum: ElectrumService): Wallet {
-    return new Wallet(HDPrivateNode.generateRandom().node, electrum);
-  }
-
-  derivePath(path: string): Wallet {
-    return new Wallet(super.derivePath(path).node, this.electrum);
+  async stopMonitoring() {
+    await this.electrum.unsubscribeAddress(
+      this.getAddress(),
+      this.onAddressNotification.bind(this)
+    );
   }
 
   getAddress() {
-    return this.deriveHDPublicNode().publicKey().deriveAddress().toCashAddr();
+    return this.derivePublicKey().deriveAddress().toCashAddr();
   }
 
   async getHistory() {
@@ -98,10 +88,7 @@ export class Wallet extends HDPrivateNode {
   }
 
   async getUnspentOutputs() {
-    const address = this.deriveHDPublicNode()
-      .publicKey()
-      .deriveAddress()
-      .toCashAddr();
+    const address = this.getAddress();
 
     const unspentTransactions = await this.electrum.request<AddressListUnspent>(
       'blockchain.address.listunspent',
@@ -129,7 +116,7 @@ export class Wallet extends HDPrivateNode {
       unlockingBytecode: {
         compiler: compilerP2PKH,
         data: {
-          keys: { privateKeys: { key: this.privateKey().toBytes() } },
+          keys: { privateKeys: { key: this.toBytes() } },
         },
         script: 'unlock',
         valueSatoshis: BigInt(unspent.value),
@@ -142,5 +129,16 @@ export class Wallet extends HDPrivateNode {
 
   async refresh(): Promise<void> {
     await Promise.all([this.getUnspentOutputs(), this.getHistory()]);
+  }
+
+  onAddressNotification(status: string | null) {
+    // If status is null, it simply means that our subscribe call to Electrum was successful.
+    if (!status) {
+      return;
+    }
+
+    // Refresh our wallet's state.
+    this.getHistory();
+    this.getUnspentOutputs();
   }
 }

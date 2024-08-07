@@ -1,5 +1,5 @@
 <div class="stamp-outer">
-  <div class="stamp-inner">
+  <div class="stamp-inner cutline">
     <div class="stamp-content">
       <!-- Redeem QR Code -->
       <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
@@ -55,7 +55,6 @@
 
     /* Stamp decoration */
     --padding-size: 7mm;
-    --border-size: 1px;
 
     /* Computed size helpers in mm */
     --paper-width-mm: 216mm;
@@ -96,13 +95,22 @@
   }
 
   body {
-    width: var(--paper-width-mm);
+    width: var(--page-width-mm);
     min-height: var(--paper-height-mm);
     padding-top: var(--paper-margin-y);
     /* See HACK above as to why this is zero. */
     padding-bottom: 0;
     padding-left: var(--paper-margin-x);
     padding-right: var(--paper-margin-x);
+  }
+
+  @media print {
+    body {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
   .page {
@@ -131,9 +139,6 @@
     /* Set stamp size */
     width: var(--stamp-inner-width-mm);
     height: var(--stamp-inner-height-mm);
-
-    /* Set stamp border */
-    /* border: var(--border-size) dashed #000; */
 
     /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
     padding-top: var(--padding-size);

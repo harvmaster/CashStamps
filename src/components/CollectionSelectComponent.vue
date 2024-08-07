@@ -159,9 +159,12 @@ async function onImportCollection() {
 
       // Initialize the Stamp Collection.
       const wallet = await WalletHD.fromMnemonic(
-        props.app.electrum,
-        trimmedMnemonic
+        trimmedMnemonic,
+        props.app.electrum
       );
+
+      // Scan the wallet for existing nodes.
+      await wallet.scan();
 
       // Set our quantity and the default amont to zero.
       let quantity = wallet.wallets.value.length;
@@ -169,7 +172,7 @@ async function onImportCollection() {
 
       // If there are stamps, attempt to set the amount more accurately.
       if (quantity) {
-        await wallet.wallets.value[0].refreshHistory();
+        // await wallet.wallets.value[0].refreshHistory();
 
         // Assume the amount based on the first ever transaction of the first ever stamp.
         // NOTE: This is guess-work - we're making a pretty big assumption here.

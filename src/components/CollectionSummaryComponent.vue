@@ -1,6 +1,6 @@
 <template>
   <div class="row q-col-gutter-md">
-    <!-- Not Funded -->
+    <!-- If Wallet is NOT Funded... -->
     <template v-if="!props.wallet?.isFunded.value">
       <!-- Total value of the TX in Fiat -->
       <div class="col-auto">
@@ -12,25 +12,25 @@
       </div>
     </template>
 
-    <!-- Funded -->
+    <!-- If Wallet IS Funded... -->
     <template v-else>
       <!-- Number of Claimed Stamps -->
-      <div v-if="props.wallet?.isFunded.value" class="col-auto">
+      <div class="col-auto">
         <div class="text-body2">Claimed</div>
         <div class="text-h6">{{ claimedStamps }} / {{ totalStamps }}</div>
       </div>
 
       <!-- Balance Fiat -->
-      <div v-if="props.wallet?.isFunded.value" class="col-auto">
-        <div class="text-body2">Each Stamp</div>
+      <div class="col-auto">
+        <div class="text-body2">Current Stamp Value</div>
         <div class="text-h6">
-          {{ convertToFiat(props.stampCollection.currency, eachStampAmount) }}
-          {{ currencyName }}
+          {{ convertToFiat(props.stampCollection.currency, currentStampValue) }}
+          <small>{{ currencyName }}</small>
         </div>
       </div>
 
       <!-- Balance Fiat -->
-      <div v-if="props.wallet?.isFunded.value" class="col-auto">
+      <div class="col-auto">
         <div class="text-body2">Total Remaining</div>
         <div class="text-h6">
           {{
@@ -39,15 +39,16 @@
               props.wallet?.balance.value
             )
           }}
-          {{ currencyName }}
+          <small>{{ currencyName }}</small>
         </div>
       </div>
 
       <!-- Balance BCH -->
-      <div v-if="props.wallet?.isFunded.value" class="col-auto">
+      <div class="col-auto">
         <div class="text-body2">Total Remaining</div>
         <div class="text-h6">
-          {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }} BCH
+          {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }}
+          <small>BCH</small>
         </div>
       </div>
     </template>
@@ -71,7 +72,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 const props = defineProps<{
   stampCollection: StampCollection;
   oracles: OraclesService;
-  wallet?: WalletHD;
+  wallet: WalletHD;
 }>();
 
 const currencyName = computed(() => {
@@ -88,35 +89,33 @@ const totalAmount = computed(() => {
 });
 
 const claimedStamps = computed(() => {
-  if (!props.wallet) {
-    return 0;
-  }
-
   return props.wallet.wallets.value.filter(
     (wallet) => wallet.balance.value === 0
   ).length;
 });
 
 const totalStamps = computed(() => {
-  if (!props.wallet) {
-    return 0;
-  }
-
   return props.wallet.wallets.value.length;
 });
 
-const eachStampAmount = computed(() => {
-  if (!props.wallet) {
-    return 0;
-  }
+const fundingSats = computed(() => {
+  const sats = props.wallet.wallets.value.reduce(
+    (sats, wallet) =>
+      (sats +=
+        wallet.transactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
+    0n
+  );
 
-  if (props.wallet.balance.value <= 0) {
+  return sats;
+});
+
+const currentStampValue = computed(() => {
+  if (!props.wallet) {
     return 0;
   }
 
   // Calculate the current value of each stamp in BCH.
-  const eachStampBch =
-    props.wallet?.balance.value / (totalStamps.value - claimedStamps.value);
+  const eachStampBch = Number(fundingSats.value) / totalStamps.value;
 
   return eachStampBch;
 });

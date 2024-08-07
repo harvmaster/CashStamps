@@ -17,6 +17,7 @@
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
     "@developers.cash/cash-pay-server-js": "^0.15.3",
+    "@electrum-cash/network": "^3.3.0",
     "@generalprotocols/price-oracle": "^2.2.0-development.5964625527",
     "@quasar/extras": "^1.16.4",
     "@sanity/eventsource": "^5.0.2",

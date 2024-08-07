@@ -5,6 +5,7 @@
       <!-- Controls for print/show mnemonic -->
       <div class="col-8 q-gutter-x-sm">
         <q-btn-group>
+          <!-- Print Stamps -->
           <q-btn
             outline
             icon="print"
@@ -14,9 +15,21 @@
           >
             <q-tooltip class="print-hide">Print Stamps</q-tooltip>
           </q-btn>
+
+          <!-- Export as JSON -->
+          <q-btn
+            outline
+            icon="file_download"
+            color="secondary"
+            :disable="!state.renderedStamps.length"
+            @click="exportAsJson"
+          >
+            <q-tooltip class="print-hide">Export as JSON</q-tooltip>
+          </q-btn>
         </q-btn-group>
 
         <q-toggle v-model="state.showClaimedStamps" label="Show Claimed" />
+        <q-toggle v-model="state.showCutLines" label="Show Cut Lines" />
       </div>
 
       <!-- Template selection -->
@@ -58,7 +71,9 @@
           credentialless="true"
         ></iframe>
 
-        <q-inner-loading :showing="state.loading">
+        <q-inner-loading
+          :showing="state.loading || !state.renderedStamps.length"
+        >
           <q-spinner size="100px" color="primary" />
         </q-inner-loading>
       </div>
@@ -77,7 +92,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue';
+import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
+import { exportFile } from 'quasar';
 
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
@@ -91,6 +107,7 @@ import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 // Pre-built Templates
 // NOTE: These are HTML Templates which we compile.
 import PrintTemplate from 'src/templates/_PrintTemplate.html?raw';
+import ClaimedBadge from 'src/templates/_ClaimedBadge.html?raw';
 import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
 import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
@@ -109,7 +126,7 @@ interface RenderedStamp {
 const props = defineProps<{
   app: App;
   stampCollection: StampCollection;
-  wallet?: WalletHD;
+  wallet: WalletHD;
 }>();
 
 const state = reactive<{
@@ -117,11 +134,13 @@ const state = reactive<{
   activeTemplate?: Template;
   renderedStamps: Array<RenderedStamp>;
   showClaimedStamps: boolean;
+  showCutLines: boolean;
 }>({
   loading: false,
   activeTemplate: undefined,
   renderedStamps: [],
   showClaimedStamps: true,
+  showCutLines: true,
 });
 
 // Built-in Templates.
@@ -200,12 +219,17 @@ async function renderStamps() {
     state.loading = true;
 
     // If no collection is selected, return to prevent further execution.
-    if (!props.wallet || !state.activeTemplate) {
+    if (!state.activeTemplate) {
       return;
     }
 
     // To improve legibility, destructure our selected collection.
-    const { amount, currency } = props.stampCollection;
+    const { amount, currency, quantity } = props.stampCollection;
+
+    // If this wallet has not been funded, manually set a quantity.
+    if (!props.wallet.isFunded.value) {
+      props.wallet.setQuantity(quantity);
+    }
 
     // Declare a variable to store our new rendered stamps.
     const newRenderedStamps: Array<RenderedStamp> = [];
@@ -218,7 +242,7 @@ async function renderStamps() {
         value: formatStampValue(amount, currency),
         symbol: props.app.oracles.getOracleSymbol(currency),
         currency: props.app.oracles.getOracleUnitCode(currency),
-        wif: wallet.privateKey().toWif(),
+        wif: wallet.toWif(),
       });
 
       // Add the compiled template to our list of visible stamps.
@@ -243,6 +267,39 @@ function printStamps() {
   printIFrame.value?.contentWindow?.print();
 }
 
+function exportAsJson() {
+  // Set the filename we should use.
+  const filename = `${props.stampCollection.name}.json`;
+
+  // Format the fields in the JSON
+  const formattedStamps = props.wallet.wallets.value.map((wallet) => ({
+    wif: wallet.toWif(),
+    address: wallet.getAddress(),
+    ...props.stampCollection
+  }));
+
+  // Trigger file download.
+  exportFile(filename, JSON.stringify(formattedStamps, null, 2))
+}
+
+function onIframeResized(event: MessageEvent) {
+  if (event.origin !== window.origin) {
+    // Ensure the message is coming from a trusted origin
+    return;
+  }
+
+  const { width, height } = event.data;
+
+  // Make sure the IFrame element exists..
+  if (!printIFrame.value) {
+    throw new Error('IFrame element does not exist');
+  }
+
+  printIFrame.value.style.width = `${width}px`;
+  printIFrame.value.style.height = `${height}px`;
+  console.log(`Iframe size changed: ${width}x${height}`);
+}
+
 //---------------------------------------------------------------------------
 // Watchers
 //---------------------------------------------------------------------------
@@ -263,32 +320,41 @@ watch(
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
-watch([visibleStamps], async () => {
-  // Set the IFrame content.
+watch([visibleStamps, () => state.showCutLines], async () => {
+  // Make sure the IFrame element exists..
   if (!printIFrame.value) {
-    return;
+    throw new Error('IFrame element does not exist');
   }
-  const stampsHtml = visibleStamps.value.map((stamp) => stamp.html).join('');
+
+  // Compile the stamp HTML.
+  const stampsHtml = visibleStamps.value
+    .map((stamp) => {
+      const claimedHtml = stamp.claimed ? ClaimedBadge : '';
+      const stampHtml = stamp.html;
+      return `<div class="stamp">${stampHtml}${claimedHtml}</div>`;
+    })
+    .join('');
+
+  // Set the IFrame content.
   printIFrame.value.srcdoc = await compileTemplate(PrintTemplate, {
+    cutlines: state.showCutLines
+      ? '<style>.cutline { border: 1px dashed #000 }</style>'
+      : '',
     html: stampsHtml,
   });
-
-  // Wait for the content to load before setting the size of the IFrame.
-  printIFrame.value.onload = () => {
-    if (!printIFrame.value) {
-      return;
-    }
-
-    printIFrame.value.style.width =
-      printIFrame.value.contentWindow?.document.body.scrollWidth + 'px';
-    printIFrame.value.style.height =
-      printIFrame.value.contentWindow?.document.body.scrollHeight + 'px';
-  };
 });
 
 //---------------------------------------------------------------------------
 // Initialization/Lifecycle Hooks
 //---------------------------------------------------------------------------
+
+onMounted(() => {
+  window.addEventListener('message', onIframeResized);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('message', onIframeResized);
+});
 
 state.activeTemplate = predefinedTemplates[0];
 </script>

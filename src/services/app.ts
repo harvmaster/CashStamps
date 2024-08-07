@@ -32,7 +32,6 @@ export class App {
   // State.
   stampCollections = reactive<Array<StampCollection>>([]);
   templates = reactive<Array<Template>>([]);
-  nextMnemonic = ref<string>('');
 
   // Flags.
   debug = ref(false);

@@ -10,23 +10,26 @@ import {
   getMinimumFee,
 } from '@bitauth/libauth';
 
-// -------------------
-//  Local imports
-// -------------------
 // Import the Stamp class to derive the private keys
-import { Wallet } from 'src/utils/wallet.js';
-// Import the functions to get the used keys and unspent transactions
-import { getUsedKeys } from 'src/utils/transaction-helpers';
+import { HDPrivateNode } from './hd-private-node';
+import { WalletP2PKH } from './wallet-p2pkh.js';
 // Import the ElectrumService as a type to use in the constructor
 import { ElectrumService } from 'src/services/electrum';
+
+import { HdPrivateNodeValid } from '@bitauth/libauth';
 
 export const DERIVATION_PATH = `m/44'/145'/0'`;
 export const ADDRESS_GAP = 20;
 
-export class WalletHD {
+export class WalletHD extends HDPrivateNode {
+  // Services/Dependencies
+  private electrum: ElectrumService;
+
   // Reactives.
+  // TODO: Move these out of here.
+  //       They should either extend or hook into events (still TBD).
   public mnemonic = ref<string>('');
-  public wallets = shallowRef<Array<Wallet>>([]);
+  public wallets = shallowRef<Array<WalletP2PKH>>([]);
   public balance = computed(() => {
     return this.wallets.value.reduce(
       (total, node) => total + node.balance.value,
@@ -34,48 +37,127 @@ export class WalletHD {
     );
   });
   public isFunded = computed(() => {
-    return this.wallets.value.some(
+    return this.wallets.value.every(
       (node) => node.transactions.value.length > 0
     );
   });
 
-  constructor(mnemonic: string, stamps: Array<Wallet> = []) {
+  shouldMonitor = false;
+
+  constructor(
+    node: HdPrivateNodeValid,
+    mnemonic: string,
+    electrum: ElectrumService
+  ) {
+    super(node);
+
     this.mnemonic.value = mnemonic;
-    this.wallets.value = stamps;
+
+    // Dependencies.
+    this.electrum = electrum;
   }
 
   static async fromMnemonic(
-    electrum: ElectrumService,
     mnemonic: string,
-    minQuantity = 0
+    electrum: ElectrumService
   ): Promise<WalletHD> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
-    // Create a node from the seed.
-    const parentNode = Wallet.fromStampSeed(seed, electrum);
+    const hdPrivateNode = HDPrivateNode.fromSeed(seed);
 
-    // Declare an array to store our nodes.
-    const nodes: Array<Wallet> = [];
+    return new WalletHD(hdPrivateNode.node, mnemonic, electrum);
+  }
 
-    // Get all the addresses that have been a tx history
-    const usedKeys = await getUsedKeys(electrum, parentNode);
+  async setQuantity(quantity: number) {
+    // Clear existing nodes.
+    this.wallets.value = this.deriveWallets(quantity);
+  }
 
-    // Get the nodes from the used keys
-    usedKeys.forEach((key, _i) => {
-      nodes.push(new Wallet(key.node.node, electrum));
-    });
+  async startMonitoring() {
+    this.shouldMonitor = true;
 
-    // Get the balance of each node
-    nodes.forEach(async (node) => node.refresh());
+    await Promise.all(
+      this.wallets.value.map((wallet) => wallet.startMonitoring())
+    );
+  }
 
-    // Derive a node for each stamp.
-    for (let i = nodes.length; i < minQuantity; i++) {
-      nodes.push(parentNode.derivePath(`${DERIVATION_PATH}/0/${i}`));
+  async stopMonitoring() {
+    this.shouldMonitor = false;
+
+    await Promise.all(
+      this.wallets.value.map((wallet) => wallet.stopMonitoring())
+    );
+  }
+
+  deriveWallets(count: number, startIndex = 0) {
+    // Create an array to store our wallets.
+    const wallets: Array<WalletP2PKH> = [];
+
+    // Create the given count of wallets.
+    for (let i = 0; i < count; i++) {
+      const childNode = this.derivePath(
+        `${DERIVATION_PATH}/0/${startIndex + i}`
+      );
+      const wallet = new WalletP2PKH(
+        childNode.privateKey().toBytes(),
+        this.electrum
+      );
+
+      if (this.shouldMonitor) {
+        wallet.startMonitoring();
+      }
+
+      wallets.push(wallet);
     }
 
-    // Create instance of StampCollection using generated mnemonic.
-    return new WalletHD(mnemonic, nodes);
+    // Return the wallets.
+    return wallets;
+  }
+
+  async scan(startIndex = 0, addressGap = 20) {
+    // Array to store active wallet nodes
+    const nodes: Array<WalletP2PKH> = [];
+
+    let currentIndex = startIndex;
+    let emptyAddressCount = 0;
+
+    // Continue scanning until we find 'addressGap' consecutive empty addresses
+    while (emptyAddressCount < addressGap) {
+      // Derive a number of wallets equivalent to our addressGap.
+      const batch: Array<WalletP2PKH> = this.deriveWallets(
+        addressGap,
+        currentIndex
+      );
+
+      // Get the transaction history of each wallet in the batch
+      const results = await Promise.all(
+        batch.map((wallet) => wallet.getHistory())
+      );
+
+      // Process the results
+      for (let i = 0; i < results.length; i++) {
+        if (results[i].length > 0) {
+          // This address has transactions, add it to nodes and reset empty address count
+          nodes.push(batch[i]);
+          emptyAddressCount = 0;
+        } else {
+          // This address is empty, increment the empty address count
+          emptyAddressCount++;
+        }
+
+        currentIndex++;
+
+        // If we've found 'addressGap' consecutive empty addresses, stop scanning
+        if (emptyAddressCount >= addressGap) {
+          break;
+        }
+      }
+    }
+
+    this.wallets.value = nodes;
+
+    return nodes;
   }
 
   async refreshChildNodes() {

@@ -225,6 +225,11 @@ export class OraclesService {
 
   convertFromSats(oraclePublicKey: string, sats: number) {
     const priceInBCH = sats / 100_000_000;
+
+    if (oraclePublicKey === 'BCH') {
+      return priceInBCH;
+    }
+
     const priceInOracleUnits =
       this.oraclePriceStore[oraclePublicKey].parsedPriceMessage.priceValue;
     const priceInCommonUnits = this.toCommonUnits(

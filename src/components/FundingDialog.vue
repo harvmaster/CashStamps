@@ -30,31 +30,6 @@
   </q-dialog>
 </template>
 
-<style lang="scss">
-.blur-background {
-  backdrop-filter: blur(5px);
-}
-
-#invoice-container {
-  margin: auto;
-  max-width: 150px;
-  font-size: 0.8em;
-  min-height: 80px;
-}
-
-.cashpay-loading {
-  fill: var(--q-primary) !important;
-}
-
-.cashpay-tick {
-  fill: var(--q-primary) !important;
-}
-
-.cashpay-cross {
-  fill: #f00 !important;
-}
-</style>
-
 <script setup lang="ts">
 import { nextTick, ref, reactive } from 'vue';
 import { useQuasar } from 'quasar';
@@ -62,11 +37,16 @@ import { useQuasar } from 'quasar';
 import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 
 import { OraclesService } from 'src/services/oracles.js';
+import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
 const $q = useQuasar();
+
+//---------------------------------------------------------------------------
+// State
+//---------------------------------------------------------------------------
 
 // Props.
 const props = defineProps<{
@@ -85,7 +65,11 @@ const state = reactive<{
 // Get the QR Code element.
 const qrElement = ref<HTMLElement | null>(null);
 
-const toggleVisible = () => {
+//---------------------------------------------------------------------------
+// Methods
+//---------------------------------------------------------------------------
+
+function toggleVisible() {
   state.visible = !state.visible;
 
   if (state.visible) {
@@ -95,7 +79,7 @@ const toggleVisible = () => {
       generateQrCode();
     });
   }
-};
+}
 
 async function createFundingTx(): Promise<CashPayServer_Invoice> {
   // Create BIP70 invoice instance
@@ -124,11 +108,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
 
   // Add addresses to transaction
   for (const node of props.wallet.wallets.value) {
-    const address = node
-      .deriveHDPublicNode()
-      .publicKey()
-      .deriveAddress()
-      .toCashAddr();
+    const address = node.getAddress();
     invoice.addAddress(
       address,
       `${bchAmount}BCH` // Amount sent to CashPayServer is in BCH
@@ -161,22 +141,20 @@ async function generateQrCode() {
     ?.intoContainer(qrElement.value)
 
     // Listen for broadcasted event to update stamps
-    .on(['broadcasted'], async (e: unknown) => {
+    .on(['broadcasted'], async (_e: unknown) => {
+      // Show the loading indicator.
       $q.loading.show();
-      // NOTE: This is a hack.
-      //       We have to wait for the tx to propagate before refreshing.
-      //       Subscriptions in our current Electrum version are broken.
-      //       So we just wait 5 seconds instead.
 
-      setTimeout(async () => {
-        await props.wallet.refreshChildNodes();
+      // Wait for the wallet to be marked as funded.
+      await waitFor(props.wallet.isFunded, true);
 
-        $q.loading.hide();
+      // Hide the loading indicator.
+      $q.loading.hide();
 
-        $q.notify({
-          message: 'Stamps funded successfully!',
-        });
-      }, 2500);
+      // Show the user a notification.
+      $q.notify({
+        message: 'Stamps funded successfully!',
+      });
     });
 
   // Create the QR code by sending request to CashPayServer
@@ -188,3 +166,28 @@ defineExpose({
   toggleVisible,
 });
 </script>
+
+<style lang="scss">
+.blur-background {
+  backdrop-filter: blur(5px);
+}
+
+#invoice-container {
+  margin: auto;
+  max-width: 150px;
+  font-size: 0.8em;
+  min-height: 80px;
+}
+
+.cashpay-loading {
+  fill: var(--q-primary) !important;
+}
+
+.cashpay-tick {
+  fill: var(--q-primary) !important;
+}
+
+.cashpay-cross {
+  fill: #f00 !important;
+}
+</style>
