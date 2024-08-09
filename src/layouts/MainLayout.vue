@@ -4,8 +4,8 @@
       <q-toolbar class="row">
         <q-toolbar-title class="col-grow">
           <span @click="$router.push('/')" class="cursor-pointer">
-            <q-avatar>
-              <img src="/bch.svg" />
+            <q-avatar square>
+              <img src="/icon.svg" />
             </q-avatar>
             Stamps.<span class="text-primary">Cash</span>
           </span>
@@ -72,10 +72,6 @@
 
 .q-toolbar .q-toolbar__title {
   font-size: 26px;
-}
-
-.q-toolbar .q-avatar img {
-  padding: 3px 0px 3px 0px;
 }
 
 .q-toolbar a img {

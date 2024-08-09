@@ -1,55 +1,62 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Print Element</title>
-  </head>
-  <style>
-    html,
-    body {
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0;
-      padding: 0;
-    }
-    div {
-      box-sizing: border-box;
-    }
-    .page > * {
-      break-inside: avoid;
-    }
-
-    @media print {
+    <style>
+      html,
       body {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0;
         padding: 0;
       }
-    }
+      div {
+        box-sizing: border-box;
+      }
+      .page > * {
+        break-inside: avoid;
+      }
 
-    .stamp-container {
-      position: relative;
-    }
+      @media print {
+        body {
+          padding: 0;
+        }
+      }
 
-    .claimed-badge {
-      position: absolute;
-      top: 2mm;
-      right: 2mm;
-      background-color: #82d853;
-      padding: 5px;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 12px;
-    }
-  </style>
-  {{ cutlines }}
+      .stamp-container {
+        position: relative;
+      }
+
+      .claimed-badge {
+        position: absolute;
+        top: 2mm;
+        right: 2mm;
+        background-color: #82d853;
+        padding: 5px;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 12px;
+      }
+    </style>
+    {{ cutlines }}
+  </head>
   <body>
     <div class="page" style="display: flex; flex-wrap: wrap; width: 100%">
       {{ html }}
     </div>
     <script>
       const postSizeToParent = () => {
-        const width = document.documentElement.scrollWidth;
-        const height = document.documentElement.scrollHeight;
+        const width = document.body.scrollWidth;
+        const height = document.body.scrollHeight;
         window.parent.postMessage({ width, height }, '*');
       };
 
+      // Post size once everything has finished loading
+      window.addEventListener('load', postSizeToParent);
+
+      // Post size when the body is resized
       const resizeObserver = new ResizeObserver(postSizeToParent);
       resizeObserver.observe(document.body);
     </script>

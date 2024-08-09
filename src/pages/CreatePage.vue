@@ -7,7 +7,7 @@
         <div
           class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
-          <img src="bch.svg" class="q-ma-sm" style="height: 1em" />
+          <img src="icon.svg" class="q-ma-sm" style="height: 1em" />
           <span class="strong">
             Stamps.<span class="text-primary">Cash</span>
           </span>

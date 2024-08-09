@@ -176,19 +176,21 @@ export class WalletHD extends HDPrivateNode {
   async sweep(payoutBytecode: Uint8Array) {
     // Get a list of inputs belonging to each wallet.
     const inputs = await Promise.all(
-      this.wallets.value.map((stamp) => stamp.getUnspentDirectives())
+      this.wallets.value.map((wallet) => wallet.getUnspentDirectives())
     );
 
     // Flatten the inputs.
     const inputsFlattened = inputs.flat();
 
-    // Calculate the total sats availabel in our inputs.
+    // Calculate the total sats available in our inputs.
     const totalSats = inputsFlattened.reduce(
       (total, input) => total + input.unlockingBytecode.valueSatoshis,
       0n
     );
 
-    // We need to estimate the number of bytes so that we can calculate the fee.
+    // We need to calculate the number of bytes so that we can calculate the fee.
+    // So we loop twice and store the final transaction here each time.
+    // 1st time will have zero fee. 2nd time will accommodate the fee.
     let encodedTransaction = new Uint8Array();
 
     // Create the transaction by looping twice.
@@ -196,7 +198,7 @@ export class WalletHD extends HDPrivateNode {
     // 2nd loop: Accommodate the fee.
     for (let i = 0; i < 2; i++) {
       // Get the fee using 1000 sats/KB.
-      const fee = getMinimumFee(BigInt(encodedTransaction.length), 1000n);
+      const feeSats = getMinimumFee(BigInt(encodedTransaction.length), 1000n);
 
       // Attempt to generate the transaction.
       const generatedTransaction = generateTransaction({
@@ -206,7 +208,7 @@ export class WalletHD extends HDPrivateNode {
         outputs: [
           {
             lockingBytecode: payoutBytecode,
-            valueSatoshis: totalSats - fee,
+            valueSatoshis: totalSats - feeSats,
           },
         ],
       });
