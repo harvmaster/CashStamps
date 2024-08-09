@@ -192,8 +192,6 @@ export const compileTemplate = async (
 
     let replacement = '';
 
-    // debugger;
-
     if (split[0].toLowerCase() === 'qrcode') {
       // Prioritize data variables and, if none exist, just use the value provided.
       const urlArg = data[split[1]] || split[1];
@@ -211,7 +209,7 @@ export const compileTemplate = async (
       const dateArg = data[split[1]] || split[1];
       const formatArg = data[split[2]] || split[2];
 
-      const date = DateTime.fromISO(dateArg);
+      const date = DateTime.fromFormat(dateArg, 'yyyy-MM-dd');
 
       replacement = date.toFormat(formatArg);
     }

@@ -29,7 +29,7 @@
     <div class="col-md">
       <q-input
         filled
-        v-model="model.expiry"
+        v-model="expiryModel"
         mask="date"
         class="col"
         placeholder="YYYY/MM/DD"
@@ -38,7 +38,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover :breakpoint="600">
-              <q-date v-model="model.expiry" />
+              <q-date v-model="expiryModel" />
             </q-popup-proxy>
           </q-icon>
         </template>
@@ -101,6 +101,16 @@ const currencyOptions = computed((): Array<Option> => {
   });
 
   return options;
+});
+
+// Format as ISO-like date.
+const expiryModel = computed({
+  get: () => {
+    return model.value.expiry.replaceAll('-', '/');
+  },
+  set: (value: string) => {
+    model.value.expiry = value.replaceAll('/', '-');
+  }
 });
 
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.

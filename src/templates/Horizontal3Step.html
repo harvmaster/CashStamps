@@ -1,36 +1,3 @@
-<!--
-@config
-{
-  "name": "3 Step - Horizontal",
-  "variables": {
-    "step1Text": {
-      "name": "Step 1 Text",
-      "default": "Scan the above QR code to Install a Bitcoin Cash Wallet.",
-      "class": "col-12"
-    },
-    "step2Text": {
-      "name": "Step 2 Text",
-      "default": "Use your Wallet to scan the above QR Code to receive free BCH!",
-      "class": "col-12"
-    },
-    "step3Text": {
-      "name": "Step 3 Text",
-      "default": "Scan the above QR Code above to find places near you to spend BCH!",
-      "class": "col-12"
-    },
-    "walletLink": {
-      "name": "Wallet Link",
-      "default": "https://wallet.bitcoin.com/"
-    },
-    "spendLink": {
-      "name": "Spend Link",
-      "default": "https://maps.bitcoin.com/"
-    }
-  }
-}
-@endconfig
--->
-
 <div class="flyer">
   <!-- Step 1 - Download Wallet -->
   <div class="section">
@@ -45,7 +12,9 @@
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 1</div>
-      <div class="content">{{ step1Text }}</div>
+      <div class="content">
+        Scan the above QR code to Install a Bitcoin Cash Wallet.
+      </div>
     </div>
   </div>
 
@@ -54,7 +23,7 @@
     <!-- Title -->
     <div class="title-primary">
       <span class="primary">Redeem</span>
-      <span class="secondary">${{ value }}</span>
+      <span class="secondary">{{ symbol }}{{ value }}</span>
     </div>
 
     <!-- Redeem QR Code -->
@@ -63,7 +32,9 @@
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 2</div>
-      <div class="content">{{ step2Text }}</div>
+      <div class="content">
+        Redeem the above BCH by scanning it with your Wallet.
+      </div>
     </div>
   </div>
 
@@ -81,14 +52,22 @@
     <!-- Details -->
     <div class="details">
       <div class="title secondary">Step 3</div>
-      <div class="content">{{ step3Text }}</div>
+      <div class="content">
+        Scan the above QR to find merchants near you to spend BCH!
+      </div>
     </div>
   </div>
 </div>
 
 <style>
-  .page {
+  /* Import fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+  body {
     background: #000;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: normal;
   }
 
   .flyer {
@@ -115,13 +94,13 @@
 
   .title-primary {
     font-size: 32px;
-    font-weight: bold;
     margin-bottom: 5mm;
+    font-family: 'Anton', sans-serif;
   }
 
   .title-secondary {
     font-size: 24px;
-    font-weight: bold;
+    font-family: 'Anton', sans-serif;
   }
 
   .qr-code {
@@ -132,10 +111,10 @@
 
   .details .title {
     font-size: 24px;
-    font-weight: bold;
+    font-family: 'Anton', sans-serif;
   }
 
   .details .content {
-    font-size: 12px;
+    font-size: 14px;
   }
 </style>

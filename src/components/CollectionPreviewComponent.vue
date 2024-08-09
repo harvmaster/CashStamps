@@ -65,7 +65,8 @@
         <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
         <iframe
           ref="printIFrame"
-          style="width: 210mm; height: 297mm; border: none"
+          style="width: 210mm; height: 297mm; border: none; overflow-x: hidden; overflow-y: hidden;"
+          scrolling="no"
           class="shadow-20 animate fadeIn"
           sandbox="allow-same-origin allow-scripts allow-modals"
           credentialless="true"
@@ -107,7 +108,6 @@ import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 // Pre-built Templates
 // NOTE: These are HTML Templates which we compile.
 import PrintTemplate from 'src/templates/_PrintTemplate.html?raw';
-import ClaimedBadge from 'src/templates/_ClaimedBadge.html?raw';
 import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
 import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
 import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
@@ -224,7 +224,7 @@ async function renderStamps() {
     }
 
     // To improve legibility, destructure our selected collection.
-    const { amount, currency, quantity } = props.stampCollection;
+    const { amount, currency, quantity, expiry } = props.stampCollection;
 
     // If this wallet has not been funded, manually set a quantity.
     if (!props.wallet.isFunded.value) {
@@ -242,7 +242,9 @@ async function renderStamps() {
         value: formatStampValue(amount, currency),
         symbol: props.app.oracles.getOracleSymbol(currency),
         currency: props.app.oracles.getOracleUnitCode(currency),
+        expiry,
         wif: wallet.toWif(),
+        address: wallet.getAddress(),
       });
 
       // Add the compiled template to our list of visible stamps.
@@ -310,6 +312,7 @@ watch(
     () => props.stampCollection,
     () => props.stampCollection.amount,
     () => props.stampCollection.currency,
+    () => props.stampCollection.expiry,
     () => props.stampCollection.quantity,
     () => props.wallet,
     () => props.wallet.claimedStamps.value,
@@ -330,9 +333,7 @@ watch([visibleStamps, () => state.showCutLines], debounce(async () => {
   // Compile the stamp HTML.
   const stampsHtml = visibleStamps.value
     .map((stamp) => {
-      const claimedHtml = stamp.claimed ? ClaimedBadge : '';
-      const stampHtml = stamp.html;
-      return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''}">${stampHtml}${claimedHtml}</div>`;
+      return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''}">${stamp.html}</div>`;
     })
     .join('');
 

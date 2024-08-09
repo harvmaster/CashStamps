@@ -1,42 +1,42 @@
-<div class="stamp-outer">
-  <div class="stamp-inner cutline">
-    <div class="stamp-content">
-      <!-- Redeem QR Code -->
-      <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+<div class="stamp-inner cutline">
+  <div class="stamp-content">
+    <!-- Redeem QR Code -->
+    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+  </div>
+
+  <!-- Stamp Value -->
+  <div class="title-primary currency">
+    <span class="primary">{{ symbol }}{{ value }}</span>
+    <span class="secondary">{{ currency }}</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer text-sm">
+    <!-- Expiry -->
+    <div class="title-secondary content text-muted text-bold">
+      <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
+      Valid until {{ DATE expiry DD }}
     </div>
 
-    <!-- Stamp Value -->
-    <div class="title-primary currency">
-      <span class="primary" contenteditable="true"
-        >{{ symbol }}{{ value }}</span
-      >
-      <span class="secondary" contenteditable="true">{{ currency }}</span>
+    <!-- Redeem link -->
+    <div class="content text-muted text-bold">
+      Redeem at <span class="primary">stamps.cash</span>
     </div>
 
-    <!-- Footer -->
-    <div class="footer text-sm">
-      <!-- Expiry -->
-      <div
-        class="title-secondary content text-muted text-bold"
-        contenteditable="true"
-      >
-        {{ validUntil }}
-      </div>
-
-      <!-- Redeem link -->
-      <div class="content text-muted text-bold" contenteditable="true">
-        {{ redeemText }}
-      </div>
-
-      <!-- Social Media Link -->
-      <div
-        class="content text-muted text-bold row-contanier"
-        style="margin-top: 5px"
-        contenteditable="true"
-      >
-        {{ additionalText }}
-      </div>
+    <!-- Social Media Link -->
+    <div
+      class="content text-muted text-bold row-contanier"
+      style="margin-top: 5px"
+    >
+      <img
+        src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
+        class="social-media-icon"
+      />
+      <span class="">@cashstamps</span>
     </div>
+
+    <!-- Claimed Badge (Only shows if stamp-container has "claimed" class) -->
+    <div class="claimed-badge">Claimed</div>
   </div>
 </div>
 
@@ -62,16 +62,18 @@
 
     /* Page is the internal usable space (i.e. with margins subtracted). */
     --page-width-mm: calc(var(--paper-width-mm) - var(--paper-margin-x) * 2);
-    --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
+    --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y));
 
     --items-per-row: 3;
+    --rows-per-page: 3;
+
+    --stamp-container-width: calc(var(--page-width-mm) / var(--items-per-row));
+    --stamp-container-height: calc(
+      var(--page-height-mm) / var(--rows-per-page)
+    );
 
     --stamp-inner-height-mm: 63.5mm;
     --stamp-inner-width-mm: 63.5mm;
-
-    --stamp-outer-width: calc(var(--page-width-mm) / var(--items-per-row));
-    /* HACK:  We can't accurately space these, so we just add the 19mm gap manually. This means we need to remove page's bottom margin. */
-    --stamp-outer-height: calc(var(--stamp-inner-height-mm) + 19mm);
 
     /* Stamp decoration */
     --padding-size: 7mm;
@@ -98,26 +100,28 @@
     padding-bottom: 0;
     padding-left: var(--paper-margin-x);
     padding-right: var(--paper-margin-x);
+    display: flex;
+    flex-wrap: wrap;
   }
 
   @media print {
     body {
-      padding-top: 0;
-      padding-bottom: 0;
-      padding-left: 0;
-      padding-right: 0;
+      width: var(--page-width-mm);
+      margin: 0;
+      padding: 0;
     }
   }
 
-  .page {
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+  .stamp-container {
+    /* Set this as a block element */
+    display: block;
 
-  .stamp-outer {
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
     /* Stamp size */
-    width: var(--stamp-outer-width);
-    height: var(--stamp-outer-height);
+    width: var(--stamp-container-width);
+    height: var(--stamp-container-height);
 
     /* Stop stamps from being broken in half between pages */
     break-inside: avoid;
@@ -126,12 +130,12 @@
     display: grid;
     align-items: start;
     justify-items: center;
-
-    /* Remove text formatting from quasar */
-    line-height: 1;
   }
 
   .stamp-inner {
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
     /* Set stamp size */
     width: var(--stamp-inner-width-mm);
     height: var(--stamp-inner-height-mm);
@@ -156,6 +160,9 @@
     grid-template-rows: auto auto auto;
     grid-template-columns: 1fr;
     align-items: space-between;
+
+    /* Allow us to float the claimed badge at the top right */
+    position: relative;
   }
 
   .title-primary {
@@ -202,5 +209,21 @@
   }
   .currency {
     font-size: 1.75rem;
+  }
+
+  .claimed-badge {
+    display: none;
+    position: absolute;
+    top: 2mm;
+    right: 2mm;
+    background-color: #82d853;
+    padding: 5px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 12px;
+  }
+
+  .stamp-container.claimed .claimed-badge {
+    display: block;
   }
 </style>

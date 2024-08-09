@@ -1,15 +1,3 @@
-export type Wallet = {
-  // address: string;
-  // privateKey: string;
-  funding: {
-    value: number;
-    currency: string;
-    funded: false | Date;
-  };
-  wif: string;
-  create_date: string;
-};
-
 export interface Template {
   label: string;
   value: string;

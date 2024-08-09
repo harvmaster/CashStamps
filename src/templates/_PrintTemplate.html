@@ -5,51 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Print Element</title>
     <style>
-      html,
+      /* Default to A4 height */
       body {
         width: 210mm;
         min-height: 297mm;
         margin: 0;
         padding: 0;
       }
-      div {
-        box-sizing: border-box;
-      }
-      .page > * {
-        break-inside: avoid;
-      }
 
-      @media print {
-        body {
-          padding: 0;
-        }
-      }
-
+      /* Avoid printing a stamp across pages. */
       .stamp-container {
-        position: relative;
-      }
-
-      .claimed-badge {
-        position: absolute;
-        top: 2mm;
-        right: 2mm;
-        background-color: #82d853;
-        padding: 5px;
-        border-radius: 10px;
-        color: #fff;
-        font-size: 12px;
+        break-inside: avoid;
       }
     </style>
     {{ cutlines }}
   </head>
   <body>
-    <div class="page" style="display: flex; flex-wrap: wrap; width: 100%">
-      {{ html }}
-    </div>
+    {{ html }}
     <script>
       const postSizeToParent = () => {
-        const width = document.body.scrollWidth;
-        const height = document.body.scrollHeight;
+        // Get computed styles to include margins
+        const computedStyle = window.getComputedStyle(document.body);
+
+        // Calculate total width including margins
+        const width =
+          document.body.scrollWidth +
+          parseFloat(computedStyle.marginLeft) +
+          parseFloat(computedStyle.marginRight);
+
+        // Calculate total height including margins
+        const height =
+          document.body.scrollHeight +
+          parseFloat(computedStyle.marginTop) +
+          parseFloat(computedStyle.marginBottom);
+
         window.parent.postMessage({ width, height }, '*');
       };
 
