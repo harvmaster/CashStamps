@@ -86,7 +86,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   const invoice = new CashPayServer.Invoice();
 
   // Get amount without currency reference
-  const rawAmount = props.stampCollection.amount;
+  const fiatAmount = props.stampCollection.amount;
 
   // Get currency
   const currency = props.stampCollection.currency;
@@ -95,7 +95,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   const unitCode = props.oracles.getOracleUnitCode(currency);
 
   // Initialise the output amount to be in BCH
-  let bchAmount = rawAmount;
+  let bchAmount = fiatAmount;
 
   // If the currency selected is not BCH, convert bchAmount to the equivalent amount in the selected currency
   if (currency !== 'BCH') {
@@ -103,7 +103,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
     const bchPrice = props.oracles.getOraclePriceCommonUnits(currency);
 
     // Set BCH amount to the equivalent amount in the selected currency
-    bchAmount = rawAmount / bchPrice;
+    bchAmount = fiatAmount / bchPrice;
   }
 
   // Add addresses to transaction

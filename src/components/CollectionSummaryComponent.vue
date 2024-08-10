@@ -4,10 +4,19 @@
     <template v-if="!props.wallet?.isFunded.value">
       <!-- Total value of the TX in Fiat -->
       <div class="col-auto">
-        <div class="text-body2">Total Due ({{ currencyName }})</div>
+        <div class="text-body2">Total Due</div>
         <div class="text-h6">
-          {{ totalAmount }}
-          {{ currencyName }}
+          {{ fundingDue }}
+          <small>{{ currencyName }}</small>
+        </div>
+      </div>
+
+      <!-- Total value of the TX in BCH -->
+      <div class="col-auto">
+        <div class="text-body2">Total Due</div>
+        <div class="text-h6">
+          {{ fundingDueBCH }}
+          <small>BCH</small>
         </div>
       </div>
     </template>
@@ -21,6 +30,8 @@
       </div>
 
       <!-- Balance Fiat -->
+      <!-- TODO: This is currently broken and a hard value to retrieve -->
+      <!--
       <div class="col-auto">
         <div class="text-body2">Current Stamp Value</div>
         <div class="text-h6">
@@ -28,6 +39,7 @@
           <small>{{ currencyName }}</small>
         </div>
       </div>
+      -->
 
       <!-- Balance Fiat -->
       <div class="col-auto">
@@ -79,13 +91,18 @@ const currencyName = computed(() => {
   return props.oracles.getOracleUnitCode(props.stampCollection.currency);
 });
 
-const totalAmount = computed(() => {
+const fundingDue = computed(() => {
   const decimalPlaces = props.oracles.getOracleDecimalPlaces(
     props.stampCollection.currency
   );
   return (
     props.stampCollection.quantity * props.stampCollection.amount || 0
   ).toFixed(decimalPlaces);
+});
+
+const fundingDueBCH = computed(() => {
+  const fundingBch = Number(fundingDue.value) / props.oracles.getOraclePriceCommonUnits(props.stampCollection.currency);
+  return fundingBch.toFixed(8);
 });
 
 const totalStamps = computed(() => {
@@ -96,7 +113,7 @@ const fundingSats = computed(() => {
   const sats = props.wallet.wallets.value.reduce(
     (sats, wallet) =>
       (sats +=
-        wallet.transactions.value[wallet.transactions.value.length -1]?.getOutputs()[0]?.valueSatoshis || 0n),
+        wallet.transactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
     0n
   );
 

@@ -104,24 +104,29 @@ export const renderQrCode = async (
     return new Promise((resolve) => {
       // When the image has loaded, draw it on the canvas
       img.onload = function () {
-        // Calculate the center position to place the image
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
+        try {
+          // Calculate the center position to place the image
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
 
-        // Resize the image to fit within the canvas dimensions
-        const scaleFactor =
-          Math.min(canvas.width / img.width, canvas.height / img.height) / 4;
-        const scaledWidth = img.width * scaleFactor;
-        const scaledHeight = img.height * scaleFactor;
+          // Resize the image to fit within the canvas dimensions
+          const scaleFactor =
+            Math.min(canvas.width / img.width, canvas.height / img.height) / 4;
+          const scaledWidth = img.width * scaleFactor;
+          const scaledHeight = img.height * scaleFactor;
 
-        // Calculate the position to draw the image to be centered
-        const drawX = centerX - scaledWidth / 2;
-        const drawY = centerY - scaledHeight / 2;
+          // Calculate the position to draw the image to be centered
+          const drawX = centerX - scaledWidth / 2;
+          const drawY = centerY - scaledHeight / 2;
 
-        // Draw the image on the canvas
-        ctx.drawImage(img, drawX, drawY, scaledWidth, scaledHeight);
+          // Draw the image on the canvas
+          ctx.drawImage(img, drawX, drawY, scaledWidth, scaledHeight);
 
-        resolve(canvas.toDataURL('image/png'));
+          resolve(canvas.toDataURL('image/png'));
+        } catch (error) {
+          console.warn(error);
+          resolve(canvas.toDataURL('image/png'));
+        }
       };
 
       // Otherwise, if it fails, just omit it.
