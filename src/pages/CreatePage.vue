@@ -28,12 +28,11 @@
             <strong>Instructions:</strong>
             <ol>
               <li>
-                Enter the value and quantity of stamps you want to create.
+                Enter the value, currency and quantity of stamps you want to create.
               </li>
-              <li>Click "Create Stamps" to generate a QR code.</li>
+              <li>Select a template (or create your own with the Edit Button).</li>
               <li>
-                Scan the QR code with your Bitcoin Cash wallet to fund the
-                stamps.
+                Click the fund button and scan the QR Code with your wallet.
               </li>
               <li>
                 Print the stamps and give them to your friends, family, or

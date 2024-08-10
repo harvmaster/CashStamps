@@ -12,7 +12,7 @@
     "dev": "quasar dev",
     "build": "quasar build",
     "build_github": "BASE_PATH='CashStamps/' quasar build",
-    "favicons": "icongenie generate --theme-color 000 --skip-trim -i ./src/assets/bch.png"
+    "favicons": "icongenie generate --theme-color 000 --skip-trim -i ./src/assets/icon.png"
   },
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
@@ -29,6 +29,7 @@
     "luxon": "^3.4.4",
     "quasar": "^2.6.0",
     "vite-plugin-externals": "^0.6.2",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
   },

@@ -7,9 +7,9 @@
       >
         <div>Make Cash Stamps!</div>
         <div class="q-gutter-md">
-          <img src="/stamp.png" />
-          <img src="/stamp.png" />
-          <img src="/stamp.png" />
+          <img class="stamp-icon" src="/icon.svg" />
+          <img class="stamp-icon" src="/icon.svg" />
+          <img class="stamp-icon" src="/icon.svg" />
         </div>
       </div>
       <div
@@ -62,6 +62,11 @@
   .right {
     order: 1; /* Move right container to the top */
   }
+}
+
+.stamp-icon {
+  width: 64px;
+  height: 64px;
 }
 </style>
 

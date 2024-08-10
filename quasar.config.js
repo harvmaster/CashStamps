@@ -9,7 +9,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers');
-const { viteExternalsPlugin } = require('vite-plugin-externals');
+const { nodePolyfills } = require('vite-plugin-node-polyfills');
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -87,34 +87,11 @@ module.exports = configure(function (/* ctx */) {
         };
       },
 
-      // Instantiate Vite Plugins to work around Module issues.
       vitePlugins: [
-        // Some of our libraries are not browser-friendly.
-        // So, we have to declare these as externals.
         [
-          viteExternalsPlugin,
+          nodePolyfills,
           {
-            // Price oracle dependencies:
-            path: '',
-            os: '',
-            fs: '',
-            // NOTE: The below are "hacks".
-            //       We need these to resolve to something: null won't work and an empty object won't work.
-            //       An empty array DOES work.
-            zeromq: [],
-            Subscriber: [],
-
-            // Anyhedge requires dependencies:
-            net: '',
-            tls: '',
-
-            // BitcoinRpcNetworkProvider requires dependencies:
-            https: '',
-            http: '',
-
-            // Fetch
-            // NOTE: We want to use the browser's native 'fetch' function.
-            'node-fetch': 'fetch',
+            include: ['event', 'net', 'tls'],
           },
         ],
       ],
@@ -238,7 +215,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'www.cashstamps',
+        appId: 'stamps.cash',
       },
     },
 

@@ -65,16 +65,17 @@ export const renderQrCode = async (
   logo?: string
 ): Promise<string> => {
   // Create a virtual div to render the QR Code into.
-  const virtualDiv = document.createElement('div');
+  const virtualQRDiv = document.createElement('div');
 
   // Render the QR Code into the virtual div.
-  new QRCode(virtualDiv, {
+  const qrCode = new QRCode(virtualQRDiv, {
     text: content,
     width: 256,
     height: 256,
     quietZone: 5,
     colorDark: '#000000',
     colorLight: '#ffffff',
+    logo,
     correctLevel: QRCode.CorrectLevel.H,
   });
 
@@ -82,7 +83,7 @@ export const renderQrCode = async (
   // NOTE: We would use our QR Code library for this...
   //       But it is shit and doesn't work asynchronously.
   //       So we do it ourselves to avoid having to add shitty timers that trigger Jim's childhood PTSD.
-  const canvas = virtualDiv.firstElementChild as HTMLCanvasElement;
+  const canvas = virtualQRDiv.firstElementChild as HTMLCanvasElement;
 
   const ctx = canvas.getContext('2d');
 
@@ -90,53 +91,25 @@ export const renderQrCode = async (
     throw new Error('Could not get canvas 2D context');
   }
 
+  const finalDiv = document.createElement('div');
+  finalDiv.setAttribute('class', 'qr-code');
+  finalDiv.setAttribute('style', 'position: relative;');
+  const imgDiv = document.createElement('img');
+  imgDiv.src = canvas.toDataURL('image/png');
+  imgDiv.setAttribute('style', 'width: 100%; height: 100%;');
   if (logo) {
-    // Create a new image object
-    const img = new Image();
-
-    // Set the source of the image (replace with your image path)
-    if (process.env.BASE_PATH) {
-      img.src = `/${process.env.BASE_PATH}/${logo}`;
-    } else {
-      img.src = logo;
-    }
-
-    return new Promise((resolve) => {
-      // When the image has loaded, draw it on the canvas
-      img.onload = function () {
-        try {
-          // Calculate the center position to place the image
-          const centerX = canvas.width / 2;
-          const centerY = canvas.height / 2;
-
-          // Resize the image to fit within the canvas dimensions
-          const scaleFactor =
-            Math.min(canvas.width / img.width, canvas.height / img.height) / 4;
-          const scaledWidth = img.width * scaleFactor;
-          const scaledHeight = img.height * scaleFactor;
-
-          // Calculate the position to draw the image to be centered
-          const drawX = centerX - scaledWidth / 2;
-          const drawY = centerY - scaledHeight / 2;
-
-          // Draw the image on the canvas
-          ctx.drawImage(img, drawX, drawY, scaledWidth, scaledHeight);
-
-          resolve(canvas.toDataURL('image/png'));
-        } catch (error) {
-          console.warn(error);
-          resolve(canvas.toDataURL('image/png'));
-        }
-      };
-
-      // Otherwise, if it fails, just omit it.
-      img.onerror = function () {
-        resolve(canvas.toDataURL('image/png'));
-      };
-    });
+    const logoDiv = document.createElement('img');
+    logoDiv.src = logo;
+    logoDiv.setAttribute(
+      'style',
+      'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width:30%;'
+    );
+    finalDiv.appendChild(logoDiv);
   }
 
-  return canvas.toDataURL('image/png');
+  finalDiv.appendChild(imgDiv);
+
+  return finalDiv.outerHTML;
 };
 
 export const parseMustache = (mustacheContent: string) => {

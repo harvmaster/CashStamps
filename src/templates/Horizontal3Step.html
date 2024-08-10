@@ -7,7 +7,7 @@
     </div>
 
     <!-- Download Wallet QR Code -->
-    <img class="qr-code" src="{{ QRCODE https://wallet.bitcoin.com }}" />
+    {{ QRCODE https://wallet.bitcoin.com }}
 
     <!-- Details -->
     <div class="details">
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Redeem QR Code -->
-    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+    {{ QRCODE wif /bch.svg }}
 
     <!-- Details -->
     <div class="details">
@@ -47,7 +47,7 @@
     </div>
 
     <!-- Spend QR Code -->
-    <img class="qr-code" src="{{ QRCODE https://maps.bitcoin.com }}" />
+    {{ QRCODE https://maps.bitcoin.com }}
 
     <!-- Details -->
     <div class="details">
@@ -106,6 +106,7 @@
   .qr-code {
     width: 35mm !important;
     height: 35mm !important;
+    margin: auto;
     margin-bottom: 5mm;
   }
 

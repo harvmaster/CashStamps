@@ -1,7 +1,7 @@
 <div class="stamp-inner cutline">
   <div class="stamp-content">
     <!-- Redeem QR Code -->
-    <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
+    {{ QRCODE wif /bch.svg }}
   </div>
 
   <!-- Stamp Value -->
@@ -83,7 +83,7 @@
    * Page Settings
    */
   @page {
-    size: var(--paper-width-mm) var(--paper-height-mm);
+    size: letter;
     /* Chrome sets own margins, we change these printer settings */
     margin-top: var(--paper-margin-y);
     /* See HACK above as to why this is zero. */
@@ -193,6 +193,7 @@
   .qr-code {
     width: 30mm !important;
     height: 30mm !important;
+    margin: auto;
   }
 
   .row-contanier {
