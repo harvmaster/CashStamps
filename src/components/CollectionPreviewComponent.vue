@@ -309,7 +309,7 @@ watch(
   ],
   debounce(async () => {
     await renderStamps()
-  }, 500),
+  }, 1000),
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
