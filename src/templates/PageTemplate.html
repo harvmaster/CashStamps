@@ -7,8 +7,6 @@
     <style>
       /* Default to A4 height */
       body {
-        width: 210mm;
-        min-height: 297mm;
         margin: 0;
         padding: 0;
       }
@@ -16,6 +14,10 @@
       /* Avoid printing a stamp across pages. */
       .stamp-container {
         break-inside: avoid;
+      }
+
+      .stamp-container.claimed {
+        filter: grayscale(100%);
       }
     </style>
     {{ cutlines }}

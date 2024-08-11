@@ -106,7 +106,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 
 // Pre-built Templates
-import { PrintTemplate, builtInTemplates } from 'src/templates/index.js';
+import { PageTemplate, builtInTemplates } from 'src/templates/index.js';
 
 interface RenderedStamp {
   html: string;
@@ -116,6 +116,8 @@ interface RenderedStamp {
 //---------------------------------------------------------------------------
 // State
 //---------------------------------------------------------------------------
+
+const emits = defineEmits(['templateSelected']);
 
 const props = defineProps<{
   app: App;
@@ -187,10 +189,13 @@ async function renderStamps() {
     // Show the loading indicator as this can take some time (to render the QR Codes).
     state.loading = true;
 
-    // If no collection is selected, return to prevent further execution.
+    // If no template is selected, return to prevent further execution.
     if (!state.activeTemplate) {
       return;
     }
+
+    // Save this as the active template UUID for this collection.
+    emits('templateSelected', state.activeTemplate.uuid);
 
     // To improve legibility, destructure our selected collection.
     const { amount, currency, quantity, expiry } = props.stampCollection;
@@ -287,9 +292,7 @@ watch(
     () => props.wallet.claimedStamps.value,
     () => state.activeTemplate,
   ],
-  debounce(() => {
-    renderStamps();
-  }, 1000)
+  renderStamps
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
@@ -307,9 +310,9 @@ watch([visibleStamps, () => state.showCutLines], debounce(async () => {
     .join('');
 
   // Set the IFrame content.
-  printIFrame.value.srcdoc = await compileTemplate(PrintTemplate, {
+  printIFrame.value.srcdoc = await compileTemplate(PageTemplate, {
     cutlines: state.showCutLines
-      ? '<style>.cutline { border: 1px dashed #000 }</style>'
+      ? '<style>.cutline { border: 1px dashed #82d853 }</style>'
       : '',
     html: stampsHtml,
     style: state.activeTemplate?.style || '',
@@ -328,5 +331,5 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
-state.activeTemplate = templates.value[0];
+state.activeTemplate = templates.value.find((template) => template.uuid === props.stampCollection.templateUUID) || templates.value[0];
 </script>

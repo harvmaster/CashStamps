@@ -104,18 +104,7 @@ h6 {
 // Component Over-rides
 //-----------------------------------------------------------------------------
 
-/* Container for the A4 content */
-.page {
-  width: 210mm;
-  min-height: 297mm;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  margin: auto;
-  page-break-after: always; /* Ensure each .page starts on a new page */
-}
-
-/* Optional: Control page breaks within the content */
-.page-element {
-  page-break-inside: avoid; /* Avoid breaking inside these elements */
-  break-inside: avoid;
+/* No padding on our Tab Panels */
+.q-tab-panel {
+  padding: 0px;
 }

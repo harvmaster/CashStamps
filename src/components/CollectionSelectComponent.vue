@@ -3,7 +3,8 @@
     label="Collection"
     :options="stampCollectionsOptions"
     v-model="model"
-    option-value="id"
+    option-label="label"
+    option-value="mnemonic"
     emit-value
     map-options
     filled
@@ -55,12 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useQuasar } from 'quasar';
 
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
-import type { StampCollection, Template } from 'src/types.js';
+import type { StampCollection } from 'src/types.js';
 import { Satoshis } from 'src/utils/satoshis.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
@@ -77,7 +78,7 @@ const $q = useQuasar();
 
 const emits = defineEmits(['wallet:updated']);
 
-const model = defineModel<Required<number>>({
+const model = defineModel<Required<string>>({
   required: true,
 });
 
@@ -92,9 +93,9 @@ const activeCollection = computed(() => {
 
 const stampCollectionsOptions = computed(
   (): Array<SelectOption<StampCollection>> => {
-    return props.app.stampCollections.map((collection, i) => {
+    return Object.values(props.app.stampCollections).map((collection, i) => {
       return {
-        id: i,
+        mnemonic: collection.mnemonic,
         label: collection.name,
         value: collection,
       };
@@ -117,10 +118,10 @@ async function onNewCollection() {
     persistent: true,
   }).onOk(async (name: string) => {
     // Add a new stamp collection.
-    props.app.addCollection({ name });
+    const mnemonic = props.app.setCollection({ name });
 
     // Set it as active.
-    model.value = props.app.stampCollections.length - 1;
+    model.value = mnemonic;
   });
 }
 
@@ -183,7 +184,7 @@ async function onImportCollection() {
       }
 
       // Add as a new collection with the given mnemonic.
-      props.app.addCollection({
+      const newMnemonic = props.app.setCollection({
         mnemonic: trimmedMnemonic,
         name: trimmedMnemonic,
         quantity,
@@ -192,7 +193,7 @@ async function onImportCollection() {
       });
 
       // Set it as the active collection.
-      model.value = props.app.stampCollections.length - 1;
+      model.value = newMnemonic;
 
       $q.notify({
         color: 'primary',
@@ -236,8 +237,8 @@ async function onDeleteCollection() {
     // Delete the collection.
     props.app.deleteCollection(model.value);
 
-    // Set the last collection as active.
-    model.value = props.app.stampCollections.length - 1;
+    // Set the first collection as active.
+    model.value = Object.keys(props.app.stampCollections)[0];
   });
 }
 

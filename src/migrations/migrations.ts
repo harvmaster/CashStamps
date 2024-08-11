@@ -13,87 +13,55 @@ export type DB_StampCollection_v2 = {
   expiry?: number;
 };
 
-export const migrateCollection_v1_to_v2 = async () => {
-  // Get the StampCollections from the browser's IndexedDB.
-  const collections = await get('stampCollections');
-  console.table(collections);
-
-  if (collections === undefined) {
-    return;
-  }
-
-  const newCollections = [] as DB_StampCollection_v2[];
-
-  // Loop through the collections and convert them to the new format. Add them to newCollections
-  Object.entries(collections).forEach(([key, val]) => {
-    const version = (val as DB_StampCollection_v2).version;
-
-    // If the version is not set, then we need to migrate it.
-    if (!version) {
-      console.log('migrating collection', key);
-      newCollections.push({
-        name: key,
-        mnemonic: val as string,
-        version: 2,
-      });
-    } else {
-      // If the version is already set, then we don't need to do anything.
-      newCollections.push(val as DB_StampCollection_v2);
-    }
-  });
-
-  console.log(newCollections);
-
-  // Save the new format to the browser's IndexedDB.
-  await set('stampCollections', newCollections);
-};
-
 export const migrateCollection_v2_to_v3 = async () => {
   // Get the StampCollections from the browser's IndexedDB.
   const collections = (await get('stampCollections')) as
     | Array<StampCollection>
     | Array<DB_StampCollection_v2>;
-  console.table(collections);
 
   if (collections === undefined) {
     return;
   }
 
-  const v2Collections: Array<DB_StampCollection_v2> = [];
-  const newCollections: Array<StampCollection> = [];
+  if (Array.isArray(collections)) {
+    console.table(collections);
 
-  for (const collection of collections) {
-    // If this is a version 2 collection, we need to migrate it.
-    if (collection.version === 2) {
-      // Backup the V2 collection.
-      v2Collections.push(collection);
+    const v2Collections: Array<DB_StampCollection_v2> = [];
+    const newCollections: { [mnemonic: string]: StampCollection } = {};
 
-      // Add it to the new collection.
-      newCollections.push({
-        version: 3,
-        mnemonic: collection.mnemonic,
-        name: collection.name,
-        amount: 0,
-        currency: 'BCH',
-        quantity: 0,
-        expiry:
-          new Date(collection.expiry || Date.now())
-            .toISOString()
-            .substring(0, 10) || new Date().toISOString().substring(0, 10),
-      });
+    // Save the old V2 as a precaution.
+    if (v2Collections.length) {
+      await set('stampColections.v2', v2Collections);
     }
 
-    // Otherwise, leave it as is.
-    else {
-      newCollections.push(collection);
+    // Save the new format to the browser's IndexedDB.
+    await set('stampCollections', newCollections);
+
+    for (const collection of collections) {
+      // If this is a version 2 collection, we need to migrate it.
+      if (collection.version === 2) {
+        // Backup the V2 collection.
+        v2Collections.push(collection);
+
+        // Add it to the new collection.
+        newCollections[collection.mnemonic] = {
+          version: 3,
+          mnemonic: collection.mnemonic,
+          name: collection.name,
+          amount: 0,
+          currency: 'BCH',
+          quantity: 0,
+          expiry:
+            new Date(collection.expiry || Date.now())
+              .toISOString()
+              .substring(0, 10) || new Date().toISOString().substring(0, 10),
+        };
+      }
+
+      // Otherwise, leave it as is.
+      else {
+        newCollections[collection.mnemonic] = collection;
+      }
     }
   }
-
-  // Save the old V2 as a precaution.
-  if (v2Collections.length) {
-    await set('stampColections.v2', v2Collections);
-  }
-
-  // Save the new format to the browser's IndexedDB.
-  await set('stampCollections', newCollections);
 };

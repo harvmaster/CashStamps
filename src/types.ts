@@ -17,6 +17,7 @@ export type StampCollection = {
   currency: string;
   quantity: number;
   expiry: string;
+  templateUUID?: string;
 };
 
 export type CashPayServer_Output = {

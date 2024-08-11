@@ -86,6 +86,7 @@
               :app="app"
               :stampCollection="activeCollection"
               :wallet="activeWallet"
+              @templateSelected="(uuid) => activeCollection.templateUUID = uuid"
               class="animated fadeIn"
             />
           </div>
@@ -124,9 +125,9 @@ $q.dark.set(false);
 
 // Reactives.
 const state = reactive<{
-  activeCollection: number;
+  activeCollection: string;
 }>({
-  activeCollection: app.stampCollections.length - 1,
+  activeCollection: Object.keys(app.stampCollections)[0],
 });
 
 const activeWallet = shallowRef<WalletHD | undefined>(undefined);

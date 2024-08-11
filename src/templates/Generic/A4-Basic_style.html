@@ -1,0 +1,186 @@
+<style>
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+
+    /*
+    Set your paper size here
+
+    Default: A4
+      A4 Paper is 210mm x 297mm
+      A3 Paper is 297mm x 420mm
+      Letter Paper is 216mm x 279mm
+    */
+
+    /* Computed size helpers in mm */
+    --paper-width-mm: 210mm;
+    --paper-height-mm: 297mm;
+
+    --paper-margin-x: 0mm;
+    --paper-margin-y: 0mm;
+
+    /* Page is the internal usable space (i.e. with margins subtracted). */
+    --page-width-mm: calc(var(--paper-width-mm) - var(--paper-margin-x) * 2);
+    --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
+
+    --items-per-row: 3;
+    --rows-per-page: 4;
+
+    --stamp-container-width: calc(var(--page-width-mm) / var(--items-per-row));
+    --stamp-container-height: calc(
+      var(--page-height-mm) / var(--rows-per-page)
+    );
+
+    /* Stamp decoration */
+    --padding-size: 7mm;
+  }
+
+  /**
+   * Page Settings
+   */
+  @page {
+    size: A4;
+    /* Chrome sets own margins, we change these printer settings */
+    margin-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    margin-bottom: 0;
+    margin-left: var(--paper-margin-x);
+    margin-right: var(--paper-margin-x);
+  }
+
+  body {
+    width: var(--page-width-mm);
+    min-height: var(--paper-height-mm);
+    padding-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    padding-bottom: 0;
+    padding-left: var(--paper-margin-x);
+    padding-right: var(--paper-margin-x);
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  @media print {
+    body {
+      width: var(--page-width-mm);
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .stamp-container {
+    /* Set this as a block element */
+    display: block;
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Stamp size */
+    width: var(--stamp-container-width);
+    height: var(--stamp-container-height);
+
+    /* Stop stamps from being broken in half between pages */
+    break-inside: avoid;
+
+    /* Center the stamp inside of the stamp container */
+    display: grid;
+    align-items: start;
+    justify-items: center;
+  }
+
+  .stamp-inner {
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Set stamp size */
+    width: 100%;
+    height: 100%;
+
+    /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
+    padding-top: var(--padding-size);
+    padding-bottom: calc(var(--padding-size) / 2);
+    padding-left: var(--padding-size);
+    padding-right: var(--padding-size);
+
+    /* Center text */
+    text-align: center;
+
+    /* Define layout inside of the stamp */
+    /*
+    Stamp content is laid out as follows on this template:
+    - QR Code
+    - Stamp Value
+    - Footer
+    */
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+    align-items: space-between;
+
+    /* Allow us to float the claimed badge at the top right */
+    position: relative;
+  }
+
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
+
+  .primary {
+    color: #46ba4f;
+  }
+
+  .secondary {
+    color: #46ba4f;
+  }
+
+  .text-bold {
+    font-weight: bold;
+  }
+
+  .text-muted {
+    color: #686868;
+  }
+
+  .text-sm {
+    font-size: 12px;
+  }
+
+  .qr-code {
+    width: 30mm !important;
+    height: 30mm !important;
+    margin: auto;
+  }
+
+  .row-contanier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .social-media-icon {
+    width: 1.5em;
+    height: 1.5em;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .currency {
+    font-size: 1.75rem;
+  }
+
+  .claimed-badge {
+    display: none;
+    position: absolute;
+    top: 2mm;
+    right: 2mm;
+    background-color: #82d853;
+    padding: 5px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 12px;
+  }
+
+  .stamp-container.claimed .claimed-badge {
+    display: block;
+  }
+</style>

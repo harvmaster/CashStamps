@@ -11,10 +11,7 @@ import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
 // Database Migrations
-import {
-  migrateCollection_v1_to_v2,
-  migrateCollection_v2_to_v3,
-} from 'src/migrations/migrations.js';
+import { migrateCollection_v2_to_v3 } from 'src/migrations/migrations.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
@@ -30,7 +27,7 @@ export class App {
   oracles: OraclesService;
 
   // State.
-  stampCollections = reactive<Array<StampCollection>>([]);
+  stampCollections = reactive<{ [mnemonic: string]: StampCollection }>({});
   templates = reactive<{ [uuid: string]: Template }>({});
 
   // Flags.
@@ -87,19 +84,24 @@ export class App {
 
   async initializeDatabase(): Promise<void> {
     // Migrate the database to the latest format.
-    migrateCollection_v1_to_v2();
+    // NOTE: We skip V1 to V2. It was only used in early development.
     migrateCollection_v2_to_v3();
 
     // Get stamp collections from IndexedDB and save them to our reactive propery.
-    this.stampCollections = reactive((await get('stampCollections')) || []);
+    this.stampCollections = reactive((await get('stampCollections')) || {});
 
     // Watch for changes to our stamp collection so that we can sync them back to IndexedDB.
     watch(
       this.stampCollections,
       async () => {
-        // TODO: Do a 'get' first and then merge our current state.
-        //       This will prevent problems when accessing across multiple browser instances.
-        await set('stampCollections', toRaw(this.stampCollections));
+        // NOTE: Do a 'get' first and then merge our current state.
+        //       This will help prevent problems when accessing across multiple tabs.
+        // TODO: This will NOT work for items we delete! They will just get added back!
+        // const existingCollections = (await get('stampCollections')) || {};
+        await set('stampCollections', {
+          //...existingCollections,
+          ...toRaw(this.stampCollections),
+        });
       },
       { deep: true }
     );
@@ -111,16 +113,21 @@ export class App {
     watch(
       this.templates,
       async () => {
-        // TODO: Do a 'get' first and then merge our current state.
-        //       This will prevent problems when accessing across multiple browser instances.
-        await set('templates', toRaw(this.templates));
+        // NOTE: Do a 'get' first and then merge our current state.
+        //       This will help prevent problems when accessing across multiple tabs.
+        // TODO: This will NOT work for items we delete! They will just get added back!
+        // const existingTemplates = (await get('templates')) || {};
+        await set('templates', {
+          // ...existingTemplates,
+          ...toRaw(this.templates),
+        });
       },
       { deep: true }
     );
 
     // If no collections exist yet, add a default one.
-    if (this.stampCollections.length === 0) {
-      this.addCollection();
+    if (Object.keys(this.stampCollections).length === 0) {
+      this.setCollection();
     }
   }
 
@@ -128,25 +135,29 @@ export class App {
   // Collections
   //---------------------------------------------------------------------------
 
-  addCollection(opts: Partial<StampCollection> = {}): void {
-    this.stampCollections.push({
+  setCollection(opts: Partial<StampCollection> = {}): string {
+    const mnemonic = opts.mnemonic || generateBip39Mnemonic();
+
+    this.stampCollections[mnemonic] = {
       version: 3,
-      mnemonic: opts.mnemonic || generateBip39Mnemonic(),
-      name: opts.name || '[New Stamp Collection]',
+      mnemonic,
+      name: opts.name || 'New Stamp Collection',
       amount: opts.amount || 0,
       currency: opts.currency || 'BCH',
       quantity: 1,
       expiry: new Date().toISOString().slice(0, 10),
-    });
+    };
+
+    return mnemonic;
   }
 
-  deleteCollection(index: number): void {
+  deleteCollection(mnemonic: string): void {
     // Delete the collection at the given index.
-    this.stampCollections.splice(index, 1);
+    delete this.stampCollections[mnemonic];
 
     // If we have no collections left, add a new one.
-    if (this.stampCollections.length === 0) {
-      this.addCollection();
+    if (Object.keys(this.stampCollections).length === 0) {
+      this.setCollection();
     }
   }
 
