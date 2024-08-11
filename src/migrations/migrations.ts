@@ -31,30 +31,37 @@ export const migrateCollection_v2_to_v3 = async () => {
       await set('stampColections.v2', collections);
     }
 
+    // Attempt to migrate to V3 format
     const newCollections: { [mnemonic: string]: StampCollection } = {};
 
-    for (const collection of collections) {
-      // If this is a version 2 collection, we need to migrate it.
-      if (collection.version === 2) {
-        // Add it to the new collection.
-        newCollections[collection.mnemonic] = {
-          version: 3,
-          mnemonic: collection.mnemonic,
-          name: collection.name,
-          amount: 0,
-          currency: 'BCH',
-          quantity: 0,
-          expiry:
-            new Date(collection.expiry || Date.now())
-              .toISOString()
-              .substring(0, 10) || new Date().toISOString().substring(0, 10),
-        };
-      }
+    try {
+      for (const collection of collections) {
+        // If this is a version 2 collection, we need to migrate it.
+        if (collection.version === 2) {
+          // Add it to the new collection.
+          newCollections[collection.mnemonic] = {
+            version: 3,
+            mnemonic: collection.mnemonic,
+            name: collection.name,
+            amount: 0,
+            currency: 'BCH',
+            quantity: 0,
+            expiry:
+              new Date(collection.expiry || Date.now())
+                .toISOString()
+                .substring(0, 10) || new Date().toISOString().substring(0, 10),
+          };
+        }
 
-      // Otherwise, leave it as is.
-      else {
-        newCollections[collection.mnemonic] = collection;
+        // Otherwise, leave it as is.
+        else {
+          newCollections[collection.mnemonic] = collection;
+        }
       }
+    } catch (error) {
+      console.error(
+        'Failed to migrate collections. Old collections are saved under stampCollections.v2'
+      );
     }
 
     // Save the new format to the browser's IndexedDB.
