@@ -55,12 +55,15 @@ export const migrateCollection_v2_to_v3 = async () => {
 
         // Otherwise, leave it as is.
         else {
-          newCollections[collection.mnemonic] = collection;
+          throw new Error(
+            `Unknown version "${collection.version}" - disregarding`
+          );
         }
       }
     } catch (error) {
       console.error(
-        'Failed to migrate collections. Old collections are saved under stampCollections.v2'
+        'Failed to migrate collections. Old collections are saved under stampCollections.v2.',
+        error
       );
     }
 
