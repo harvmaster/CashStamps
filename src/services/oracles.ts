@@ -79,7 +79,7 @@ export class OraclesService {
     oraclePublicKey: string | Uint8Array,
     type: 'numerator' | 'denominator' = 'numerator'
   ) {
-    if (oraclePublicKey === 'BCH') {
+    if (!oraclePublicKey || oraclePublicKey === 'BCH') {
       return 'BCH';
     }
 
