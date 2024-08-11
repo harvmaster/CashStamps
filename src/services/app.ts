@@ -31,7 +31,7 @@ export class App {
 
   // State.
   stampCollections = reactive<Array<StampCollection>>([]);
-  templates = reactive<Array<Template>>([]);
+  templates = reactive<{ [uuid: string]: Template }>({});
 
   // Flags.
   debug = ref(false);
@@ -105,7 +105,7 @@ export class App {
     );
 
     // Get templates from IndexedDB and save them to our reactive propery.
-    this.templates = reactive((await get('templates')) || []);
+    this.templates = reactive((await get('templates')) || {});
 
     // Watch for changes to our templates so that we can sync them back to IndexedDB.
     watch(
@@ -154,31 +154,11 @@ export class App {
   // Templates
   //---------------------------------------------------------------------------
 
-  addTemplate(template: Template) {
-    this.templates.push(template);
+  setTemplate(template: Template) {
+    this.templates[template.uuid] = template;
   }
 
-  updateTemplate(newTemplate: Template, oldTemplate: Template) {
-    const indexOfTemplate = this.templates.findIndex(
-      (template) => template === oldTemplate
-    );
-
-    if (indexOfTemplate === -1) {
-      throw new Error('Failed to find existing template');
-    }
-
-    this.templates[indexOfTemplate] = newTemplate;
-  }
-
-  deleteTemplate(templateToDelete: Template) {
-    const indexOfTemplate = this.templates.findIndex(
-      (template) => template === templateToDelete
-    );
-
-    if (indexOfTemplate === -1) {
-      throw new Error('Failed to find existing template');
-    }
-
-    this.templates.splice(indexOfTemplate, 1);
+  deleteTemplate(template: Template) {
+    delete this.templates[template.uuid];
   }
 }

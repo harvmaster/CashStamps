@@ -12,23 +12,43 @@
 
             <!-- Warning Banner -->
             <q-banner class="bg-negative text-white">
-              <strong>DO NOT:</strong>
-              <ol>
-                <li>Paste template code in here from people you do not trust.</li>
-                <li>Use external URL-based QR Code generators - they will receive your WIFs (Private Keys) and can then steal your funds.</li>
-              </ol>
-              In future, we hope to revise Template Editing to make this simpler. In the meantime, if you need help, reach out on <a href="https://t.me/stampscash" target="_blank" class="text-white">Telegram</a>.
+              <strong>DO NOT</strong> paste template code here from people you do not trust and <strong>DO NOT</strong> use external QR Code generators (they will receive your WIF/Private Keys and can potentially steal your funds). Reach out on <a href="https://t.me/stampscash" target="_blank" class="text-white">Telegram</a> if you need help.
             </q-banner>
 
-            <!-- Text Editor -->
-            <div class="scroll" style="height: 800px">
-              <q-input
-                v-model="state.activeTemplate.value"
-                label="Code"
-                autogrow
-                filled
-              />
-            </div>
+            <q-tabs
+              v-model="state.activeTab"
+              align="justify"
+              active-color="primary"
+            >
+              <q-tab name="content" label="Content" />
+              <q-tab name="style" label="Style" />
+            </q-tabs>
+
+            <q-tab-panels v-model="state.activeTab" animated>
+              <q-tab-panel name="content">
+                <!-- Text Editor -->
+                <div class="scroll" style="height: 800px">
+                  <div class="monaco-container">
+                    <v-ace-editor
+                        v-model:value="state.activeTemplate.template"
+                        lang="html"
+                    />
+                  </div>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="style">
+                <!-- Text Editor -->
+                <div class="scroll" style="height: 800px">
+                  <div class="monaco-container">
+                    <v-ace-editor
+                        v-model:value="state.activeTemplate.style"
+                        lang="html"
+                    />
+                  </div>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
           </div>
           <div class="col-shrink q-gutter-x-md">
             <q-btn
@@ -58,8 +78,19 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
+import { uid } from 'quasar';
 
 import type { Template } from 'src/types.js';
+
+import { VAceEditor } from 'vue3-ace-editor';
+import ace from 'ace-builds';
+import modeHtmlUrl from 'ace-builds/src-noconflict/mode-html?url';
+import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
+import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
+
+ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
+ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
+ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
 
 export type UpdateTemplate = {
   oldValue: Template;
@@ -76,11 +107,11 @@ const props = defineProps<{ activeTemplate: Template }>();
 const state = reactive<{
   visible: boolean;
   activeTemplate: Template;
-  mode: 'simple' | 'advanced';
+  activeTab: 'content' | 'style';
 }>({
   visible: false,
   activeTemplate: { ...props.activeTemplate, readonly: false },
-  mode: 'advanced',
+  activeTab: 'content',
 });
 
 const toggleVisible = () => {
@@ -94,7 +125,7 @@ function saveTemplate() {
 }
 
 function copyTemplate() {
-  emits('template:created', state.activeTemplate);
+  emits('template:created', { ...state.activeTemplate, uuid: uid() });
 
   toggleVisible();
 }

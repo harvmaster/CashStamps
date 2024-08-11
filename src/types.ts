@@ -1,6 +1,9 @@
 export interface Template {
+  version: 1;
+  uuid: string;
   label: string;
-  value: string;
+  template: string;
+  style: string;
   readonly: boolean;
 }
 

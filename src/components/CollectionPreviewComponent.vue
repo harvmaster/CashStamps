@@ -106,13 +106,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 
 // Pre-built Templates
-// NOTE: These are HTML Templates which we compile.
-import PrintTemplate from 'src/templates/_PrintTemplate.html?raw';
-import Horizontal3StepTemplate from 'src/templates/Horizontal3Step.html?raw';
-import Vertical3StepTemplate from 'src/templates/Vertical3Step.html?raw';
-import RectangleSingeStep from 'src/templates/RectangleSingleStep.html?raw';
-import StaticSingleStep from 'src/templates/StaticSingleStep.html?raw';
-import TwoHalfInchSquare from 'src/templates/AveryLabels/2_5_Square.html?raw';
+import { PrintTemplate, builtInTemplates } from 'src/templates/index.js';
 
 interface RenderedStamp {
   html: string;
@@ -143,34 +137,9 @@ const state = reactive<{
   showCutLines: true,
 });
 
-// Built-in Templates.
-const predefinedTemplates = [
-  {
-    label: 'Avery: 2.5 Inch Square',
-    value: TwoHalfInchSquare,
-    readonly: true,
-  },
-  {
-    label: 'Flex Stamps',
-    value: RectangleSingeStep,
-    readonly: true,
-  },
-  { label: 'Static Stamps', value: StaticSingleStep, readonly: true },
-  {
-    label: 'Horizontal - 3 Step',
-    value: Horizontal3StepTemplate,
-    readonly: true,
-  },
-  {
-    label: 'Vertical - 3 Step',
-    value: Vertical3StepTemplate,
-    readonly: true,
-  },
-];
-
 // Computeds.
-const templates = computed(() => {
-  return [...predefinedTemplates, ...props.app.templates];
+const templates = computed((): Array<Template> => {
+  return [...Object.values(builtInTemplates), ...Object.values(props.app.templates)];
 });
 
 const visibleStamps = computed(() => {
@@ -192,13 +161,13 @@ async function showTemplateEditorDialog() {
 }
 
 async function onTemplateUpdated(newTemplate: Template, oldTemplate: Template) {
-  props.app.updateTemplate(newTemplate, oldTemplate);
+  props.app.setTemplate(newTemplate);
 
   state.activeTemplate = newTemplate;
 }
 
 async function onTemplateCreated(template: Template) {
-  props.app.addTemplate(template);
+  props.app.setTemplate(template);
 
   state.activeTemplate = template;
 }
@@ -237,7 +206,7 @@ async function renderStamps() {
     // Iterate over each stamp and render them.
     for (const wallet of props.wallet.wallets.value) {
       // Compile this stamp.
-      const compiledStamp = await compileTemplate(state.activeTemplate.value, {
+      const compiledStamp = await compileTemplate(state.activeTemplate.template, {
         valueBch: formatStampValue(wallet.balance.value, 'BCH'),
         value: formatStampValue(amount, currency),
         symbol: props.app.oracles.getOracleSymbol(currency),
@@ -343,6 +312,7 @@ watch([visibleStamps, () => state.showCutLines], debounce(async () => {
       ? '<style>.cutline { border: 1px dashed #000 }</style>'
       : '',
     html: stampsHtml,
+    style: state.activeTemplate?.style || '',
   });
 }, 1000));
 
@@ -358,5 +328,5 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
-state.activeTemplate = predefinedTemplates[0];
+state.activeTemplate = templates.value[0];
 </script>

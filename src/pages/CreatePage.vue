@@ -38,6 +38,9 @@
                 Print the stamps and give them to your friends, family, or
                 customers.
               </li>
+              <li>
+                Click Reclaim to send any unclaimed stamps back to your own wallet.
+              </li>
             </ol>
           </div>
         </div>

@@ -1,45 +1,3 @@
-<div class="stamp-inner cutline">
-  <div class="stamp-content">
-    <!-- Redeem QR Code -->
-    {{ QRCODE wif /bch.svg }}
-  </div>
-
-  <!-- Stamp Value -->
-  <div class="title-primary currency">
-    <span class="primary">{{ symbol }}{{ value }}</span>
-    <span class="secondary">{{ currency }}</span>
-  </div>
-
-  <!-- Footer -->
-  <div class="footer text-sm">
-    <!-- Expiry -->
-    <div class="title-secondary content text-muted text-bold">
-      <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
-      Valid until {{ DATE expiry DD }}
-    </div>
-
-    <!-- Redeem link -->
-    <div class="content text-muted text-bold">
-      Redeem at <span class="primary">stamps.cash</span>
-    </div>
-
-    <!-- Social Media Link -->
-    <div
-      class="content text-muted text-bold row-contanier"
-      style="margin-top: 5px"
-    >
-      <img
-        src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
-        class="social-media-icon"
-      />
-      <span class="">@cashstamps</span>
-    </div>
-
-    <!-- Claimed Badge (Only shows if stamp-container has "claimed" class) -->
-    <div class="claimed-badge">Claimed</div>
-  </div>
-</div>
-
 <style>
   :root {
     font-family: Arial, Helvetica, sans-serif;
@@ -101,6 +59,7 @@
     padding-left: var(--paper-margin-x);
     padding-right: var(--paper-margin-x);
     display: flex;
+    align-content: flex-start;
     flex-wrap: wrap;
   }
 

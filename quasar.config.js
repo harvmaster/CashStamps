@@ -10,6 +10,7 @@
 
 const { configure } = require('quasar/wrappers');
 const { nodePolyfills } = require('vite-plugin-node-polyfills');
+const { string } = require('vite-plugin-string');
 
 module.exports = configure(function (/* ctx */) {
   return {
@@ -92,6 +93,12 @@ module.exports = configure(function (/* ctx */) {
           nodePolyfills,
           {
             include: ['event', 'net', 'tls'],
+          },
+        ],
+        [
+          string,
+          {
+            include: '**/*.html',
           },
         ],
       ],

@@ -68,7 +68,7 @@ export const renderQrCode = async (
   const virtualQRDiv = document.createElement('div');
 
   // Render the QR Code into the virtual div.
-  const qrCode = new QRCode(virtualQRDiv, {
+  new QRCode(virtualQRDiv, {
     text: content,
     width: 256,
     height: 256,
@@ -102,7 +102,7 @@ export const renderQrCode = async (
     logoDiv.src = logo;
     logoDiv.setAttribute(
       'style',
-      'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width:30%;'
+      'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width:25%;'
     );
     finalDiv.appendChild(logoDiv);
   }
@@ -110,35 +110,6 @@ export const renderQrCode = async (
   finalDiv.appendChild(imgDiv);
 
   return finalDiv.outerHTML;
-};
-
-export const parseMustache = (mustacheContent: string) => {
-  // We split the placeholder and the default value of the placeholder.
-  // NOTE: Example: {{ @qrcode someLink|https://stamps.cash icon|https://stamps.cash/bch.png }}
-  const tokens = mustacheContent
-    .trim()
-    .split(' ')
-    .map((content) => content.trim());
-
-  const parsedTokens = tokens.map((arg) => {
-    // If this is a directive (begins with '@' character)
-    if (arg.startsWith('@')) {
-      return {
-        type: 'directive',
-        value: arg,
-      };
-    } else {
-      const [value, defaultValue] = arg.split('|');
-
-      return {
-        type: 'variable',
-        value,
-        defaultValue,
-      };
-    }
-  });
-
-  return parsedTokens;
 };
 
 export const compileTemplate = async (
@@ -170,7 +141,7 @@ export const compileTemplate = async (
 
     let replacement = '';
 
-    if (split[0].toLowerCase() === 'qrcode') {
+    if (split[0].toLowerCase() === '@qrcode') {
       // Prioritize data variables and, if none exist, just use the value provided.
       const urlArg = data[split[1]] || split[1];
       const logoArg = data[split[2]] || split[2];
@@ -183,7 +154,7 @@ export const compileTemplate = async (
       replacement = data[split[0]] === undefined ? replacement : data[split[0]];
     }
 
-    if (split[0].toLowerCase() === 'date') {
+    if (split[0].toLowerCase() === '@date') {
       const dateArg = data[split[1]] || split[1];
       const formatArg = data[split[2]] || split[2];
 
