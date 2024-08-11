@@ -85,7 +85,7 @@ export class App {
   async initializeDatabase(): Promise<void> {
     // Migrate the database to the latest format.
     // NOTE: We skip V1 to V2. It was only used in early development.
-    migrateCollection_v2_to_v3();
+    await migrateCollection_v2_to_v3();
 
     // Get stamp collections from IndexedDB and save them to our reactive propery.
     this.stampCollections = reactive((await get('stampCollections')) || {});
