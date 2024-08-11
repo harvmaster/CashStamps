@@ -113,7 +113,7 @@ const expiryModel = computed({
   },
   set: (value: string) => {
     model.value.expiry = value.replaceAll('/', '-');
-  }
+  },
 });
 
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.

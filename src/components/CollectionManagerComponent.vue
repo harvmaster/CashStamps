@@ -51,9 +51,7 @@
         <!-- Funded/Not Funded -->
         <div class="flex justify-center">
           <q-chip
-            v-if="
-              props.wallet.isClaimed.value
-            "
+            v-if="props.wallet.isClaimed.value"
             color="primary"
             text-color="white"
             icon="check_circle"

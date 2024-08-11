@@ -12,7 +12,17 @@
 
             <!-- Warning Banner -->
             <q-banner class="bg-negative text-white">
-              <strong>DO NOT</strong> paste template code here from people you do not trust and <strong>DO NOT</strong> use external QR Code generators (they will receive your WIF/Private Keys and can potentially steal your funds). Reach out on <a href="https://t.me/stampscash" target="_blank" class="text-white">Telegram</a> if you need help.
+              <strong>DO NOT</strong> paste template code here from people you
+              do not trust and <strong>DO NOT</strong> use external QR Code
+              generators (they will receive your WIF/Private Keys and can
+              potentially steal your funds). Reach out on
+              <a
+                href="https://t.me/stampscash"
+                target="_blank"
+                class="text-white"
+                >Telegram</a
+              >
+              if you need help.
             </q-banner>
 
             <q-tabs
@@ -28,10 +38,10 @@
               <q-tab-panel name="content">
                 <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
-                  <div class="monaco-container">
+                  <div class="editor-container">
                     <v-ace-editor
-                        v-model:value="state.activeTemplate.template"
-                        lang="html"
+                      v-model:value="state.activeTemplate.template"
+                      lang="html"
                     />
                   </div>
                 </div>
@@ -40,10 +50,10 @@
               <q-tab-panel name="style">
                 <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
-                  <div class="monaco-container">
+                  <div class="editor-container">
                     <v-ace-editor
-                        v-model:value="state.activeTemplate.style"
-                        lang="html"
+                      v-model:value="state.activeTemplate.style"
+                      lang="html"
                     />
                   </div>
                 </div>

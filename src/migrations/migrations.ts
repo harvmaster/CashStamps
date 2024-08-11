@@ -26,23 +26,16 @@ export const migrateCollection_v2_to_v3 = async () => {
   if (Array.isArray(collections)) {
     console.table(collections);
 
-    const v2Collections: Array<DB_StampCollection_v2> = [];
-    const newCollections: { [mnemonic: string]: StampCollection } = {};
-
     // Save the old V2 as a precaution.
-    if (v2Collections.length) {
-      await set('stampColections.v2', v2Collections);
+    if (collections.length) {
+      await set('stampColections.v2', collections);
     }
 
-    // Save the new format to the browser's IndexedDB.
-    await set('stampCollections', newCollections);
+    const newCollections: { [mnemonic: string]: StampCollection } = {};
 
     for (const collection of collections) {
       // If this is a version 2 collection, we need to migrate it.
       if (collection.version === 2) {
-        // Backup the V2 collection.
-        v2Collections.push(collection);
-
         // Add it to the new collection.
         newCollections[collection.mnemonic] = {
           version: 3,
@@ -63,5 +56,8 @@ export const migrateCollection_v2_to_v3 = async () => {
         newCollections[collection.mnemonic] = collection;
       }
     }
+
+    // Save the new format to the browser's IndexedDB.
+    await set('stampCollections', newCollections);
   }
 };

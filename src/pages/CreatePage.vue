@@ -28,9 +28,12 @@
             <strong>Instructions:</strong>
             <ol>
               <li>
-                Enter the value, currency and quantity of stamps you want to create.
+                Enter the value, currency and quantity of stamps you want to
+                create.
               </li>
-              <li>Select a template (or create your own with the Edit Button).</li>
+              <li>
+                Select a template (or create your own with the Edit Button).
+              </li>
               <li>
                 Click the fund button and scan the QR Code with your wallet.
               </li>
@@ -39,7 +42,8 @@
                 customers.
               </li>
               <li>
-                Click Reclaim to send any unclaimed stamps back to your own wallet.
+                Click Reclaim to send any unclaimed stamps back to your own
+                wallet.
               </li>
             </ol>
           </div>
@@ -86,7 +90,9 @@
               :app="app"
               :stampCollection="activeCollection"
               :wallet="activeWallet"
-              @templateSelected="(uuid) => activeCollection.templateUUID = uuid"
+              @templateSelected="
+                (uuid) => (activeCollection.templateUUID = uuid)
+              "
               class="animated fadeIn"
             />
           </div>
@@ -197,7 +203,7 @@ watch([() => activeCollection.value], async () => {
 //---------------------------------------------------------------------------
 
 onUnmounted(async () => {
-  if(activeWallet.value) {
+  if (activeWallet.value) {
     await activeWallet.value.stopMonitoring();
   }
 });

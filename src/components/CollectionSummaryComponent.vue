@@ -26,7 +26,10 @@
       <!-- Number of Claimed Stamps/Total Stamps -->
       <div class="col-auto">
         <div class="text-body2">Claimed</div>
-        <div class="text-h6">{{ props.wallet.claimedStamps.value }} / {{ props.wallet.wallets.value.length }}</div>
+        <div class="text-h6">
+          {{ props.wallet.claimedStamps.value }} /
+          {{ props.wallet.wallets.value.length }}
+        </div>
       </div>
 
       <!-- Balance Fiat -->
@@ -101,7 +104,9 @@ const fundingDue = computed(() => {
 });
 
 const fundingDueBCH = computed(() => {
-  const fundingBch = Number(fundingDue.value) / props.oracles.getOraclePriceCommonUnits(props.stampCollection.currency);
+  const fundingBch =
+    Number(fundingDue.value) /
+    props.oracles.getOraclePriceCommonUnits(props.stampCollection.currency);
   return fundingBch.toFixed(8);
 });
 

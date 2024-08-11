@@ -88,7 +88,7 @@ h6 {
 }
 
 // Editor
-.monaco-container {
+.editor-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -96,7 +96,7 @@ h6 {
   flex: 1;
 }
 
-.monaco-container > div {
+.editor-container > div {
   flex: 1;
 }
 

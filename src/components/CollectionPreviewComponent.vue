@@ -28,7 +28,10 @@
           </q-btn>
         </q-btn-group>
 
-        <q-toggle v-model="state.showClaimedStamps" label="Show Claimed Stamps" />
+        <q-toggle
+          v-model="state.showClaimedStamps"
+          label="Show Claimed Stamps"
+        />
         <q-toggle v-model="state.showCutLines" label="Show Cut Lines" />
       </div>
 
@@ -65,7 +68,13 @@
         <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
         <iframe
           ref="printIFrame"
-          style="width: 210mm; height: 297mm; border: none; overflow-x: hidden; overflow-y: hidden;"
+          style="
+            width: 210mm;
+            height: 297mm;
+            border: none;
+            overflow-x: hidden;
+            overflow-y: hidden;
+          "
           scrolling="no"
           class="shadow-20 animate fadeIn"
           sandbox="allow-same-origin allow-scripts allow-modals"
@@ -141,7 +150,10 @@ const state = reactive<{
 
 // Computeds.
 const templates = computed((): Array<Template> => {
-  return [...Object.values(builtInTemplates), ...Object.values(props.app.templates)];
+  return [
+    ...Object.values(builtInTemplates),
+    ...Object.values(props.app.templates),
+  ];
 });
 
 const visibleStamps = computed(() => {
@@ -211,15 +223,18 @@ async function renderStamps() {
     // Iterate over each stamp and render them.
     for (const wallet of props.wallet.wallets.value) {
       // Compile this stamp.
-      const compiledStamp = await compileTemplate(state.activeTemplate.template, {
-        valueBch: formatStampValue(wallet.balance.value, 'BCH'),
-        value: formatStampValue(amount, currency),
-        symbol: props.app.oracles.getOracleSymbol(currency),
-        currency: props.app.oracles.getOracleUnitCode(currency),
-        expiry,
-        wif: wallet.toWif(),
-        address: wallet.getAddress(),
-      });
+      const compiledStamp = await compileTemplate(
+        state.activeTemplate.template,
+        {
+          valueBch: formatStampValue(wallet.balance.value, 'BCH'),
+          value: formatStampValue(amount, currency),
+          symbol: props.app.oracles.getOracleSymbol(currency),
+          currency: props.app.oracles.getOracleUnitCode(currency),
+          expiry,
+          wif: wallet.toWif(),
+          address: wallet.getAddress(),
+        }
+      );
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
@@ -296,28 +311,33 @@ watch(
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
-watch([visibleStamps, () => state.showCutLines], debounce(async () => {
-  // Make sure the IFrame element exists..
-  if (!printIFrame.value) {
-    throw new Error('IFrame element does not exist');
-  }
+watch(
+  [visibleStamps, () => state.showCutLines],
+  debounce(async () => {
+    // Make sure the IFrame element exists..
+    if (!printIFrame.value) {
+      throw new Error('IFrame element does not exist');
+    }
 
-  // Compile the stamp HTML.
-  const stampsHtml = visibleStamps.value
-    .map((stamp) => {
-      return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''}">${stamp.html}</div>`;
-    })
-    .join('');
+    // Compile the stamp HTML.
+    const stampsHtml = visibleStamps.value
+      .map((stamp) => {
+        return `<div class="stamp-container ${
+          stamp.claimed ? 'claimed' : ''
+        }">${stamp.html}</div>`;
+      })
+      .join('');
 
-  // Set the IFrame content.
-  printIFrame.value.srcdoc = await compileTemplate(PageTemplate, {
-    cutlines: state.showCutLines
-      ? '<style>.cutline { border: 1px dashed #82d853 }</style>'
-      : '',
-    html: stampsHtml,
-    style: state.activeTemplate?.style || '',
-  });
-}, 1000));
+    // Set the IFrame content.
+    printIFrame.value.srcdoc = await compileTemplate(PageTemplate, {
+      cutlines: state.showCutLines
+        ? '<style>.cutline { border: 1px dashed #82d853 }</style>'
+        : '',
+      html: stampsHtml,
+      style: state.activeTemplate?.style || '',
+    });
+  }, 1000)
+);
 
 //---------------------------------------------------------------------------
 // Initialization/Lifecycle Hooks
@@ -331,5 +351,8 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
-state.activeTemplate = templates.value.find((template) => template.uuid === props.stampCollection.templateUUID) || templates.value[0];
+state.activeTemplate =
+  templates.value.find(
+    (template) => template.uuid === props.stampCollection.templateUUID
+  ) || templates.value[0];
 </script>
