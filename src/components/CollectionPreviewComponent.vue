@@ -307,7 +307,9 @@ watch(
     () => props.wallet.claimedStamps.value,
     () => state.activeTemplate,
   ],
-  renderStamps
+  debounce(async () => {
+    await renderStamps()
+  }, 500),
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
@@ -336,7 +338,7 @@ watch(
       html: stampsHtml,
       style: state.activeTemplate?.style || '',
     });
-  }, 1000)
+  }, 500)
 );
 
 //---------------------------------------------------------------------------

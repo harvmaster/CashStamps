@@ -6,7 +6,6 @@
         :label="`Target Amount (${currencyName})`"
         type="number"
         :min="0"
-        debounce="1000"
         filled
       />
     </div>
@@ -35,7 +34,6 @@
         class="col"
         placeholder="YYYY/MM/DD"
         label="Expiry Date (YYYY/MM/DD)"
-        debounce="1000"
       >
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -58,7 +56,6 @@
         :step="1"
         :min="0"
         :max="100"
-        debounce="1000"
         filled
       />
     </div>

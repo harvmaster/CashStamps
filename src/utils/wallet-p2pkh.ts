@@ -131,14 +131,13 @@ export class WalletP2PKH extends PrivateKey {
     await Promise.all([this.getUnspentOutputs(), this.getHistory()]);
   }
 
-  onAddressNotification(status: string | null) {
+  async onAddressNotification(status: string | null) {
     // If status is null, it simply means that our subscribe call to Electrum was successful.
     if (!status) {
       return;
     }
 
     // Refresh our wallet's state.
-    this.getHistory();
-    this.getUnspentOutputs();
+    await Promise.all([this.getHistory(), this.getUnspentOutputs()]);
   }
 }
