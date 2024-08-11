@@ -262,6 +262,36 @@ export class Address {
     return Address.fromHash160(hash160Bytes, type);
   }
 
+  public static isValid(address: string): boolean {
+    try {
+      Address.fromCashAddrOrLegacy(address);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static isValidLegacy(address: string): boolean {
+    try {
+      Address.fromLegacy(address);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static isValidCashAddr(address: string): boolean {
+    try {
+      Address.fromCashAddr(address);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Gets the type of address (P2PKH, P2SH).
    *

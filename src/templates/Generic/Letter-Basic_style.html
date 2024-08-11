@@ -1,44 +1,3 @@
-<div class="stamp-outer">
-  <div class="stamp-inner">
-    <div class="stamp-content">
-      <!-- Redeem QR Code -->
-      <img class="qr-code" src="{{ QRCODE wif /bch.svg }}" />
-    </div>
-
-    <!-- Stamp Value -->
-    <div class="title-primary currency">
-      <span class="primary">{{ symbol }}{{ value }}</span>
-      <span class="secondary">{{ currency }}</span>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer text-sm">
-      <!-- Expiry -->
-      <div class="title-secondary content text-muted text-bold">
-        <!-- DD is the format of the date. It formats it as "'Short month name' 'day' , 'year'" -->
-        Valid until {{ DATE expiry DD }}
-      </div>
-
-      <!-- Redeem link -->
-      <div class="content text-muted text-bold">
-        Redeem at <span class="primary">stamps.cash</span>
-      </div>
-
-      <!-- Social Media Link -->
-      <div
-        class="content text-muted text-bold row-contanier"
-        style="margin-top: 5px"
-      >
-        <img
-          src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1721174400&semt=ais_user"
-          class="social-media-icon"
-        />
-        <span class="">@cashstamps</span>
-      </div>
-    </div>
-  </div>
-</div>
-
 <style>
   :root {
     font-family: Arial, Helvetica, sans-serif;
@@ -52,40 +11,34 @@
       Letter Paper is 216mm x 279mm
     */
 
-    /* Stamp decoration */
-    --padding-size: 7mm;
-    --border-size: 1px;
-
     /* Computed size helpers in mm */
     --paper-width-mm: 216mm;
     --paper-height-mm: 279mm;
 
-    --paper-margin-x: 10mm;
-    --paper-margin-y: 25mm;
+    --paper-margin-x: 0mm;
+    --paper-margin-y: 0mm;
 
     /* Page is the internal usable space (i.e. with margins subtracted). */
     --page-width-mm: calc(var(--paper-width-mm) - var(--paper-margin-x) * 2);
     --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
 
     --items-per-row: 3;
+    --rows-per-page: 4;
 
-    --stamp-inner-height-mm: 63.5mm;
-    --stamp-inner-width-mm: 63.5mm;
+    --stamp-container-width: calc(var(--page-width-mm) / var(--items-per-row));
+    --stamp-container-height: calc(
+      var(--page-height-mm) / var(--rows-per-page)
+    );
 
-    --stamp-outer-width: calc(var(--page-width-mm) / var(--items-per-row));
-    /* HACK:  We can't accurately space these, so we just add the 19mm gap manually. This means we need to remove page's bottom margin. */
-    --stamp-outer-height: calc(var(--stamp-inner-height-mm) + 19mm);
-
-    /* Define the grid axis lengths */
-    --calculated-y-quantity-per-page: 3;
-    --calculated-x-quantity-per-page: 3;
+    /* Stamp decoration */
+    --padding-size: 7mm;
   }
 
   /**
    * Page Settings
    */
   @page {
-    size: var(--paper-width-mm) var(--paper-height-mm);
+    size: Letter;
     /* Chrome sets own margins, we change these printer settings */
     margin-top: var(--paper-margin-y);
     /* See HACK above as to why this is zero. */
@@ -94,25 +47,37 @@
     margin-right: var(--paper-margin-x);
   }
 
-  .preview {
-    width: var(--paper-width-mm);
+  body {
+    width: var(--page-width-mm);
     min-height: var(--paper-height-mm);
     padding-top: var(--paper-margin-y);
     /* See HACK above as to why this is zero. */
     padding-bottom: 0;
     padding-left: var(--paper-margin-x);
     padding-right: var(--paper-margin-x);
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
   }
 
-  .page {
-    align-items: flex-start;
-    justify-content: flex-start;
+  @media print {
+    body {
+      width: var(--page-width-mm);
+      margin: 0;
+      padding: 0;
+    }
   }
 
-  .stamp-outer {
+  .stamp-container {
+    /* Set this as a block element */
+    display: block;
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
     /* Stamp size */
-    width: var(--stamp-outer-width);
-    height: var(--stamp-outer-height);
+    width: var(--stamp-container-width);
+    height: var(--stamp-container-height);
 
     /* Stop stamps from being broken in half between pages */
     break-inside: avoid;
@@ -121,18 +86,15 @@
     display: grid;
     align-items: start;
     justify-items: center;
-
-    /* Remove text formatting from quasar */
-    line-height: 1;
   }
 
   .stamp-inner {
-    /* Set stamp size */
-    width: var(--stamp-inner-width-mm);
-    height: var(--stamp-inner-height-mm);
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
 
-    /* Set stamp border */
-    /* border: var(--border-size) dashed #000; */
+    /* Set stamp size */
+    width: 100%;
+    height: 100%;
 
     /* Set stamp padding, this is purely stylistic and does not affect stamps placement in the tempalte */
     padding-top: var(--padding-size);
@@ -154,6 +116,9 @@
     grid-template-rows: auto auto auto;
     grid-template-columns: 1fr;
     align-items: space-between;
+
+    /* Allow us to float the claimed badge at the top right */
+    position: relative;
   }
 
   .title-primary {
@@ -184,6 +149,7 @@
   .qr-code {
     width: 30mm !important;
     height: 30mm !important;
+    margin: auto;
   }
 
   .row-contanier {

@@ -1,6 +1,24 @@
 // Font imports.
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
+.header-outer {
+  width: 100%;
+}
+
+.header-inner {
+  width: 992px;
+  margin: auto;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  color: #fff;
+}
+
+.header-inner .paragraph {
+  width: 40em;
+  max-width: 100%;
+}
+
 .inner-page {
   min-width: 210mm;
   width: 992px;
@@ -69,22 +87,24 @@ h6 {
   overflow-x: hidden;
 }
 
+// Editor
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+.editor-container > div {
+  flex: 1;
+}
+
 //-----------------------------------------------------------------------------
 // Component Over-rides
 //-----------------------------------------------------------------------------
 
-/* Container for the A4 content */
-.page {
-  width: 210mm;
-  min-height: 297mm;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  margin: auto;
-  page-break-after: always; /* Ensure each .page starts on a new page */
-}
-
-/* Optional: Control page breaks within the content */
-.page-element {
-  page-break-inside: avoid; /* Avoid breaking inside these elements */
-  break-inside: avoid;
+/* No padding on our Tab Panels */
+.q-tab-panel {
+  padding: 0px;
 }

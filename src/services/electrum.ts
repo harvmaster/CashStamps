@@ -1,9 +1,14 @@
-import { ElectrumRequest } from './electrum-types.js';
+import { AddressNotification, ElectrumRequest } from './electrum-types.js';
 
-import { ElectrumClient } from 'electrum-cash';
+import { ElectrumClient } from '@electrum-cash/network';
+
+export type AddressCallback = (status: string | null) => void;
 
 export class ElectrumService {
   electrumClient!: ElectrumClient;
+
+  // Address subscriptions.
+  addressSubscriptions: { [address: string]: AddressCallback } = {};
 
   constructor(
     public readonly servers: string[],
@@ -41,6 +46,9 @@ export class ElectrumService {
       // Save the client.
       this.electrumClient = electrum;
 
+      // Setup notification handler.
+      this.electrumClient.on('notification', this.onNotification.bind(this));
+
       // Return to prevent further execution.
       return;
     }
@@ -62,5 +70,50 @@ export class ElectrumService {
     }
 
     return response;
+  }
+
+  async subscribeAddress(address: string, callback: AddressCallback) {
+    await this.electrumClient.subscribe(
+      'blockchain.address.subscribe',
+      address
+    );
+
+    this.addressSubscriptions[address] = callback;
+  }
+
+  async unsubscribeAddress(address: string, _callback: AddressCallback) {
+    if (!this.addressSubscriptions[address]) {
+      return;
+    }
+
+    delete this.addressSubscriptions[address];
+
+    try {
+      await this.electrumClient.unsubscribe(
+        'blockchain.address.unsubscribe',
+        address
+      );
+    } catch (error) {
+      console.warn(`${error}`);
+    }
+  }
+
+  onNotification(data: AddressNotification) {
+    // Handle Address notification.
+    if (data.method === 'blockchain.address.subscribe') {
+      const address = data.params[0];
+      const status = data.params[1];
+      const subscription = this.addressSubscriptions[address];
+
+      if (!subscription) {
+        console.warn(
+          `Notification for address ${address} subscribed to, but has no handler`
+        );
+        return;
+      }
+
+      // Trigger the subscription's callback.
+      subscription(status);
+    }
   }
 }

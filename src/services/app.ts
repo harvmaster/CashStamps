@@ -6,20 +6,20 @@ import {
 } from 'src/config.js';
 
 // Import services the app may require.
+import type { StampCollection, Template } from 'src/types.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
-import { StampCollection } from './stamp-collection.js';
 
 // Database Migrations
-import { migrateCollection_v1_to_v2 } from 'src/utils/migrations/database-v1-to-v2.js';
+import { migrateCollection_v2_to_v3 } from 'src/migrations/migrations.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
 
+import { generateBip39Mnemonic } from '@bitauth/libauth';
+
 // Vue and Quasar.
-import { ref, shallowRef } from 'vue';
-import { Loading } from 'quasar';
-import { DB_StampCollection } from 'src/types.js';
+import { reactive, ref, watch, toRaw } from 'vue';
 
 export class App {
   // Services.
@@ -27,8 +27,8 @@ export class App {
   oracles: OraclesService;
 
   // State.
-  // NOTE: We use a shallow refs so that nested refs are not unwrapped.
-  stampCollection = shallowRef<StampCollection | undefined>(undefined);
+  stampCollections = reactive<{ [mnemonic: string]: StampCollection }>({});
+  templates = reactive<{ [uuid: string]: Template }>({});
 
   // Flags.
   debug = ref(false);
@@ -43,16 +43,14 @@ export class App {
 
     // Setup our Electrum Service.
     this.electrum = new ElectrumService(ELECTRUM_SERVERS);
-
-    // Set the stampCollection to a new StampCollection instance.
-    this.stampCollection.value = StampCollection.generate(this.electrum, {
-      quantity: 0,
-    });
   }
 
   async start(): Promise<void> {
-    // Check that the user's browser is compatible.
-    await this.checkBrowser();
+    // Check that the user's browser is compatible and perform any initialization.
+    await this.initializeBrowser();
+
+    // Initialize IndexedDB by performing and migrations and data setup that is necessary.
+    await this.initializeDatabase();
 
     // Start the following services in parallel as they have no dependency on each other.
     await Promise.all([
@@ -61,17 +59,10 @@ export class App {
       // Oracles Service
       // TODO: Should try to make this optional in case the Oracles are down.
       this.oracles.start(),
-
-      migrateCollection_v1_to_v2(),
     ]);
-
-    // Start the Oracle Service.
-    // await this.electrum.start();
-
-    // console.log('Electrum connected');
   }
 
-  async checkBrowser(): Promise<void> {
+  async initializeBrowser(): Promise<void> {
     // Check that browser supports IndexedDB.
     try {
       // NOTE: It does not matter whether this key exists or not. If the browser does not support IndexedDB, this will throw an error.
@@ -91,83 +82,94 @@ export class App {
     }
   }
 
-  //---------------------------------------------------------------------------
-  // Methods
-  //---------------------------------------------------------------------------
+  async initializeDatabase(): Promise<void> {
+    // Migrate the database to the latest format.
+    // NOTE: We skip V1 to V2. It was only used in early development.
+    migrateCollection_v2_to_v3();
 
-  //--------------------------------------------------------------------------
-  // Database Methods
-  //---------------------------------------------------------------------------
+    // Get stamp collections from IndexedDB and save them to our reactive propery.
+    this.stampCollections = reactive((await get('stampCollections')) || {});
 
-  // Get the StampCollections from the browser's IndexedDB.
-  async getStampCollections(): Promise<DB_StampCollection[]> {
-    const collections: DB_StampCollection[] | undefined = await get(
-      'stampCollections'
-    );
-    return collections || [];
-  }
-
-  // Find a StampCollection by name and set it to the stampCollection ref.
-  async getStampCollection(name: string) {
-    Loading.show();
-
-    // TODO: Rename this to useStampCollection or something similar.
-    // Get the StampCollections from the browser's IndexedDB.
-    const collections = await this.getStampCollections();
-
-    // Load the StampCollection from the mnemonic.
-    const collection = collections.find((c) => c.name === name);
-    if (!collection) {
-      throw new Error(`StampCollection with name "${name}" not found`);
-    }
-
-    const expiry = collection.expiry ? new Date(collection.expiry) : undefined;
-
-    // Set the StampCollection to the stampCollection ref.
-    this.stampCollection.value = await StampCollection.fromMnemonic(
-      this.electrum,
-      collection.mnemonic,
-      expiry
+    // Watch for changes to our stamp collection so that we can sync them back to IndexedDB.
+    watch(
+      this.stampCollections,
+      async () => {
+        // NOTE: Do a 'get' first and then merge our current state.
+        //       This will help prevent problems when accessing across multiple tabs.
+        // TODO: This will NOT work for items we delete! They will just get added back!
+        // const existingCollections = (await get('stampCollections')) || {};
+        await set('stampCollections', {
+          //...existingCollections,
+          ...toRaw(this.stampCollections),
+        });
+      },
+      { deep: true }
     );
 
-    Loading.hide();
-  }
+    // Get templates from IndexedDB and save them to our reactive propery.
+    this.templates = reactive((await get('templates')) || {});
 
-  async saveStamps(stampCollection: StampCollection) {
-    // Get the name or use the mnemonic as the name
-    const name = stampCollection.getName() || stampCollection.getMnemonic();
-    const mnemonic = stampCollection.getMnemonic();
-    const expiry = stampCollection.getExpiry();
+    // Watch for changes to our templates so that we can sync them back to IndexedDB.
+    watch(
+      this.templates,
+      async () => {
+        // NOTE: Do a 'get' first and then merge our current state.
+        //       This will help prevent problems when accessing across multiple tabs.
+        // TODO: This will NOT work for items we delete! They will just get added back!
+        // const existingTemplates = (await get('templates')) || {};
+        await set('templates', {
+          // ...existingTemplates,
+          ...toRaw(this.templates),
+        });
+      },
+      { deep: true }
+    );
 
-    // Get the existing collections or create a new one
-    const collections = await this.getStampCollections();
-
-    // Check if the collection already exists
-    const existingIndex = collections.findIndex((c) => c.name === name);
-
-    // If the collection exists, Overwrite it
-    if (existingIndex > -1) {
-      collections[existingIndex] = {
-        name,
-        mnemonic,
-        version: 2,
-        expiry: expiry.getTime(),
-      };
-    } else {
-      // If the collection does not exist, Add it
-      collections.push({
-        name,
-        mnemonic,
-        version: 2,
-        expiry: expiry.getTime(),
-      });
+    // If no collections exist yet, add a default one.
+    if (Object.keys(this.stampCollections).length === 0) {
+      this.setCollection();
     }
-
-    // Save the collections back to IDB
-    await set('stampCollections', collections);
   }
 
   //---------------------------------------------------------------------------
-  // Events/Callbacks
+  // Collections
   //---------------------------------------------------------------------------
+
+  setCollection(opts: Partial<StampCollection> = {}): string {
+    const mnemonic = opts.mnemonic || generateBip39Mnemonic();
+
+    this.stampCollections[mnemonic] = {
+      version: 3,
+      mnemonic,
+      name: opts.name || 'New Stamp Collection',
+      amount: opts.amount || 0,
+      currency: opts.currency || 'BCH',
+      quantity: 1,
+      expiry: new Date().toISOString().slice(0, 10),
+    };
+
+    return mnemonic;
+  }
+
+  deleteCollection(mnemonic: string): void {
+    // Delete the collection at the given index.
+    delete this.stampCollections[mnemonic];
+
+    // If we have no collections left, add a new one.
+    if (Object.keys(this.stampCollections).length === 0) {
+      this.setCollection();
+    }
+  }
+
+  //---------------------------------------------------------------------------
+  // Templates
+  //---------------------------------------------------------------------------
+
+  setTemplate(template: Template) {
+    this.templates[template.uuid] = template;
+  }
+
+  deleteTemplate(template: Template) {
+    delete this.templates[template.uuid];
+  }
 }

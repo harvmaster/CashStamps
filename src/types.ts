@@ -1,20 +1,23 @@
-export type Wallet = {
-  // address: string;
-  // privateKey: string;
-  funding: {
-    value: number;
-    currency: string;
-    funded: false | Date;
-  };
-  wif: string;
-  create_date: string;
-};
+export interface Template {
+  version: 1;
+  uuid: string;
+  label: string;
+  template: string;
+  style: string;
+  readonly: boolean;
+}
 
-export type DB_StampCollection = {
+export type TemplateData = { [key: string]: string };
+
+export type StampCollection = {
+  version: 3;
   mnemonic: string;
   name: string;
-  version: number;
-  expiry?: number;
+  amount: number;
+  currency: string;
+  quantity: number;
+  expiry: string;
+  templateUUID?: string;
 };
 
 export type CashPayServer_Output = {

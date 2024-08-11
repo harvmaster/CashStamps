@@ -77,8 +77,12 @@ export class OraclesService {
 
   getOracleUnitCode(
     oraclePublicKey: string | Uint8Array,
-    type: 'numerator' | 'denominator' = 'denominator'
+    type: 'numerator' | 'denominator' = 'numerator'
   ) {
+    if (!oraclePublicKey || oraclePublicKey === 'BCH') {
+      return 'BCH';
+    }
+
     const oraclePublicKeyHex =
       oraclePublicKey instanceof Uint8Array
         ? binToHex(oraclePublicKey)
@@ -121,6 +125,22 @@ export class OraclesService {
     return '';
   }
 
+  getOracleDecimalPlaces(oraclePublicKey: string | Uint8Array) {
+    if (oraclePublicKey === 'BCH') {
+      return 8;
+    }
+
+    const oraclePublicKeyHex =
+      oraclePublicKey instanceof Uint8Array
+        ? binToHex(oraclePublicKey)
+        : oraclePublicKey;
+
+    const oracle = this.oracleMetadataStore[oraclePublicKeyHex];
+
+    // NOTE: This is imperfect and assumes multiples of 10.
+    return oracle.attestationScaling.toString().length - 1;
+  }
+
   getOracleScalingFactor(oraclePublicKey: string | Uint8Array) {
     const oraclePublicKeyHex =
       oraclePublicKey instanceof Uint8Array
@@ -150,6 +170,10 @@ export class OraclesService {
   }
 
   getOraclePriceCommonUnits(oraclePublicKey: string | Uint8Array) {
+    if (oraclePublicKey === 'BCH') {
+      return 0.00000001;
+    }
+
     const oraclePublicKeyHex =
       oraclePublicKey instanceof Uint8Array
         ? binToHex(oraclePublicKey)
@@ -201,6 +225,27 @@ export class OraclesService {
         decimals
       )
     );
+  }
+
+  convertFromSats(oraclePublicKey: string, sats: number) {
+    const priceInBCH = sats / 100_000_000;
+
+    if (oraclePublicKey === 'BCH') {
+      return priceInBCH;
+    }
+
+    const priceInOracleUnits =
+      this.oraclePriceStore[oraclePublicKey].parsedPriceMessage.priceValue;
+    const priceInCommonUnits = this.toCommonUnits(
+      priceInOracleUnits,
+      oraclePublicKey
+    );
+    return priceInBCH * priceInCommonUnits;
+  }
+
+  formatCommonUnits(oraclePublicKey: string, commonUnits: number) {
+    const decimalPlaces = this.getOracleDecimalPlaces(oraclePublicKey);
+    return commonUnits.toFixed(decimalPlaces);
   }
 
   // Get the price from the Oracle with the given public key and timestamp.

@@ -4,8 +4,8 @@
       <q-toolbar class="row">
         <q-toolbar-title class="col-grow">
           <span @click="$router.push('/')" class="cursor-pointer">
-            <q-avatar>
-              <img src="/bch.svg" />
+            <q-avatar square>
+              <img src="/icon.svg" />
             </q-avatar>
             Stamps.<span class="text-primary">Cash</span>
           </span>
@@ -13,6 +13,7 @@
 
         <!-- Right Buttons -->
         <div class="col-shrink text-right q-gutter-x-xs">
+          <!-- Telegram -->
           <q-btn
             round
             flat
@@ -20,7 +21,10 @@
             type="a"
             href="https://t.me/stampscash"
             target="_blank"
-          />
+          >
+            <q-tooltip>Telegram</q-tooltip>
+          </q-btn>
+          <!-- X -->
           <q-btn
             round
             flat
@@ -28,7 +32,10 @@
             type="a"
             href="https://x.com/cashstamps"
             target="_blank"
-          />
+          >
+            <q-tooltip>X</q-tooltip>
+          </q-btn>
+          <!-- Git -->
           <q-btn
             round
             flat
@@ -36,13 +43,21 @@
             type="a"
             href="https://github.com/harvmaster/CashStamps"
             target="_blank"
-          />
+          >
+            <q-tooltip>Source Code</q-tooltip>
+          </q-btn>
         </div>
       </q-toolbar>
     </q-header>
 
     <q-page-container>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition appear enter-active-class="animated fadeIn">
+          <Suspense @pending="$q.loading.show()" @resolve="$q.loading.hide()">
+            <component :is="Component" />
+          </Suspense>
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -59,10 +74,6 @@
   font-size: 26px;
 }
 
-.q-toolbar .q-avatar img {
-  padding: 3px 0px 3px 0px;
-}
-
 .q-toolbar a img {
   width: 32px;
   height: 32px;
@@ -71,6 +82,8 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
 const $router = useRouter();
+const $q = useQuasar();
 </script>

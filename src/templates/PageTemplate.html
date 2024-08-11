@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Print Element</title>
+    <style>
+      /* Default to A4 height */
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Avoid printing a stamp across pages. */
+      .stamp-container {
+        break-inside: avoid;
+      }
+
+      .stamp-container.claimed {
+        filter: grayscale(100%);
+      }
+    </style>
+    {{ cutlines }}
+  </head>
+  <body>
+    {{ html }} {{ style }}
+    <script>
+      const postSizeToParent = () => {
+        // Get computed styles to include margins
+        const computedStyle = window.getComputedStyle(document.body);
+
+        // Calculate total width including margins
+        const width =
+          document.body.scrollWidth +
+          parseFloat(computedStyle.marginLeft) +
+          parseFloat(computedStyle.marginRight);
+
+        // Calculate total height including margins
+        const height =
+          document.body.scrollHeight +
+          parseFloat(computedStyle.marginTop) +
+          parseFloat(computedStyle.marginBottom);
+
+        window.parent.postMessage({ width, height }, '*');
+      };
+
+      // Post size once everything has finished loading
+      window.addEventListener('load', postSizeToParent);
+
+      // Post size when the body is resized
+      const resizeObserver = new ResizeObserver(postSizeToParent);
+      resizeObserver.observe(document.body);
+    </script>
+  </body>
+</html>
