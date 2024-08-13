@@ -38,7 +38,7 @@ import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 
 import { OraclesService } from 'src/services/oracles.js';
 import { waitFor } from 'src/utils/misc.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
@@ -51,7 +51,7 @@ const $q = useQuasar();
 // Props.
 const props = defineProps<{
   stampCollection: StampCollection;
-  wallet: WalletHD;
+  wallet: StampsWallet;
   oracles: OraclesService;
 }>();
 
@@ -107,7 +107,7 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   }
 
   // Add addresses to transaction
-  for (const node of props.wallet.wallets.value) {
+  for (const node of props.wallet.rWallets.value) {
     const address = node.getAddress();
     invoice.addAddress(
       address,
@@ -146,7 +146,7 @@ async function generateQrCode() {
       $q.loading.show();
 
       // Wait for the wallet to be marked as funded.
-      await waitFor(props.wallet.isFunded, true);
+      await waitFor(props.wallet.rIsFunded, true);
 
       // Hide the loading indicator.
       $q.loading.hide();

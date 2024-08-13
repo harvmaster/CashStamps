@@ -45,9 +45,9 @@ import { useQuasar } from 'quasar';
 
 import { ElectrumService } from 'src/services/electrum.js';
 import type { TransactionBroadcast } from 'src/services/electrum-types';
-import { Address } from 'src/utils/address.js';
+import { Address } from 'src/libcash/primitives/index.js';
 import { waitFor } from 'src/utils/misc.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 import { binToHex } from '@bitauth/libauth';
 
@@ -60,7 +60,7 @@ const $q = useQuasar();
 // Props.
 const props = defineProps<{
   electrum: ElectrumService;
-  wallet: WalletHD;
+  wallet: StampsWallet;
 }>();
 
 // Reactives.
@@ -99,7 +99,7 @@ async function sweepStamps() {
     );
 
     // Wait for our collection to be marked as claimed.
-    await waitFor(props.wallet.isClaimed, true);
+    await waitFor(props.wallet.rIsClaimed, true);
 
     // Hide the dialog
     toggleVisible();

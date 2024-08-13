@@ -109,7 +109,7 @@ import { debounce, exportFile } from 'quasar';
 import { App } from 'src/services/app.js';
 import type { StampCollection, Template } from 'src/types.js';
 import { compileTemplate, formatStampValue } from 'src/utils/misc.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 // Components.
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
@@ -131,7 +131,7 @@ const emits = defineEmits(['templateSelected']);
 const props = defineProps<{
   app: App;
   stampCollection: StampCollection;
-  wallet: WalletHD;
+  wallet: StampsWallet;
 }>();
 
 const state = reactive<{
@@ -213,7 +213,7 @@ async function renderStamps() {
     const { amount, currency, quantity, expiry } = props.stampCollection;
 
     // If this wallet has not been funded, manually set a quantity.
-    if (!props.wallet.isFunded.value) {
+    if (!props.wallet.rIsFunded.value) {
       props.wallet.setQuantity(quantity);
     }
 
@@ -221,12 +221,12 @@ async function renderStamps() {
     const newRenderedStamps: Array<RenderedStamp> = [];
 
     // Iterate over each stamp and render them.
-    for (const wallet of props.wallet.wallets.value) {
+    for (const wallet of props.wallet.rWallets.value) {
       // Compile this stamp.
       const compiledStamp = await compileTemplate(
         state.activeTemplate.template,
         {
-          valueBch: formatStampValue(wallet.balance.value, 'BCH'),
+          valueBch: formatStampValue(wallet.rBalance.value, 'BCH'),
           value: formatStampValue(amount, currency),
           symbol: props.app.oracles.getOracleSymbol(currency),
           currency: props.app.oracles.getOracleUnitCode(currency),
@@ -238,7 +238,7 @@ async function renderStamps() {
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
-        claimed: props.wallet.isFunded.value && wallet.balance.value <= 0,
+        claimed: props.wallet.rIsFunded.value && wallet.rBalance.value <= 0,
         html: compiledStamp,
       });
     }
@@ -263,7 +263,7 @@ function exportAsJson() {
   const filename = `${props.stampCollection.name}.json`;
 
   // Format the fields in the JSON
-  const formattedStamps = props.wallet.wallets.value.map((wallet) => ({
+  const formattedStamps = props.wallet.rWallets.value.map((wallet) => ({
     wif: wallet.toWif(),
     address: wallet.getAddress(),
     ...props.stampCollection,
@@ -304,12 +304,12 @@ watch(
     () => props.stampCollection.expiry,
     () => props.stampCollection.quantity,
     () => props.wallet,
-    () => props.wallet.claimedStamps.value,
+    () => props.wallet.rClaimedStamps.value,
     () => state.activeTemplate,
   ],
   debounce(async () => {
-    await renderStamps()
-  }, 1000),
+    await renderStamps();
+  }, 1000)
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.

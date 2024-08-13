@@ -1,7 +1,12 @@
-// -------------------
-// 3rd party imports
-// -------------------
-import { computed, ref, shallowRef } from 'vue';
+// Import the Stamp class to derive the private keys
+import { HDPrivateNode } from 'src/libcash/primitives/index.js';
+import { EventEmitter } from 'src/libcash/utils/index.js';
+import { ElectrumService } from 'src/services/electrum';
+import {
+  WalletP2PKH,
+  WalletP2PKHFactory,
+  WalletP2PKHDefault,
+} from './wallet-p2pkh.js';
 
 import {
   deriveSeedFromBip39Mnemonic,
@@ -10,105 +15,70 @@ import {
   getMinimumFee,
 } from '@bitauth/libauth';
 
-// Import the Stamp class to derive the private keys
-import { HDPrivateNode } from './hd-private-node';
-import { WalletP2PKH } from './wallet-p2pkh.js';
-// Import the ElectrumService as a type to use in the constructor
-import { ElectrumService } from 'src/services/electrum';
-
-import { HdPrivateNodeValid } from '@bitauth/libauth';
-
-export const DERIVATION_PATH = `m/44'/145'/0'`;
+export const DERIVATION_PATH = "m/44'/145'/0'";
 export const ADDRESS_GAP = 20;
 
-export class WalletHD extends HDPrivateNode {
-  // Services/Dependencies
-  private electrum: ElectrumService;
+export type WalletHDEvents<WalletType> = {
+  walletsUpdated: Array<WalletType>;
+};
 
-  // Reactives.
-  // TODO: Move these out of here.
-  //       They should either extend or hook into events (still TBD).
-  public mnemonic = ref<string>('');
-  public wallets = shallowRef<Array<WalletP2PKH>>([]);
-  public balance = computed(() => {
-    return this.wallets.value.reduce(
-      (total, node) => total + node.balance.value,
-      0
-    );
-  });
+export class WalletHD<WalletType extends WalletP2PKH> extends HDPrivateNode {
+  // Events.
+  public events: EventEmitter<WalletHDEvents<WalletType>> = new EventEmitter();
 
-  public isFunded = computed(() => {
-    return this.wallets.value.every(
-      (node) => node.transactions.value.length > 0
-    );
-  });
-  public isClaimed = computed(() => {
-    return this.isFunded.value && this.balance.value <= 0;
-  });
-  public claimedStamps = computed(() => {
-    return this.wallets.value.filter(
-      (wallet) => wallet.transactions.value.length && wallet.balance.value === 0
-    ).length;
-  });
-
-  shouldMonitor = false;
+  // Mutable State.
+  public wallets: Array<WalletType> = [];
+  public shouldMonitor = false;
 
   constructor(
-    node: HdPrivateNodeValid,
-    mnemonic: string,
-    electrum: ElectrumService
+    public mnemonic: string,
+    public electrum: ElectrumService,
+    private walletFactory: WalletP2PKHFactory<WalletType> = WalletP2PKHDefault
   ) {
-    super(node);
-
-    this.mnemonic.value = mnemonic;
-
-    // Dependencies.
-    this.electrum = electrum;
-  }
-
-  static async fromMnemonic(
-    mnemonic: string,
-    electrum: ElectrumService
-  ): Promise<WalletHD> {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
+    // Derive node from mnemonic.
     const hdPrivateNode = HDPrivateNode.fromSeed(seed);
 
-    return new WalletHD(hdPrivateNode.node, mnemonic, electrum);
+    // Instantiate parent class.
+    super(hdPrivateNode.node);
+
+    // Monitor the following properties and emit an event when they change.
+    this.events.monitorProperty(this, 'wallets', 'walletsUpdated');
+  }
+
+  async destroy() {
+    this.events.removeAllListeners();
   }
 
   async setQuantity(quantity: number) {
     // Clear existing nodes.
-    this.wallets.value = this.deriveWallets(quantity);
+    this.wallets = this.deriveWallets(quantity);
   }
 
   async startMonitoring() {
     this.shouldMonitor = true;
 
-    await Promise.all(
-      this.wallets.value.map((wallet) => wallet.startMonitoring())
-    );
+    await Promise.all(this.wallets.map((wallet) => wallet.startMonitoring()));
   }
 
   async stopMonitoring() {
     this.shouldMonitor = false;
 
-    await Promise.all(
-      this.wallets.value.map((wallet) => wallet.stopMonitoring())
-    );
+    await Promise.all(this.wallets.map((wallet) => wallet.stopMonitoring()));
   }
 
   deriveWallets(count: number, startIndex = 0) {
     // Create an array to store our wallets.
-    const wallets: Array<WalletP2PKH> = [];
+    const wallets: Array<WalletType> = [];
 
     // Create the given count of wallets.
     for (let i = 0; i < count; i++) {
       const childNode = this.derivePath(
         `${DERIVATION_PATH}/0/${startIndex + i}`
       );
-      const wallet = new WalletP2PKH(
+      const wallet = this.walletFactory(
         childNode.privateKey().toBytes(),
         this.electrum
       );
@@ -120,13 +90,15 @@ export class WalletHD extends HDPrivateNode {
       wallets.push(wallet);
     }
 
+    this.wallets = wallets;
+
     // Return the wallets.
     return wallets;
   }
 
   async scan(startIndex = 0, addressGap = 20) {
     // Array to store active wallet nodes
-    const nodes: Array<WalletP2PKH> = [];
+    const nodes: Array<WalletType> = [];
 
     let currentIndex = startIndex;
     let emptyAddressCount = 0;
@@ -134,14 +106,14 @@ export class WalletHD extends HDPrivateNode {
     // Continue scanning until we find 'addressGap' consecutive empty addresses
     while (emptyAddressCount < addressGap) {
       // Derive a number of wallets equivalent to our addressGap.
-      const batch: Array<WalletP2PKH> = this.deriveWallets(
+      const batch: Array<WalletType> = this.deriveWallets(
         addressGap,
         currentIndex
       );
 
       // Get the transaction history of each wallet in the batch
       const results = await Promise.all(
-        batch.map((wallet) => wallet.getHistory())
+        batch.map((wallet) => wallet.fetchHistory())
       );
 
       // Process the results
@@ -164,29 +136,32 @@ export class WalletHD extends HDPrivateNode {
       }
     }
 
-    this.wallets.value = nodes;
+    this.wallets = nodes;
 
     return nodes;
   }
 
   async refreshChildNodes() {
-    await Promise.all(this.wallets.value.map((node) => node.refresh()));
+    await Promise.all(this.wallets.map((node) => node.refresh()));
   }
 
   async sweep(payoutBytecode: Uint8Array) {
     // Get a list of inputs belonging to each wallet.
     const inputs = await Promise.all(
-      this.wallets.value.map((wallet) => wallet.getUnspentDirectives())
+      this.wallets.map((wallet) => wallet.getUnspentDirectives())
     );
 
     // Flatten the inputs.
     const inputsFlattened = inputs.flat();
 
     // Calculate the total sats available in our inputs.
-    const totalSats = inputsFlattened.reduce(
-      (total, input) => total + input.unlockingBytecode.valueSatoshis,
-      0n
-    );
+    const totalSats = inputsFlattened.reduce((total, input) => {
+      if (input.unlockingBytecode instanceof Uint8Array) {
+        return (total += 0n);
+      }
+
+      return (total += input.unlockingBytecode.valueSatoshis);
+    }, 0n);
 
     // We need to calculate the number of bytes so that we can calculate the fee.
     // So we loop twice and store the final transaction here each time.

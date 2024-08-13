@@ -1,38 +1,43 @@
+import { Transaction } from 'src/libcash/primitives/index.js';
+import { EventEmitter } from 'src/libcash/utils/index.js';
+import {
+  type AddressListUnspent,
+  type AddressGetHistory,
+  type TransactionGet,
+} from 'src/services/electrum-types';
+import { ElectrumService } from 'src/services/electrum';
+
+import { WalletBase } from './wallet-base.js';
+
 import {
   hexToBin,
   walletTemplateP2pkhNonHd,
   walletTemplateToCompilerBCH,
 } from '@bitauth/libauth';
-import { PrivateKey } from './private-key.js';
-import { Transaction } from './transaction.js';
 
-import {
-  AddressListUnspent,
-  AddressGetHistory,
-  TransactionGet,
-} from 'src/services/electrum-types';
-import { ElectrumService } from 'src/services/electrum';
-import { computed, shallowRef } from 'vue';
+export type WalletP2PKHEvents = {
+  transactionsUpdated: Array<Transaction>;
+  unspentsUpdated: AddressListUnspent['response'];
+};
 
-export class WalletP2PKH extends PrivateKey {
-  // Dependencies/Services
-  public electrum: ElectrumService;
+export class WalletP2PKH extends WalletBase {
+  // Events.
+  public events: EventEmitter<WalletP2PKHEvents> = new EventEmitter();
 
-  // Reactives.
-  public transactions = shallowRef<Array<Transaction>>([]);
-  public unspents = shallowRef<AddressListUnspent['response']>([]);
-
-  // Computeds.
-  public balance = computed(() => {
-    return this.unspents.value.reduce(
-      (total, unspent) => total + unspent.value,
-      0
-    );
-  });
+  // State.
+  public transactions: Array<Transaction> = [];
+  public unspents: AddressListUnspent['response'] = [];
 
   constructor(privateKeyBytes: Uint8Array, electrum: ElectrumService) {
-    super(privateKeyBytes);
-    this.electrum = electrum;
+    super(privateKeyBytes, electrum);
+
+    // Monitor the following properties and emit an event when they change.
+    this.events.monitorProperty(this, 'transactions', 'transactionsUpdated');
+    this.events.monitorProperty(this, 'unspents', 'unspentsUpdated');
+  }
+
+  async destroy() {
+    this.events.removeAllListeners();
   }
 
   async startMonitoring() {
@@ -53,7 +58,7 @@ export class WalletP2PKH extends PrivateKey {
     return this.derivePublicKey().deriveAddress().toCashAddr();
   }
 
-  async getHistory() {
+  async fetchHistory() {
     // Get this node's address.
     const address = this.getAddress();
 
@@ -81,29 +86,30 @@ export class WalletP2PKH extends PrivateKey {
       Transaction.fromHex(tx)
     );
 
-    // Set the state.
-    this.transactions.value = decodedTransactions;
+    // Store the transactions.
+    this.transactions = decodedTransactions;
 
     return decodedTransactions;
   }
 
-  async getUnspentOutputs() {
+  async fetchUnspentOutputs() {
     const address = this.getAddress();
 
-    const unspentTransactions = await this.electrum.request<AddressListUnspent>(
+    const unspentOutputs = await this.electrum.request<AddressListUnspent>(
       'blockchain.address.listunspent',
       address,
       'include_tokens'
     );
 
-    this.unspents.value = unspentTransactions;
+    // Emit event with unspent outputs.
+    this.unspents = unspentOutputs;
 
-    return unspentTransactions;
+    return unspentOutputs;
   }
 
   async getUnspentDirectives() {
     // Get a list of unspent outputs.
-    const unspentOutputs = await this.getUnspentOutputs();
+    const unspentOutputs = await this.fetchUnspentOutputs();
 
     // Create our P2PKH Compiler.
     const compilerP2PKH = walletTemplateToCompilerBCH(walletTemplateP2pkhNonHd);
@@ -128,7 +134,7 @@ export class WalletP2PKH extends PrivateKey {
   }
 
   async refresh(): Promise<void> {
-    await Promise.all([this.getUnspentOutputs(), this.getHistory()]);
+    await Promise.all([this.fetchUnspentOutputs(), this.fetchHistory()]);
   }
 
   async onAddressNotification(status: string | null) {
@@ -138,6 +144,16 @@ export class WalletP2PKH extends PrivateKey {
     }
 
     // Refresh our wallet's state.
-    await Promise.all([this.getHistory(), this.getUnspentOutputs()]);
+    await this.refresh();
   }
 }
+
+export type WalletP2PKHFactory<T> = (
+  privateKeyBytes: Uint8Array,
+  electrum: ElectrumService
+) => T;
+
+export const WalletP2PKHDefault = <T extends WalletP2PKH>(
+  privateKeyBytes: Uint8Array,
+  electrum: ElectrumService
+): T => new WalletP2PKH(privateKeyBytes, electrum) as T;

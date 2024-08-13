@@ -62,8 +62,8 @@ import { useQuasar } from 'quasar';
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
 import type { StampCollection } from 'src/types.js';
-import { Satoshis } from 'src/utils/satoshis.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { Satoshis } from 'src/libcash/primitives/index.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 interface SelectOption<T> {
   label: string;
@@ -75,8 +75,6 @@ const $q = useQuasar();
 //---------------------------------------------------------------------------
 // State
 //---------------------------------------------------------------------------
-
-const emits = defineEmits(['wallet:updated']);
 
 const model = defineModel<Required<string>>({
   required: true,
@@ -93,7 +91,7 @@ const activeCollection = computed(() => {
 
 const stampCollectionsOptions = computed(
   (): Array<SelectOption<StampCollection>> => {
-    return Object.values(props.app.stampCollections).map((collection, i) => {
+    return Object.values(props.app.stampCollections).map((collection) => {
       return {
         mnemonic: collection.mnemonic,
         label: collection.name,
@@ -159,16 +157,13 @@ async function onImportCollection() {
       }
 
       // Initialize the Stamp Collection.
-      const wallet = await WalletHD.fromMnemonic(
-        trimmedMnemonic,
-        props.app.electrum
-      );
+      const wallet = new StampsWallet(trimmedMnemonic, props.app.electrum);
 
       // Scan the wallet for existing nodes.
       await wallet.scan();
 
       // Set our quantity and the default amont to zero.
-      let quantity = wallet.wallets.value.length;
+      let quantity = wallet.wallets.length;
       let amount = 0;
 
       // If there are stamps, attempt to set the amount more accurately.
@@ -178,8 +173,8 @@ async function onImportCollection() {
         // Assume the amount based on the first ever transaction of the first ever stamp.
         // NOTE: This is guess-work - we're making a pretty big assumption here.
         amount = Satoshis.fromSats(
-          wallet.wallets.value[0]?.transactions.value[0]?.getOutputs()[0]
-            ?.valueSatoshis || 0n
+          wallet.wallets[0]?.transactions[0]?.getOutputs()[0]?.valueSatoshis ||
+            0n
         ).toBCH();
       }
 
@@ -197,7 +192,7 @@ async function onImportCollection() {
 
       $q.notify({
         color: 'primary',
-        message: `Mnemonic successfully imported`,
+        message: 'Mnemonic successfully imported',
       });
     } catch (error) {
       console.log(error);

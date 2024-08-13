@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-md">
     <!-- If Wallet is NOT Funded... -->
-    <template v-if="!props.wallet?.isFunded.value">
+    <template v-if="!props.wallet?.rIsFunded.value">
       <!-- Total value of the TX in Fiat -->
       <div class="col-auto">
         <div class="text-body2">Total Due</div>
@@ -27,8 +27,8 @@
       <div class="col-auto">
         <div class="text-body2">Claimed</div>
         <div class="text-h6">
-          {{ props.wallet.claimedStamps.value }} /
-          {{ props.wallet.wallets.value.length }}
+          {{ props.wallet.rClaimedStamps.value }} /
+          {{ props.wallet.rWallets.value.length }}
         </div>
       </div>
 
@@ -51,7 +51,7 @@
           {{
             convertToFiat(
               props.stampCollection.currency,
-              props.wallet?.balance.value
+              props.wallet.rBalance.value
             )
           }}
           <small>{{ currencyName }}</small>
@@ -62,7 +62,7 @@
       <div class="col-auto">
         <div class="text-body2">Total Remaining</div>
         <div class="text-h6">
-          {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }}
+          {{ Satoshis.fromSats(props.wallet.rBalance.value || 0).toBCH() }}
           <small>BCH</small>
         </div>
       </div>
@@ -77,8 +77,8 @@ import { computed } from 'vue';
 
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
-import { Satoshis } from 'src/utils/satoshis.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { Satoshis } from 'src/libcash/primitives/satoshis.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 //---------------------------------------------------------------------------
 // State
@@ -87,7 +87,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 const props = defineProps<{
   stampCollection: StampCollection;
   oracles: OraclesService;
-  wallet: WalletHD;
+  wallet: StampsWallet;
 }>();
 
 const currencyName = computed(() => {
@@ -111,14 +111,14 @@ const fundingDueBCH = computed(() => {
 });
 
 const totalStamps = computed(() => {
-  return props.wallet.wallets.value.length;
+  return props.wallet.rWallets.value.length;
 });
 
 const fundingSats = computed(() => {
-  const sats = props.wallet.wallets.value.reduce(
+  const sats = props.wallet.rWallets.value.reduce(
     (sats, wallet) =>
       (sats +=
-        wallet.transactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
+        wallet.rTransactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
     0n
   );
 

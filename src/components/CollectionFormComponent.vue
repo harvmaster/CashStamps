@@ -52,7 +52,7 @@
         v-model.number="quantityModel"
         label="Stamp Quantity"
         type="number"
-        :disable="props.wallet?.isFunded.value || false"
+        :disable="props.wallet?.rIsFunded.value || false"
         :step="1"
         :min="0"
         :max="100"
@@ -69,7 +69,7 @@ import { computed } from 'vue';
 
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 interface Option {
   label: string;
@@ -80,7 +80,7 @@ const model = defineModel<Required<StampCollection>>({
   required: true,
 });
 
-const props = defineProps<{ oracles: OraclesService; wallet: WalletHD }>();
+const props = defineProps<{ oracles: OraclesService; wallet: StampsWallet }>();
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {
@@ -116,8 +116,8 @@ const expiryModel = computed({
 // NOTE: We want to clamp the number between 0 through 100, so use a computed getter/setter.
 const quantityModel = computed({
   get: () => {
-    if (props.wallet.isFunded.value) {
-      return props.wallet.wallets.value.length;
+    if (props.wallet.rIsFunded.value) {
+      return props.wallet.rWallets.value.length;
     }
 
     return model.value.quantity;

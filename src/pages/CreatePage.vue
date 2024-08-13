@@ -91,7 +91,7 @@
               :stampCollection="activeCollection"
               :wallet="activeWallet"
               @templateSelected="
-                (uuid) => (activeCollection.templateUUID = uuid)
+                (uuid: string) => (activeCollection.templateUUID = uuid)
               "
               class="animated fadeIn"
             />
@@ -108,7 +108,7 @@ import { useQuasar } from 'quasar';
 
 // Service / App / Utils imports
 import { App } from 'src/services/app.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 // Component Imports
 import CollectionSelectComponent from 'src/components/CollectionSelectComponent.vue';
@@ -136,7 +136,7 @@ const state = reactive<{
   activeCollection: Object.keys(app.stampCollections)[0],
 });
 
-const activeWallet = shallowRef<WalletHD | undefined>(undefined);
+const activeWallet = shallowRef<StampsWallet | undefined>(undefined);
 
 // Computeds.
 const activeCollection = computed(() => {
@@ -158,7 +158,7 @@ async function initWallet() {
   activeWallet.value = undefined;
 
   // Initialize the Stamp Collection.
-  const wallet = await WalletHD.fromMnemonic(
+  const wallet = new StampsWallet(
     activeCollection.value.mnemonic,
     app.electrum
   );
@@ -167,7 +167,7 @@ async function initWallet() {
   await wallet.scan();
 
   // If this is a fresh wallet, set the quantity to whatever the collection specified.
-  if (!wallet.wallets.value.length) {
+  if (!wallet.rWallets.value.length) {
     wallet.setQuantity(activeCollection.value.quantity);
   }
 

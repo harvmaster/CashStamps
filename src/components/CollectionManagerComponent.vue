@@ -24,7 +24,7 @@
         <div>
           <q-btn
             :disable="
-              props.wallet.isFunded.value ||
+              props.wallet.rIsFunded.value ||
               !collection.quantity ||
               !collection.amount
             "
@@ -39,7 +39,7 @@
         <div>
           <q-btn
             :disable="
-              !props.wallet.isFunded.value || props.wallet.isClaimed.value
+              !props.wallet.rIsFunded.value || props.wallet.rIsClaimed.value
             "
             label="Reclaim Stamps"
             color="secondary"
@@ -51,14 +51,14 @@
         <!-- Funded/Not Funded -->
         <div class="flex justify-center">
           <q-chip
-            v-if="props.wallet.isClaimed.value"
+            v-if="props.wallet.rIsClaimed.value"
             color="primary"
             text-color="white"
             icon="check_circle"
             >All claimed</q-chip
           >
           <q-chip
-            v-else-if="props.wallet?.isFunded.value"
+            v-else-if="props.wallet?.rIsFunded.value"
             color="primary"
             text-color="white"
             icon="check_circle"
@@ -92,7 +92,7 @@ import { ref } from 'vue';
 // App / Service / Utils Imports
 import type { StampCollection } from 'src/types.js';
 import { App } from 'src/services/app.js';
-import { WalletHD } from 'src/utils/wallet-hd.js';
+import { StampsWallet } from 'src/utils/stamps-wallet.js';
 
 // Components
 import CollectionFormComponent from './CollectionFormComponent.vue';
@@ -110,7 +110,7 @@ const collection = defineModel<Required<StampCollection>>({
 
 const props = defineProps<{
   app: App;
-  wallet: WalletHD;
+  wallet: StampsWallet;
 }>();
 
 // Elements
