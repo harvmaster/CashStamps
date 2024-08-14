@@ -75,9 +75,17 @@ export class PrivateKey {
    *
    * @returns {PrivateKey} The Private Key
    */
-  public static fromWIF(wif: string): PrivateKey {
+  public static fromWIF(
+    wif: string,
+    supportedPrefixes = ['bitcoincash:']
+  ): PrivateKey {
+    // Remove the prefixes from the WIF (if they exist).
+    const wifWithoutPrefixes = supportedPrefixes.reduce((result, prefix) => {
+      return result.startsWith(prefix) ? result.slice(prefix.length) : result;
+    }, wif);
+
     // Attempt to decode the WIF.
-    const decodeResult = decodePrivateKeyWif(wif);
+    const decodeResult = decodePrivateKeyWif(wifWithoutPrefixes);
 
     // If a string is returned, this indicates an error...
     if (typeof decodeResult === 'string') {

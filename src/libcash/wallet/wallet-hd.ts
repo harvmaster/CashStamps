@@ -5,7 +5,7 @@ import { ElectrumService } from 'src/services/electrum';
 import {
   WalletP2PKH,
   WalletP2PKHFactory,
-  WalletP2PKHDefault,
+  useWalletP2PKH,
 } from './wallet-p2pkh.js';
 
 import {
@@ -22,7 +22,9 @@ export type WalletHDEvents<WalletType> = {
   walletsUpdated: Array<WalletType>;
 };
 
-export class WalletHD<WalletType extends WalletP2PKH> extends HDPrivateNode {
+export class WalletHD<
+  WalletType extends WalletP2PKH = WalletP2PKH
+> extends HDPrivateNode {
   // Events.
   public events: EventEmitter<WalletHDEvents<WalletType>> = new EventEmitter();
 
@@ -33,7 +35,7 @@ export class WalletHD<WalletType extends WalletP2PKH> extends HDPrivateNode {
   constructor(
     public mnemonic: string,
     public electrum: ElectrumService,
-    private walletFactory: WalletP2PKHFactory<WalletType> = WalletP2PKHDefault
+    private walletFactory: WalletP2PKHFactory<WalletType> = useWalletP2PKH
   ) {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
@@ -46,6 +48,19 @@ export class WalletHD<WalletType extends WalletP2PKH> extends HDPrivateNode {
 
     // Monitor the following properties and emit an event when they change.
     this.events.monitorProperty(this, 'wallets', 'walletsUpdated');
+  }
+
+  static fromMnemonic<T extends WalletHD<any>>(
+    this: new (
+      mnemonic: string,
+      electrum: ElectrumService,
+      walletFactory?: WalletP2PKHFactory<any>
+    ) => T,
+    mnemonic: string,
+    electrum: ElectrumService,
+    walletFactory?: WalletP2PKHFactory<any>
+  ): T {
+    return new this(mnemonic, electrum, walletFactory);
   }
 
   async destroy() {
@@ -200,4 +215,18 @@ export class WalletHD<WalletType extends WalletP2PKH> extends HDPrivateNode {
 
     return encodedTransaction;
   }
+}
+
+export type WalletHDFactory<T extends WalletHD = WalletHD> = (
+  mnemonic: string,
+  electrum: ElectrumService,
+  walletFactory?: WalletP2PKHFactory<any>
+) => T;
+
+export function useWalletHD<T extends WalletHD = WalletHD>(
+  mnemonic: string,
+  electrum: ElectrumService,
+  walletFactory?: WalletP2PKHFactory<any>
+): T {
+  return new WalletHD(mnemonic, electrum, walletFactory) as T;
 }

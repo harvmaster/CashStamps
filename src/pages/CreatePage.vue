@@ -158,9 +158,9 @@ async function initWallet() {
   activeWallet.value = undefined;
 
   // Initialize the Stamp Collection.
-  const wallet = new StampsWallet(
+  const wallet = StampsWallet.fromMnemonic(
     activeCollection.value.mnemonic,
-    app.electrum
+    app.electrum,
   );
 
   // Scan for wallets.

@@ -148,12 +148,14 @@ export class WalletP2PKH extends WalletBase {
   }
 }
 
-export type WalletP2PKHFactory<T> = (
+export type WalletP2PKHFactory<T extends WalletP2PKH = WalletP2PKH> = (
   privateKeyBytes: Uint8Array,
   electrum: ElectrumService
 ) => T;
 
-export const WalletP2PKHDefault = <T extends WalletP2PKH>(
+export function useWalletP2PKH<T extends WalletP2PKH = WalletP2PKH>(
   privateKeyBytes: Uint8Array,
   electrum: ElectrumService
-): T => new WalletP2PKH(privateKeyBytes, electrum) as T;
+): T {
+  return new WalletP2PKH(privateKeyBytes, electrum) as T;
+}

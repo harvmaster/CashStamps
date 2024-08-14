@@ -31,3 +31,10 @@ export class WalletP2PKHVue extends WalletP2PKH {
     });
   }
 }
+
+export function useWalletP2PKHVue(
+  privateKeyBytes: Uint8Array,
+  electrum: ElectrumService
+): WalletP2PKHVue {
+  return new WalletP2PKHVue(privateKeyBytes, electrum);
+}
