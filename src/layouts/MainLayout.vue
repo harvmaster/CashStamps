@@ -46,6 +46,15 @@
           >
             <q-tooltip>Source Code</q-tooltip>
           </q-btn>
+          <!-- FAQ -->
+          <q-btn
+            round
+            flat
+            icon="help"
+            to="/faq"
+          >
+            <q-tooltip>FAQ</q-tooltip>
+          </q-btn>
         </div>
       </q-toolbar>
     </q-header>

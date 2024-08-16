@@ -3,6 +3,7 @@
 [Stamps.cash](https://stamps.cash) is a web app that allows you to create and reclaim BCH stamps/wallets. These can be used for gifting, sharing, or marketing your product with BCH, with an easy way to reclaim your stamps that go unclaimed past their expiry date. It leverages the browsers storage to store your stamps and nmemonics locally to ensure that your stamps are secure and private.
 
 ## Features
+
 - Create stamps with a simple interface
 - Reclaim stamps with a simple interface
 - Stamps are stored locally in your browser

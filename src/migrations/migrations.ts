@@ -16,7 +16,7 @@ export type DB_StampCollection_v2 = {
 export const migrateCollection_v2_to_v3 = async () => {
   // Get the StampCollections from the browser's IndexedDB.
   const collections = (await get('stampCollections')) as
-    | { [mnemonic: string]: StampCollection } 
+    | { [mnemonic: string]: StampCollection }
     | Array<DB_StampCollection_v2>;
 
   if (collections === undefined) {
@@ -34,7 +34,6 @@ export const migrateCollection_v2_to_v3 = async () => {
     // Attempt to migrate to V3 format
     const newCollections: { [mnemonic: string]: StampCollection } = {};
 
-    
     try {
       for (const collection of collections) {
         // If this is a version 2 collection, we need to migrate it.

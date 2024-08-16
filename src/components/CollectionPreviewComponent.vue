@@ -308,8 +308,8 @@ watch(
     () => state.activeTemplate,
   ],
   debounce(async () => {
-    await renderStamps()
-  }, 1000),
+    await renderStamps();
+  }, 1000)
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.
