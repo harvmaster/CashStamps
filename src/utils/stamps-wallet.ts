@@ -3,6 +3,8 @@ import { WalletHDVue } from 'src/libcash/vue/index.js';
 
 import { computed } from 'vue';
 
+import { HdPrivateNodeValid } from '@bitauth/libauth';
+
 export class StampsWallet extends WalletHDVue {
   // Computeds.
   public rIsFunded = computed(() => {
@@ -20,7 +22,7 @@ export class StampsWallet extends WalletHDVue {
     ).length;
   });
 
-  constructor(mnemonic: string, electrum: ElectrumService) {
-    super(mnemonic, electrum);
+  constructor(node: HdPrivateNodeValid, electrum: ElectrumService) {
+    super(node, electrum);
   }
 }

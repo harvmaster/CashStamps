@@ -39,7 +39,11 @@ export class EventEmitter<
     this.listeners.clear();
   }
 
-  monitorProperty<T, K extends keyof T>(target: T, key: K, eventName: string) {
+  monitorProperty<ObjectType, Property extends keyof ObjectType>(
+    target: ObjectType,
+    key: Property,
+    eventName: keyof T
+  ) {
     let value = target[key];
 
     Object.defineProperty(target, key, {
@@ -48,7 +52,7 @@ export class EventEmitter<
       },
       set: (newValue) => {
         value = newValue;
-        this.emit(eventName, newValue);
+        this.emit(eventName as string, newValue);
       },
       enumerable: true,
       configurable: true,

@@ -9,6 +9,7 @@ import {
 } from './wallet-p2pkh.js';
 
 import {
+  type HdPrivateNodeValid,
   deriveSeedFromBip39Mnemonic,
   encodeTransaction,
   generateTransaction,
@@ -19,6 +20,7 @@ export const DERIVATION_PATH = "m/44'/145'/0'";
 export const ADDRESS_GAP = 20;
 
 export type WalletHDEvents<WalletType> = {
+  shouldMonitorUpdated: boolean;
   walletsUpdated: Array<WalletType>;
 };
 
@@ -29,38 +31,36 @@ export class WalletHD<
   public events: EventEmitter<WalletHDEvents<WalletType>> = new EventEmitter();
 
   // Mutable State.
-  public wallets: Array<WalletType> = [];
   public shouldMonitor = false;
+  public wallets: Array<WalletType> = [];
 
   constructor(
-    public mnemonic: string,
+    public node: HdPrivateNodeValid,
     public electrum: ElectrumService,
     private walletFactory: WalletP2PKHFactory<WalletType> = useWalletP2PKH
   ) {
+    // Instantiate parent class.
+    super(node);
+
+    // Monitor the following properties and emit an event when they change.
+    this.events.monitorProperty(this, 'shouldMonitor', 'shouldMonitorUpdated');
+    this.events.monitorProperty(this, 'wallets', 'walletsUpdated');
+  }
+
+  static fromMnemonic<T extends WalletHD<any>>(
+    this: WalletHDConstructor<T>,
+    mnemonic: string,
+    electrum: ElectrumService,
+    walletFactory?: WalletP2PKHFactory<any>
+  ): T {
     // Derive the seed from the mnemonic.
     const seed = deriveSeedFromBip39Mnemonic(mnemonic);
 
     // Derive node from mnemonic.
     const hdPrivateNode = HDPrivateNode.fromSeed(seed);
 
-    // Instantiate parent class.
-    super(hdPrivateNode.node);
-
-    // Monitor the following properties and emit an event when they change.
-    this.events.monitorProperty(this, 'wallets', 'walletsUpdated');
-  }
-
-  static fromMnemonic<T extends WalletHD<any>>(
-    this: new (
-      mnemonic: string,
-      electrum: ElectrumService,
-      walletFactory?: WalletP2PKHFactory<any>
-    ) => T,
-    mnemonic: string,
-    electrum: ElectrumService,
-    walletFactory?: WalletP2PKHFactory<any>
-  ): T {
-    return new this(mnemonic, electrum, walletFactory);
+    // Return a new instance of this class.
+    return new this(hdPrivateNode.node, electrum, walletFactory);
   }
 
   async destroy() {
@@ -217,16 +217,18 @@ export class WalletHD<
   }
 }
 
+//-----------------------------------------------------------------------------
+// Factories Types/Functions
+//-----------------------------------------------------------------------------
+
+export type WalletHDParams = ConstructorParameters<typeof WalletHD>;
+export type WalletHDConstructor<T> = new (...args: WalletHDParams) => T;
 export type WalletHDFactory<T extends WalletHD = WalletHD> = (
-  mnemonic: string,
-  electrum: ElectrumService,
-  walletFactory?: WalletP2PKHFactory<any>
+  ...args: WalletHDParams
 ) => T;
 
 export function useWalletHD<T extends WalletHD = WalletHD>(
-  mnemonic: string,
-  electrum: ElectrumService,
-  walletFactory?: WalletP2PKHFactory<any>
+  ...args: WalletHDParams
 ): T {
-  return new WalletHD(mnemonic, electrum, walletFactory) as T;
+  return new WalletHD(...args) as T;
 }

@@ -62,7 +62,7 @@
       <div class="col-auto">
         <div class="text-body2">Total Remaining</div>
         <div class="text-h6">
-          {{ Satoshis.fromSats(props.wallet.rBalance.value || 0).toBCH() }}
+          {{ Satoshis.fromSats(props.wallet.rBalance.value).toBCH() }}
           <small>BCH</small>
         </div>
       </div>

@@ -157,7 +157,7 @@ async function onImportCollection() {
       }
 
       // Initialize the Stamp Collection.
-      const wallet = new StampsWallet(trimmedMnemonic, props.app.electrum);
+      const wallet = StampsWallet.fromMnemonic(trimmedMnemonic, props.app.electrum);
 
       // Scan the wallet for existing nodes.
       await wallet.scan();

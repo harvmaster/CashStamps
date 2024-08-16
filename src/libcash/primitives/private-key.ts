@@ -77,10 +77,10 @@ export class PrivateKey {
    */
   public static fromWIF(
     wif: string,
-    supportedPrefixes = ['bitcoincash:']
+    removePrefixes = ['bitcoincash:', 'wif:']
   ): PrivateKey {
     // Remove the prefixes from the WIF (if they exist).
-    const wifWithoutPrefixes = supportedPrefixes.reduce((result, prefix) => {
+    const wifWithoutPrefixes = removePrefixes.reduce((result, prefix) => {
       return result.startsWith(prefix) ? result.slice(prefix.length) : result;
     }, wif);
 
