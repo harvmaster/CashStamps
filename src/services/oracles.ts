@@ -171,7 +171,7 @@ export class OraclesService {
 
   getOraclePriceCommonUnits(oraclePublicKey: string | Uint8Array) {
     if (oraclePublicKey === 'BCH') {
-      return 0.00000001;
+      return 1;
     }
 
     const oraclePublicKeyHex =
