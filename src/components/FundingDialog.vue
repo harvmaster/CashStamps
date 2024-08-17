@@ -4,8 +4,11 @@
       <q-card-section>
         <!-- Warning to backup mnemonic -->
         <q-banner class="bg-negative text-white text-center">
+          <p class="text-weight-bold">
+            Your mnemonics and stamps are stored locally and will be lost if you clear your browser's storage.
+          </p>
           <p>
-            <strong
+            <strong class="text-weight-bolder"
               >Save your mnemonic somewhere safe before proceeding!</strong
             >
           </p>

@@ -50,7 +50,7 @@
           <q-btn
             round
             flat
-            icon="help"
+            icon="img:help.svg"
             to="/faq"
           >
             <q-tooltip>FAQ</q-tooltip>
