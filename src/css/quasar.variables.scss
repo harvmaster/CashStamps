@@ -26,3 +26,7 @@ $warning: #f2c037;
 
 // Set the default animation speed.
 $animate-duration: 1s;
+
+// Set the breakpoints for small screens.
+// NOTE: For this product, we switch to small-screen mode at 960px width.
+$breakpoint-sm: 959px;

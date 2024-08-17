@@ -148,7 +148,7 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
@@ -160,6 +160,15 @@ $q.dark.set(true);
 //-----------------------------------------------------------------------------
 
 const step = ref(1);
+
+//-----------------------------------------------------------------------------
+// Initialization/Lifecycle
+//-----------------------------------------------------------------------------
+
+onUnmounted(() => {
+  // HACK: Disable dark mode as we leave this page.
+  $q.dark.set(false);
+});
 </script>
 
 <style lang="scss">

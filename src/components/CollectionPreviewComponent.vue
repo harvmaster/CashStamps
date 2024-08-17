@@ -3,7 +3,7 @@
   <div class="q-mb-xl">
     <div class="row">
       <!-- Controls for print/show mnemonic -->
-      <div class="col-8 q-gutter-x-sm">
+      <div class="col-md-8 col-12 q-gutter-x-sm">
         <q-btn-group>
           <!-- Print Stamps -->
           <q-btn
@@ -36,7 +36,7 @@
       </div>
 
       <!-- Template selection -->
-      <div class="col-4">
+      <div class="col-md-4 col-12">
         <q-select
           label="Template"
           :options="templates"

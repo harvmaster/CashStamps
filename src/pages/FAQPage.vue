@@ -1,17 +1,7 @@
 <template>
   <q-page>
-    <!--
-    <div class="header-outer bg-dark">
-      <div class="header-inner">
-          <h1 class="strong">
-            FAQ
-          </h1>
-      </div>
-    </div>
-    -->
-
     <div class="inner-page">
-    <h1 class="text-center strong">Frequently Asked Questions</h1>
+    <h1 class="text-center strong">FAQ</h1>
     <ol>
       <li>
         <h2>What are CashStamps?</h2>
