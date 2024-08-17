@@ -6,10 +6,11 @@
 }
 
 .header-inner {
-  width: 992px;
+  width: 1024px;
+  max-width: 100%;
   margin: auto;
   margin-bottom: 20px;
-  padding-top: 20px;
+  padding: 20px;
   padding-bottom: 40px;
   color: #fff;
 }
@@ -20,9 +21,11 @@
 }
 
 .inner-page {
-  min-width: 210mm;
-  width: 992px;
+  width: 1024px;
+  max-width: 100%;
   margin: auto;
+  padding: 20px;
+  padding-top: 10px;
   padding-bottom: 40px;
 }
 

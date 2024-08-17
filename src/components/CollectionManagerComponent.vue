@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-x-md">
     <!-- Form and Summary -->
-    <div class="col-10">
+    <div class="col-md-10 col-12">
       <div class="column q-col-gutter-y-md">
         <CollectionFormComponent
           :oracles="app.oracles"
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="col-2">
+    <div class="col-md-2 col-12">
       <div class="column q-col-gutter-y-md">
         <!-- Fund Stamps -->
         <div>

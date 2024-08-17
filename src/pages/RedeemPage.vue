@@ -40,7 +40,7 @@
             </q-stepper>
           </div>
           <div
-            class="flex col-grow items-center q-pl-xl q-pr-xl q-pt-md q-pb-md"
+            class="flex col-grow items-center q-pl-md q-pr-md q-pt-md q-pb-md"
           >
             <!-- Step 1 -->
             <div
@@ -96,20 +96,14 @@
               v-if="step === 3"
               class="flex col-grow justify-center animated fadeIn"
             >
-              <div class="flex column text-center q-col-gutter-y-lg">
-                <div class="text-weight-bold">
-                  Find merchants near you to spend BCH!
+              <div class="flex column text-center q-col-gutter-y-lg" style="width:496px; max-width:100%;">
+                
+                <div class="column q-gutter-y-lg">
+                  <q-btn icon="img:merchant.svg" rounded color="accent" label="Nearby Merchants" type="a" href="https://maps.bitcoin.com" target="_blank" size="xl" no-caps />
+                  <q-btn icon="img:bch.svg" rounded color="accent" label="Online Services" type="a" href="https://bchportal.cash/" target="_blank" size="xl" no-caps />
+                  <q-btn icon="img:info.svg" rounded color="accent" label="Learn More" size="xl" type="a" href="https://discover.cash" target="_blank" no-caps />
                 </div>
 
-                <div>
-                  <a
-                    class="text-primary"
-                    href="https://maps.bitcoin.com"
-                    target="_blank"
-                  >
-                    <q-icon name="store" size="144px" />
-                  </a>
-                </div>
               </div>
             </div>
           </div>
@@ -120,18 +114,6 @@
                 @click="step++"
                 color="primary"
                 label="Next"
-                class="full-width strong"
-                size="lg"
-                no-caps
-                rounded
-              />
-              <q-btn
-                v-if="step === 3"
-                type="a"
-                href="https://maps.bitcoin.com"
-                target="_blank"
-                color="primary"
-                label="Open Bitcoin.com Maps!"
                 class="full-width strong"
                 size="lg"
                 no-caps
@@ -148,7 +130,7 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
@@ -160,6 +142,15 @@ $q.dark.set(true);
 //-----------------------------------------------------------------------------
 
 const step = ref(1);
+
+//-----------------------------------------------------------------------------
+// Initialization/Lifecycle
+//-----------------------------------------------------------------------------
+
+onUnmounted(() => {
+  // HACK: Disable dark mode as we leave this page.
+  $q.dark.set(false);
+});
 </script>
 
 <style lang="scss">

@@ -121,10 +121,6 @@ const $q = useQuasar();
 const app = new App();
 await app.start();
 
-// HACK: Set to light mode in case user has come from redeem page.
-// TODO: Fix this in future.
-$q.dark.set(false);
-
 //---------------------------------------------------------------------------
 // State
 //---------------------------------------------------------------------------

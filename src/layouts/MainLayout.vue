@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header class="bg-dark">
       <q-toolbar class="row">
-        <q-toolbar-title class="col-grow">
+        <q-toolbar-title class="col-shrink">
           <span @click="$router.push('/')" class="cursor-pointer">
             <q-avatar square>
               <img src="/icon.svg" />
@@ -12,7 +12,7 @@
         </q-toolbar-title>
 
         <!-- Right Buttons -->
-        <div class="col-shrink text-right q-gutter-x-xs">
+        <div class="col-grow text-right q-gutter-x-xs">
           <!-- Telegram -->
           <q-btn
             round
@@ -45,6 +45,15 @@
             target="_blank"
           >
             <q-tooltip>Source Code</q-tooltip>
+          </q-btn>
+          <!-- FAQ -->
+          <q-btn
+            round
+            flat
+            icon="img:help.svg"
+            to="/faq"
+          >
+            <q-tooltip>FAQ</q-tooltip>
           </q-btn>
         </div>
       </q-toolbar>

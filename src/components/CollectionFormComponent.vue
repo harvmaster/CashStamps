@@ -1,6 +1,6 @@
 <template>
   <div class="row q-col-gutter-md">
-    <div class="col-md col-12">
+    <div class="col-md-4 col-12">
       <q-input
         v-model.number="model.amount"
         :label="`Target Amount (${currencyName})`"
@@ -11,9 +11,8 @@
     </div>
 
     <!-- Currency Selection -->
-    <div class="col-md-auto col-8">
+    <div class="col-md-2 col-12">
       <q-select
-        style="min-width: 10em"
         v-model="model.currency"
         :options="currencyOptions"
         option-value="value"
@@ -26,7 +25,7 @@
     </div>
 
     <!-- Expiry Date -->
-    <div class="col-md">
+    <div class="col-md-4 col-12">
       <q-input
         filled
         v-model="expiryModel"
@@ -46,9 +45,8 @@
     </div>
 
     <!-- Quantity Input -->
-    <div class="col-auto">
+    <div class="col-md-2 col-12">
       <q-input
-        style="min-width: 10em"
         v-model.number="quantityModel"
         label="Stamp Quantity"
         type="number"
