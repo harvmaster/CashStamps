@@ -69,7 +69,7 @@
             click on "Import Mnemonic" and continue with the "Reclaim Stamps"
             button/process. If you've cleared your browser's cache AND you didn't
             write down your Seedphrase for the stamps you created/funded...shame
-            on you! There is no way to recover those funds unless you indivudually
+            on you! There is no way to recover those funds unless you individually
             scan each created CashStamp(s) QR code still in your posession. If you
             haven't given those CashStamps away, this is simple enough (although
             time-consuming), but if you've given them away, the best you can hope
@@ -157,7 +157,8 @@
             We plan on adding more label templates for different CashStamp sizes
             in the near future. If you have a specific/custom label or template
             you'd like to use, feel free to get in touch via our Telegram
-            (https://t.me/stampscash) and we'll consider adding it to the
+            (<a href="https://t.me/stampscash" target="_blank" >https://t.me/stampscash</a>)
+            and we'll consider adding it to the
             pre-loaded template list. Coding the formatting/parameters for these
             labels to integrate with the CashStamps creation tool and print
             properly is a pretty big PITA, unfortunately.
