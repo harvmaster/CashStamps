@@ -49,7 +49,7 @@
         </section>
         <section class="faq-section">
           <h2>{{ t('whatLabelsTitle') }}</h2>
-          <p>{{ t('whatLabelsContent') }}</p>
+          <p v-html="t('whatLabelsContent')" />
         </section>
       </div>
     </div>

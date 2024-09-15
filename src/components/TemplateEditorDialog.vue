@@ -96,7 +96,7 @@ import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 
 // translations
-import translation from './TemaplteEditorDialog.i18n.json';
+import translation from './TemplateEditorDialog.i18n.json';
 
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
