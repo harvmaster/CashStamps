@@ -46,8 +46,14 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 
 import { binToHex } from '@bitauth/libauth';
 
+import translations from './ReclaimDialog.i18n.json';
+
 const $q = useQuasar();
-const { t } = useI18n();
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 //---------------------------------------------------------------------------
 // State
