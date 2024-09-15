@@ -5,7 +5,7 @@
         class="left column q-col-gutter-y-md cursor-pointer"
         @click="$router.push('/create')"
       >
-        <div>{{ t('title') }}</div>
+        <div class="text-center">{{ t('title') }}</div>
         <div class="q-gutter-md">
           <img class="stamp-icon" src="/icon.svg" />
           <img class="stamp-icon" src="/icon.svg" />
@@ -16,7 +16,7 @@
         class="right column q-col-gutter-y-md cursor-pointer"
         @click="$router.push('/redeem')"
       >
-        <div>{{ t('redeem') }}</div>
+        <div class="text-center">{{ t('redeem') }}</div>
         <div>
           <img src="/redeem.png" />
         </div>
