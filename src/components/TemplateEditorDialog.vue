@@ -8,11 +8,16 @@
         <div class="q-gutter-y-md">
           <div class="col-grow q-gutter-y-md">
             <!-- Name Input -->
-            <q-input v-model="state.activeTemplate.label" :label="t('name')" filled />
+            <q-input
+              v-model="state.activeTemplate.label"
+              :label="t('name')"
+              filled
+            />
 
             <!-- Warning Banner -->
             <q-banner class="bg-negative text-white">
-              <strong>{{ t('doNot') }}</strong> {{ t('pasteCodeWarning') }} <strong>{{ t('doNot') }}</strong> {{ t('useExternalGenerators') }}
+              <strong>{{ t('doNot') }}</strong> {{ t('pasteCodeWarning') }}
+              <strong>{{ t('doNot') }}</strong> {{ t('useExternalGenerators') }}
               {{ t('contactSupport') }}
             </q-banner>
 
@@ -91,7 +96,7 @@ import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 
 // translations
-import translation from './TemaplteEditorDialog.i18n.json'
+import translation from './TemaplteEditorDialog.i18n.json';
 
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);

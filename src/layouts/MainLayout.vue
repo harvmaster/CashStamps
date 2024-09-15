@@ -47,21 +47,12 @@
             <q-tooltip>Source Code</q-tooltip>
           </q-btn>
           <!-- FAQ -->
-          <q-btn
-            round
-            flat
-            icon="img:help.svg"
-            to="/faq"
-          >
+          <q-btn round flat icon="img:help.svg" to="/faq">
             <q-tooltip>FAQ</q-tooltip>
           </q-btn>
 
           <!-- Locale Selector -->
-          <q-btn
-            round
-            flat
-            :label="localeIcon"
-          >
+          <q-btn round flat :label="localeIcon">
             <q-menu auto-close>
               <q-list style="min-width: 100px">
                 <q-item clickable @click="() => setLocale('en')">
@@ -119,9 +110,9 @@ const $q = useQuasar();
 
 const localeIcon = computed((): string => {
   // Map of codes to icons
-  const icons: { [ lang: string ]: string } = {
-    'en': '🇬🇧',
-    'es': '🇪🇸',
+  const icons: { [lang: string]: string } = {
+    en: '🇬🇧',
+    es: '🇪🇸',
   };
 
   // Get the main locale (e.g. "en" as opposed to "en-GB")

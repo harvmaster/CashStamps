@@ -75,7 +75,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import translations from './IndexPage.i18n.json';
 
-const router = useRouter();
+const $router = useRouter();
 
 const { t } = useI18n({
   useScope: 'local',

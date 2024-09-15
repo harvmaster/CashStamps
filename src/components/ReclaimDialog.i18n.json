@@ -8,8 +8,7 @@
       "reclaim": "Reclaim",
       "bip39Info": "NOTE: Your stamp collection is a BIP39 HD Wallet using derivation path m/44'/145'/0'. This means that you can also import your mnemonic into Electron Cash (and other BIP39 compatible wallets) and manage stamp balances from there.",
       "stampsReclaimed": "Stamps reclaimed successfully!"
-    }
-    ,
+    },
     "es": {
       "reclaimStamps": "Reclamar Sellos Restantes",
       "enterPayoutAddress": "Ingrese la dirección de Bitcoin Cash que los saldos restantes deben enviarse a.",

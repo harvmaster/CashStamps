@@ -1,5 +1,5 @@
-import type { App } from 'vue'
-import { createI18n } from 'vue-i18n'
+import type { App } from 'vue';
+import { createI18n } from 'vue-i18n';
 
 export default ({ app }: { app: App }) => {
   // Set i18n instance on app
@@ -7,7 +7,7 @@ export default ({ app }: { app: App }) => {
     legacy: false,
     locale: 'en',
     fallbackLocale: 'en',
-  })
-  
-  app.use(i18n)  
-}
+  });
+
+  app.use(i18n);
+};

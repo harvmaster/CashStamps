@@ -251,8 +251,7 @@ async function onDeleteCollection() {
 async function onShowMnemonicDialog() {
   $q.dialog({
     title: t('mnemonic'),
-    message:
-      activeCollection.value?.mnemonic || t('noStampCollectionSelected'),
+    message: activeCollection.value?.mnemonic || t('noStampCollectionSelected'),
   });
 }
 </script>

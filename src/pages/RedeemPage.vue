@@ -36,7 +36,12 @@
                 icon="qr_code"
                 :done="step > 2"
               />
-              <q-step :name="3" :title="t('spend')" icon="store" :done="step > 3" />
+              <q-step
+                :name="3"
+                :title="t('spend')"
+                icon="store"
+                :done="step > 3"
+              />
             </q-stepper>
           </div>
           <div
@@ -50,7 +55,9 @@
               <div class="flex column text-center q-col-gutter-y-lg">
                 <div class="text-weight-bold">
                   {{ t('installInstructions.before') }}
-                  <span class="text-primary">{{ t('installInstructions.wallet') }}</span>
+                  <span class="text-primary">{{
+                    t('installInstructions.wallet')
+                  }}</span>
                   {{ t('installInstructions.after') }}
                 </div>
 
@@ -95,14 +102,45 @@
               v-if="step === 3"
               class="flex col-grow justify-center animated fadeIn"
             >
-              <div class="flex column text-center q-col-gutter-y-lg" style="width:496px; max-width:100%;">
-                
+              <div
+                class="flex column text-center q-col-gutter-y-lg"
+                style="width: 496px; max-width: 100%"
+              >
                 <div class="column q-gutter-y-lg">
-                  <q-btn icon="img:merchant.svg" rounded color="accent" :label="t('nearbyMerchants')" type="a" href="https://maps.bitcoin.com" target="_blank" size="xl" no-caps />
-                  <q-btn icon="img:bch.svg" rounded color="accent" :label="t('onlineServices')" type="a" href="https://bchportal.cash/" target="_blank" size="xl" no-caps />
-                  <q-btn icon="img:info.svg" rounded color="accent" :label="t('learnMore')" size="xl" type="a" href="https://discover.cash" target="_blank" no-caps />
+                  <q-btn
+                    icon="img:merchant.svg"
+                    rounded
+                    color="accent"
+                    :label="t('nearbyMerchants')"
+                    type="a"
+                    href="https://maps.bitcoin.com"
+                    target="_blank"
+                    size="xl"
+                    no-caps
+                  />
+                  <q-btn
+                    icon="img:bch.svg"
+                    rounded
+                    color="accent"
+                    :label="t('onlineServices')"
+                    type="a"
+                    href="https://bchportal.cash/"
+                    target="_blank"
+                    size="xl"
+                    no-caps
+                  />
+                  <q-btn
+                    icon="img:info.svg"
+                    rounded
+                    color="accent"
+                    :label="t('learnMore')"
+                    size="xl"
+                    type="a"
+                    href="https://discover.cash"
+                    target="_blank"
+                    no-caps
+                  />
                 </div>
-
               </div>
             </div>
           </div>

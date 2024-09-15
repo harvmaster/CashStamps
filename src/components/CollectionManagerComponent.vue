@@ -64,7 +64,9 @@
             icon="check_circle"
             >{{ t('funded') }}</q-chip
           >
-          <q-chip v-else color="warning" text-color="white">{{ t('notFunded') }}</q-chip>
+          <q-chip v-else color="warning" text-color="white">{{
+            t('notFunded')
+          }}</q-chip>
         </div>
       </div>
     </div>
@@ -102,7 +104,7 @@ import FundingDialog from './FundingDialog.vue';
 import ReclaimDialog from './ReclaimDialog.vue';
 
 // Translations
-import translations from './CollectionManagerComponent.i18n.json' 
+import translations from './CollectionManagerComponent.i18n.json';
 
 //---------------------------------------------------------------------------
 // State
@@ -120,7 +122,7 @@ const props = defineProps<{
 const { t } = useI18n({
   inheritLocale: true,
   useScope: 'local',
-  messages: translations.messages
+  messages: translations.messages,
 });
 
 // Elements

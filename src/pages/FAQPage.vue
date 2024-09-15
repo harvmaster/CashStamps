@@ -17,7 +17,9 @@
         </section>
         <section class="faq-section">
           <h2>{{ t('risksAssociatedWithCashStampsTitle') }}</h2>
-          <p class="no-margin">{{ t('risksAssociatedWithCashStampsContent') }}</p>
+          <p class="no-margin">
+            {{ t('risksAssociatedWithCashStampsContent') }}
+          </p>
           <div class="flex row justify-center q-py-md">
             <img src="/img/faq-mnemonic-button.png" style="max-width: 100%" />
           </div>
@@ -35,7 +37,10 @@
           <h2>{{ t('editingCashStampsTitle') }}</h2>
           <p class="no-margin">{{ t('editingCashStampsContent') }}</p>
           <div class="flex row justify-center">
-            <img src="/img/faq-template-editing.png" style="max-width: 100%; width: 30em"/>
+            <img
+              src="/img/faq-template-editing.png"
+              style="max-width: 100%; width: 30em"
+            />
           </div>
         </section>
         <section class="faq-section">
@@ -52,18 +57,18 @@
 </template>
 
 <style lang="scss" scoped>
-  h1 {
-    font-size: 2.5em;
-    color: var(--q-primary)
-  }
+h1 {
+  font-size: 2.5em;
+  color: var(--q-primary);
+}
 
-  h2 {
-    font-size: 2em;
-    color: var(--q-primary)
-  }
-  .faq-section {
-    margin-bottom: 2.5em;
-  }
+h2 {
+  font-size: 2em;
+  color: var(--q-primary);
+}
+.faq-section {
+  margin-bottom: 2.5em;
+}
 </style>
 
 <script setup lang="ts">

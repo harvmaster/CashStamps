@@ -8,7 +8,9 @@
             {{ t('backupWarning') }}
           </p>
           <p>
-            <strong class="text-weight-bolder">{{ t('saveMnemonicWarning') }}</strong>
+            <strong class="text-weight-bolder">{{
+              t('saveMnemonicWarning')
+            }}</strong>
           </p>
           <p>
             {{ stampCollection.mnemonic }}
