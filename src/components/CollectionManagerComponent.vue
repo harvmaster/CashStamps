@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-x-md">
     <!-- Form and Summary -->
-    <div class="col-md-10 col-12">
+    <div class="col-md-9 col-12">
       <div class="column q-col-gutter-y-md">
         <CollectionFormComponent
           :oracles="app.oracles"
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="col-md-2 col-12">
+    <div class="col-md-3 col-12">
       <div class="column q-col-gutter-y-md">
         <!-- Fund Stamps -->
         <div>
@@ -28,7 +28,7 @@
               !collection.quantity ||
               !collection.amount
             "
-            label="Fund Stamps"
+            :label="t('fundStamps')"
             color="primary"
             @click="showFundingDialog"
             class="full-width"
@@ -41,7 +41,7 @@
             :disable="
               !props.wallet.isFunded.value || props.wallet.isClaimed.value
             "
-            label="Reclaim Stamps"
+            :label="t('reclaimStamps')"
             color="secondary"
             @click="showReclaimDialog"
             class="full-width"
@@ -55,16 +55,16 @@
             color="primary"
             text-color="white"
             icon="check_circle"
-            >All claimed</q-chip
+            >{{ t('allClaimed') }}</q-chip
           >
           <q-chip
             v-else-if="props.wallet?.isFunded.value"
             color="primary"
             text-color="white"
             icon="check_circle"
-            >Funded</q-chip
+            >{{ t('funded') }}</q-chip
           >
-          <q-chip v-else color="warning" text-color="white">Not Funded</q-chip>
+          <q-chip v-else color="warning" text-color="white">{{ t('notFunded') }}</q-chip>
         </div>
       </div>
     </div>
@@ -88,6 +88,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
 import type { StampCollection } from 'src/types.js';
@@ -99,6 +100,9 @@ import CollectionFormComponent from './CollectionFormComponent.vue';
 import CollectionSummaryComponent from './CollectionSummaryComponent.vue';
 import FundingDialog from './FundingDialog.vue';
 import ReclaimDialog from './ReclaimDialog.vue';
+
+// Translations
+import translations from './CollectionManagerComponent.i18n.json' 
 
 //---------------------------------------------------------------------------
 // State
@@ -112,6 +116,12 @@ const props = defineProps<{
   app: App;
   wallet: WalletHD;
 }>();
+
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages
+});
 
 // Elements
 const fundingQrCode = ref<typeof FundingDialog | null>(null);

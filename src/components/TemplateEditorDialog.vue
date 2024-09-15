@@ -2,27 +2,18 @@
   <q-dialog v-model="state.visible">
     <q-card style="max-width: 1024px; width: 100%">
       <q-card-section class="text-h6 text-center">
-        Edit Template
+        {{ t('editTemplate') }}
       </q-card-section>
       <q-card-section class="column">
         <div class="q-gutter-y-md">
           <div class="col-grow q-gutter-y-md">
             <!-- Name Input -->
-            <q-input v-model="state.activeTemplate.label" label="Name" filled />
+            <q-input v-model="state.activeTemplate.label" :label="t('name')" filled />
 
             <!-- Warning Banner -->
             <q-banner class="bg-negative text-white">
-              <strong>DO NOT</strong> paste template code here from people you
-              do not trust and <strong>DO NOT</strong> use external QR Code
-              generators (they will receive your WIF/Private Keys and can
-              potentially steal your funds). Reach out on
-              <a
-                href="https://t.me/stampscash"
-                target="_blank"
-                class="text-white"
-                >Telegram</a
-              >
-              if you need help.
+              <strong>{{ t('doNot') }}</strong> {{ t('pasteCodeWarning') }} <strong>{{ t('doNot') }}</strong> {{ t('useExternalGenerators') }}
+              {{ t('contactSupport') }}
             </q-banner>
 
             <q-tabs
@@ -30,8 +21,8 @@
               align="justify"
               active-color="primary"
             >
-              <q-tab name="content" label="Content" />
-              <q-tab name="style" label="Style" />
+              <q-tab name="content" :label="t('content')" />
+              <q-tab name="style" :label="t('style')" />
             </q-tabs>
 
             <q-tab-panels v-model="state.activeTab" animated>
@@ -63,18 +54,18 @@
           <div class="col-shrink q-gutter-x-md">
             <q-btn
               v-if="!props.activeTemplate.readonly"
-              label="Save"
+              :label="t('save')"
               color="primary"
               @click="saveTemplate"
             />
             <q-btn
-              label="Save as new template"
+              :label="t('saveAsNew')"
               color="secondary"
               @click="copyTemplate"
             />
             <q-btn
               v-if="!props.activeTemplate.readonly"
-              label="Delete"
+              :label="t('delete')"
               color="negative"
               @click="deleteTemplate"
               :disabled="props.activeTemplate.readonly"
@@ -89,6 +80,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { uid } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 import type { Template } from 'src/types.js';
 
@@ -98,9 +90,18 @@ import modeHtmlUrl from 'ace-builds/src-noconflict/mode-html?url';
 import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 
+// translations
+import translation from './TemaplteEditorDialog.i18n.json'
+
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
 ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
+
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translation.messages,
+});
 
 export type UpdateTemplate = {
   oldValue: Template;

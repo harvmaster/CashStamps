@@ -1,0 +1,32 @@
+{
+  "messages": {
+    "en": {
+      "subtitle": "Giftable BCH that can be reclaimed if unused",
+      "description": "CashStamps are easily redeemable Bitcoin Cash wallets that can be used for gifting BCH with the option to reclaim any unused stamps.",
+      "instructions": {
+        "title": "Instructions:",
+        "steps": [
+          "Enter the value, currency and quantity of stamps you want to create.",
+          "Select a template (or create your own with the Edit Button).",
+          "Click the fund button and scan the QR Code with your wallet.",
+          "Print the stamps and give them to your friends, family, or customers.",
+          "Click Reclaim to send any unclaimed stamps back to your own wallet."
+        ]
+      }
+    },
+    "es": {
+      "subtitle": "BCH regalable que se puede reclamar si no se usa",
+      "description": "CashStamps son billeteras de Bitcoin Cash fácilmente canjeables que se pueden usar para regalar BCH con la opción de reclamar cualquier estampa no utilizada.",
+      "instructions": {
+        "title": "Instrucciones:",
+        "steps": [
+          "Ingrese el valor, la moneda y la cantidad de estampas que desea crear.",
+          "Seleccione una plantilla (o cree la suya propia con el botón Editar).",
+          "Haga clic en el botón de fondeo y escanee el código QR con su billetera.",
+          "Imprima las estampas y regálelas a sus amigos, familiares o clientes.",
+          "Haga clic en Reclamar para enviar cualquier estampa no reclamada de vuelta a su propia billetera."
+        ]
+      }
+    }
+  }
+}

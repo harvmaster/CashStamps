@@ -4,7 +4,7 @@
     <template v-if="!props.wallet?.isFunded.value">
       <!-- Total value of the TX in Fiat -->
       <div class="col-auto">
-        <div class="text-body2">Total Due</div>
+        <div class="text-body2">{{ t('totalDue') }}</div>
         <div class="text-h6">
           {{ fundingDue }}
           <small>{{ currencyName }}</small>
@@ -13,7 +13,7 @@
 
       <!-- Total value of the TX in BCH -->
       <div class="col-auto">
-        <div class="text-body2">Total Due</div>
+        <div class="text-body2">{{ t('totalDue') }}</div>
         <div class="text-h6">
           {{ fundingDueBCH }}
           <small>BCH</small>
@@ -25,7 +25,7 @@
     <template v-else>
       <!-- Number of Claimed Stamps/Total Stamps -->
       <div class="col-auto">
-        <div class="text-body2">Claimed</div>
+        <div class="text-body2">{{ t('claimed') }}</div>
         <div class="text-h6">
           {{ props.wallet.claimedStamps.value }} /
           {{ props.wallet.wallets.value.length }}
@@ -33,10 +33,9 @@
       </div>
 
       <!-- Balance Fiat -->
-      <!-- TODO: This is currently broken and a hard value to retrieve -->
       <!--
       <div class="col-auto">
-        <div class="text-body2">Current Stamp Value</div>
+        <div class="text-body2">{{ t('currentStampValue') }}</div>
         <div class="text-h6">
           {{ convertToFiat(props.stampCollection.currency, currentStampValue) }}
           <small>{{ currencyName }}</small>
@@ -46,7 +45,7 @@
 
       <!-- Balance Fiat -->
       <div class="col-auto">
-        <div class="text-body2">Total Remaining</div>
+        <div class="text-body2">{{ t('totalRemaining') }}</div>
         <div class="text-h6">
           {{
             convertToFiat(
@@ -60,7 +59,7 @@
 
       <!-- Balance BCH -->
       <div class="col-auto">
-        <div class="text-body2">Total Remaining</div>
+        <div class="text-body2">{{ t('totalRemaining') }}</div>
         <div class="text-h6">
           {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }}
           <small>BCH</small>
@@ -70,15 +69,23 @@
   </div>
 </template>
 
-<style lang="scss" scoped></style>
-
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { Satoshis } from 'src/utils/satoshis.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
+
+// Translations
+import translations from './CollectionSummaryComponent.i18n.json';
+
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 //---------------------------------------------------------------------------
 // State

@@ -26,17 +26,17 @@
             >
               <q-step
                 :name="1"
-                title="Install a Wallet"
+                :title="t('installWallet')"
                 icon="img:bch.svg"
                 :done="step > 1"
               />
               <q-step
                 :name="2"
-                title="Redeem BCH"
+                :title="t('redeemBCH')"
                 icon="qr_code"
                 :done="step > 2"
               />
-              <q-step :name="3" title="Spend" icon="store" :done="step > 3" />
+              <q-step :name="3" :title="t('spend')" icon="store" :done="step > 3" />
             </q-stepper>
           </div>
           <div
@@ -49,9 +49,9 @@
             >
               <div class="flex column text-center q-col-gutter-y-lg">
                 <div class="text-weight-bold">
-                  Install the
-                  <span class="text-primary">Bitcoin.com Wallet</span> on your
-                  device.
+                  {{ t('installInstructions.before') }}
+                  <span class="text-primary">{{ t('installInstructions.wallet') }}</span>
+                  {{ t('installInstructions.after') }}
                 </div>
 
                 <div>
@@ -81,8 +81,7 @@
             >
               <div class="flex column text-center q-col-gutter-y-lg">
                 <div class="text-weight-bold">
-                  In your wallet, click the scan button and then scan your QR
-                  Code to sweep the amount into your wallet.
+                  {{ t('scanInstructions') }}
                 </div>
 
                 <div>
@@ -99,9 +98,9 @@
               <div class="flex column text-center q-col-gutter-y-lg" style="width:496px; max-width:100%;">
                 
                 <div class="column q-gutter-y-lg">
-                  <q-btn icon="img:merchant.svg" rounded color="accent" label="Nearby Merchants" type="a" href="https://maps.bitcoin.com" target="_blank" size="xl" no-caps />
-                  <q-btn icon="img:bch.svg" rounded color="accent" label="Online Services" type="a" href="https://bchportal.cash/" target="_blank" size="xl" no-caps />
-                  <q-btn icon="img:info.svg" rounded color="accent" label="Learn More" size="xl" type="a" href="https://discover.cash" target="_blank" no-caps />
+                  <q-btn icon="img:merchant.svg" rounded color="accent" :label="t('nearbyMerchants')" type="a" href="https://maps.bitcoin.com" target="_blank" size="xl" no-caps />
+                  <q-btn icon="img:bch.svg" rounded color="accent" :label="t('onlineServices')" type="a" href="https://bchportal.cash/" target="_blank" size="xl" no-caps />
+                  <q-btn icon="img:info.svg" rounded color="accent" :label="t('learnMore')" size="xl" type="a" href="https://discover.cash" target="_blank" no-caps />
                 </div>
 
               </div>
@@ -113,7 +112,7 @@
                 v-if="step < 3"
                 @click="step++"
                 color="primary"
-                label="Next"
+                :label="t('next')"
                 class="full-width strong"
                 size="lg"
                 no-caps
@@ -127,11 +126,12 @@
   </q-layout>
 </template>
 
-<style lang="scss" scoped></style>
-
 <script setup lang="ts">
 import { onUnmounted, ref } from 'vue';
 import { useQuasar } from 'quasar';
+
+import { useI18n } from 'vue-i18n';
+import Translations from './RedeemPage.i18n.json';
 
 const $q = useQuasar();
 
@@ -142,6 +142,16 @@ $q.dark.set(true);
 //-----------------------------------------------------------------------------
 
 const step = ref(1);
+
+//-----------------------------------------------------------------------------
+// I18n
+//-----------------------------------------------------------------------------
+
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: Translations.messages,
+});
 
 //-----------------------------------------------------------------------------
 // Initialization/Lifecycle

@@ -5,12 +5,10 @@
         <!-- Warning to backup mnemonic -->
         <q-banner class="bg-negative text-white text-center">
           <p class="text-weight-bold">
-            Your mnemonics and stamps are stored locally and will be lost if you clear your browser's storage.
+            {{ t('backupWarning') }}
           </p>
           <p>
-            <strong class="text-weight-bolder"
-              >Save your mnemonic somewhere safe before proceeding!</strong
-            >
+            <strong class="text-weight-bolder">{{ t('saveMnemonicWarning') }}</strong>
           </p>
           <p>
             {{ stampCollection.mnemonic }}
@@ -23,7 +21,7 @@
         <div
           class="text-h6 no-margin text-weight-medium justify-center items-center text-center"
         >
-          Scan to fill the stamps with BCH
+          {{ t('scanToFund') }}
         </div>
         <div class="flex justify-center">
           <div ref="qrElement" id="invoice-container" class="full-width" />
@@ -36,16 +34,24 @@
 <script setup lang="ts">
 import { nextTick, ref, reactive } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
-
 import { OraclesService } from 'src/services/oracles.js';
 import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
+// translations
+import translations from './FundingDialog.i18n.json';
+
 const $q = useQuasar();
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 //---------------------------------------------------------------------------
 // State
@@ -156,7 +162,7 @@ async function generateQrCode() {
 
       // Show the user a notification.
       $q.notify({
-        message: 'Stamps funded successfully!',
+        message: t('stampsFundedSuccessfully'),
       });
     });
 

@@ -13,7 +13,7 @@
             :disable="!state.renderedStamps.length"
             @click="printStamps"
           >
-            <q-tooltip class="print-hide">Print Stamps</q-tooltip>
+            <q-tooltip class="print-hide">{{ t('printStamps') }}</q-tooltip>
           </q-btn>
 
           <!-- Export as JSON -->
@@ -24,21 +24,21 @@
             :disable="!state.renderedStamps.length"
             @click="exportAsJson"
           >
-            <q-tooltip class="print-hide">Export as JSON</q-tooltip>
+            <q-tooltip class="print-hide">{{ t('exportAsJson') }}</q-tooltip>
           </q-btn>
         </q-btn-group>
 
         <q-toggle
           v-model="state.showClaimedStamps"
-          label="Show Claimed Stamps"
+          :label="t('showClaimedStamps')"
         />
-        <q-toggle v-model="state.showCutLines" label="Show Cut Lines" />
+        <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
       </div>
 
       <!-- Template selection -->
       <div class="col-md-4 col-12">
         <q-select
-          label="Template"
+          :label="t('template')"
           :options="templates"
           v-model="state.activeTemplate"
           @update:model-value="renderStamps"
@@ -53,7 +53,7 @@
               icon="edit"
               @click="showTemplateEditorDialog"
             >
-              <q-tooltip>Edit Template</q-tooltip>
+              <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
             </q-btn>
           </template>
         </q-select>
@@ -104,6 +104,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
 import { debounce, exportFile } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
@@ -116,6 +117,9 @@ import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 
 // Pre-built Templates
 import { PageTemplate, builtInTemplates } from 'src/templates/index.js';
+
+// Translations
+import translations from './CollectionPreviewComponent.i18n.json';
 
 interface RenderedStamp {
   html: string;
@@ -133,6 +137,12 @@ const props = defineProps<{
   stampCollection: StampCollection;
   wallet: WalletHD;
 }>();
+
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 const state = reactive<{
   loading: boolean;

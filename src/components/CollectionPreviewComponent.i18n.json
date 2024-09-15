@@ -1,0 +1,20 @@
+{
+  "messages": {
+    "en": {
+      "printStamps": "Print Stamps",
+      "exportAsJson": "Export as JSON",
+      "showClaimedStamps": "Show Claimed Stamps",
+      "showCutLines": "Show Cut Lines",
+      "template": "Template",
+      "editTemplate": "Edit Template"
+    },
+    "es": {
+      "printStamps": "Imprimir Sellos",
+      "exportAsJson": "Exportar como JSON",
+      "showClaimedStamps": "Mostrar Sellos Reclamados",
+      "showCutLines": "Mostrar Líneas Cortadas",
+      "template": "Plantilla",
+      "editTemplate": "Editar Plantilla"
+    }
+  }
+}

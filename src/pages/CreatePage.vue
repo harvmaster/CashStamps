@@ -8,42 +8,24 @@
           class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
           <img src="icon.svg" class="q-ma-sm" style="height: 1em" />
-          <span class="strong">
-            Stamps.<span class="text-primary">Cash</span>
-          </span>
+          <span class="strong">Stamps.Cash</span>
         </div>
 
         <!-- Subtitle -->
         <div class="flex justify-center text-h6 text-weight-medium q-mb-md">
-          Giftable BCH that can be reclaimed if unused
+          {{ t('subtitle') }}
         </div>
 
         <!-- Description & Instructions -->
         <div class="flex justify-center">
           <div class="text-body1 paragraph">
             <p>
-              CashStamps are easily redeemable Bitcoin Cash wallets that can be
-              used for gifting BCH with the option to reclaim any unused stamps.
+              {{ t('description') }}
             </p>
-            <strong>Instructions:</strong>
+            <strong>{{ t('instructions.title') }}</strong>
             <ol>
-              <li>
-                Enter the value, currency and quantity of stamps you want to
-                create.
-              </li>
-              <li>
-                Select a template (or create your own with the Edit Button).
-              </li>
-              <li>
-                Click the fund button and scan the QR Code with your wallet.
-              </li>
-              <li>
-                Print the stamps and give them to your friends, family, or
-                customers.
-              </li>
-              <li>
-                Click Reclaim to send any unclaimed stamps back to your own
-                wallet.
+              <li v-for="step in tm('instructions.steps')" :key="step">
+                {{ step }}
               </li>
             </ol>
           </div>
@@ -105,6 +87,7 @@
 <script setup lang="ts">
 import { onUnmounted, computed, reactive, shallowRef, watch } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 // Service / App / Utils imports
 import { App } from 'src/services/app.js';
@@ -115,11 +98,22 @@ import CollectionSelectComponent from 'src/components/CollectionSelectComponent.
 import CollectionManagerComponent from 'src/components/CollectionManagerComponent.vue';
 import CollectionPreviewComponent from 'src/components/CollectionPreviewComponent.vue';
 
+// Translations
+import Translations from './CreatePage.i18n.json';
+
 const $q = useQuasar();
+
+// Set up i18n
+const { t, tm } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: Translations.messages,
+});
 
 // Initialize and start the app so that we have access to Oracles, Electrum, etc.
 const app = new App();
 await app.start();
+
 
 //---------------------------------------------------------------------------
 // State

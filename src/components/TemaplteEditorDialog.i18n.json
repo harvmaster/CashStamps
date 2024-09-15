@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "en": {
+      "editTemplate": "Edit Template",
+      "name": "Name",
+      "doNot": "DO NOT",
+      "pasteCodeWarning": "paste template code here from people you do not trust and",
+      "useExternalGenerators": "use external QR Code generators (they will receive your WIF/Private Keys and can potentially steal your funds).",
+      "contactSupport": "Reach out on Telegram if you need help.",
+      "content": "Content",
+      "style": "Style",
+      "save": "Save",
+      "saveAsNew": "Save as new template",
+      "delete": "Delete"
+    },
+    "es": {
+      "editTemplate": "Editar Plantilla",
+      "name": "Nombre",
+      "doNot": "NO",
+      "pasteCodeWarning": "pegue el código de la plantilla aquí de personas que no confíes y",
+      "useExternalGenerators": "use generadores de código QR externos (que recibirán sus WIF/Llaves Privadas y pueden potencialmente robar sus fondos).",
+      "contactSupport": "Comuníquese en Telegram si necesitas ayuda.",
+      "content": "Contenido",
+      "style": "Estilo",
+      "save": "Guardar",
+      "saveAsNew": "Guardar como nueva plantilla",
+      "delete": "Eliminar"
+    }
+  }
+}

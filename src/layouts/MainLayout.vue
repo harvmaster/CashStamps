@@ -67,6 +67,19 @@
           </Suspense>
         </transition>
       </router-view>
+
+      <!-- Locale Selector -->
+      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+
+        <q-fab color="primary" icon="language" direction="up"> 
+          <q-fab-action color="primary" @click="() => setLocale('en')">
+            <h6 class="q-ma-none">🇬🇧</h6>
+          </q-fab-action>
+          <q-fab-action color="primary" @click="() => setLocale('es')">
+            <h6 class="q-ma-none">🇪🇸</h6>
+          </q-fab-action>
+        </q-fab>
+      </q-page-sticky>
     </q-page-container>
   </q-layout>
 </template>
@@ -92,6 +105,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
+
+const { locale } = useI18n();
+
+const setLocale = (newLocale: string) => {
+  locale.value = newLocale;
+};
 
 const $router = useRouter();
 const $q = useQuasar();
