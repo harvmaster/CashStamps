@@ -5,7 +5,7 @@
         class="left column q-col-gutter-y-md cursor-pointer"
         @click="$router.push('/create')"
       >
-        <div>Make Cash Stamps!</div>
+        <div class="text-center">{{ t('title') }}</div>
         <div class="q-gutter-md">
           <img class="stamp-icon" src="/icon.svg" />
           <img class="stamp-icon" src="/icon.svg" />
@@ -16,7 +16,7 @@
         class="right column q-col-gutter-y-md cursor-pointer"
         @click="$router.push('/redeem')"
       >
-        <div>Redeem my Stamp!</div>
+        <div class="text-center">{{ t('redeem') }}</div>
         <div>
           <img src="/redeem.png" />
         </div>
@@ -72,6 +72,13 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import translations from './IndexPage.i18n.json';
 
 const $router = useRouter();
+
+const { t } = useI18n({
+  useScope: 'local',
+  messages: translations.messages,
+});
 </script>

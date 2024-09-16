@@ -1,0 +1,34 @@
+{
+  "messages": {
+    "en": {
+      "installWallet": "Install a Wallet",
+      "redeemBCH": "Redeem BCH",
+      "spend": "Spend",
+      "installInstructions": {
+        "before": "Install the",
+        "wallet": "Bitcoin.com Wallet",
+        "after": "on your device."
+      },
+      "scanInstructions": "In your wallet, click the scan button and then scan your QR Code to sweep the amount into your wallet.",
+      "nearbyMerchants": "Nearby Merchants",
+      "onlineServices": "Online Services",
+      "learnMore": "Learn More",
+      "next": "Next"
+    },
+    "es": {
+      "installWallet": "Instalar una Billetera",
+      "redeemBCH": "Canjear BCH",
+      "spend": "Gastar",
+      "installInstructions": {
+        "before": "Instala la",
+        "wallet": "Billetera Bitcoin.com",
+        "after": "en tu dispositivo."
+      },
+      "scanInstructions": "En tu billetera, haz clic en el botón de escanear y luego escanea tu Código QR para transferir el monto a tu billetera.",
+      "nearbyMerchants": "Comerciantes Cercanos",
+      "onlineServices": "Servicios en Línea",
+      "learnMore": "Aprende Más",
+      "next": "Siguiente"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "messages": {
+    "en": {
+      "collection": "Collection",
+      "new": "New",
+      "importMnemonic": "Import Mnemonic",
+      "rename": "Rename",
+      "viewMnemonic": "View Mnemonic",
+      "delete": "Delete",
+      "enterNameForCollection": "Enter a name for this collection",
+      "enterSeedPhrase": "Enter your 12 word seed phrase",
+      "invalidMnemonic": "Invalid mnemonic: Must be 12 or 24 words",
+      "mnemonicImported": "Mnemonic successfully imported",
+      "renameCollection": "Rename Collection",
+      "enterNewNameForCollection": "Enter a new name for this collection",
+      "deleteConfirmation": "Are you sure you want to delete this collection?",
+      "mnemonic": "Mnemonic",
+      "noStampCollectionSelected": "No Stamp Collection Selected"
+    },
+    "es": {
+      "collection": "Colección",
+      "new": "Nuevo",
+      "importMnemonic": "Importar Mnemónico",
+      "rename": "Renombrar",
+      "viewMnemonic": "Ver Mnemónico",
+      "delete": "Eliminar",
+      "enterNameForCollection": "Ingrese un nombre para esta colección",
+      "enterSeedPhrase": "Ingrese su frase semilla de 12 palabras",
+      "invalidMnemonic": "Mnemónico inválido: Debe ser 12 o 24 palabras",
+      "mnemonicImported": "Mnemónico importado con éxito",
+      "renameCollection": "Renombrar Colección",
+      "enterNewNameForCollection": "Ingrese un nuevo nombre para esta colección",
+      "deleteConfirmation": "¿Estás seguro de que quieres eliminar esta colección?",
+      "mnemonic": "Mnemónico",
+      "noStampCollectionSelected": "No se ha seleccionado ninguna colección de sellos"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "messages": {
+    "en": {
+      "totalDue": "Total Due",
+      "claimed": "Claimed",
+      "currentStampValue": "Current Stamp Value",
+      "totalRemaining": "Total Remaining"
+    },
+    "es": {
+      "totalDue": "Total a Pagar",
+      "claimed": "Reclamado",
+      "currentStampValue": "Valor de Sello Actual",
+      "totalRemaining": "Total Restante"
+    }
+  }
+}

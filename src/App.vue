@@ -9,8 +9,15 @@
 <script setup lang="ts">
 import { onErrorCaptured } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
+
+// Set up i18n
+const { locale } = useI18n({
+  useScope: 'global',
+});
+locale.value = $q.lang.getLocale() || 'en';
 
 //-----------------------------------------------------------------------------
 // Methods

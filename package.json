@@ -18,7 +18,7 @@
     "@bitauth/libauth": "^3.0.0",
     "@developers.cash/cash-pay-server-js": "^0.15.3",
     "@electrum-cash/network": "^3.3.0",
-    "@generalprotocols/price-oracle": "^2.2.0-development.5964625527",
+    "@generalprotocols/price-oracle": "3.0.0-development.7704357227",
     "@guolao/vue-monaco-editor": "1.4.0",
     "@quasar/extras": "^1.16.4",
     "@sanity/eventsource": "^5.0.2",
@@ -30,6 +30,7 @@
     "quasar": "^2.6.0",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "^3.0.0",
+    "vue-i18n": "^10.0.1",
     "vue-router": "^4.0.0",
     "vue3-ace-editor": "^2.2.4"
   },

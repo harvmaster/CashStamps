@@ -1,6 +1,6 @@
 <template>
   <q-select
-    label="Collection"
+    :label="t('collection')"
     :options="stampCollectionsOptions"
     v-model="model"
     option-label="label"
@@ -17,13 +17,13 @@
               <q-item-section avatar>
                 <q-icon name="add" />
               </q-item-section>
-              <q-item-section>New</q-item-section>
+              <q-item-section>{{ t('new') }}</q-item-section>
             </q-item>
             <q-item clickable v-close-popup @click="onImportCollection">
               <q-item-section avatar>
                 <q-icon name="create" />
               </q-item-section>
-              <q-item-section>Import Mnemonic</q-item-section>
+              <q-item-section>{{ t('importMnemonic') }}</q-item-section>
             </q-item>
           </q-list>
         </q-menu>
@@ -31,7 +31,7 @@
     </template>
     <template v-slot:after>
       <q-btn round flat icon="edit" @click="onRenameCollection">
-        <q-tooltip>Rename</q-tooltip>
+        <q-tooltip>{{ t('rename') }}</q-tooltip>
       </q-btn>
       <q-btn round flat icon="more_horiz">
         <q-menu>
@@ -40,13 +40,13 @@
               <q-item-section avatar>
                 <q-icon name="key" />
               </q-item-section>
-              <q-item-section>View Mnemonic</q-item-section>
+              <q-item-section>{{ t('viewMnemonic') }}</q-item-section>
             </q-item>
             <q-item clickable v-close-popup @click="onDeleteCollection">
               <q-item-section avatar>
                 <q-icon name="delete" />
               </q-item-section>
-              <q-item-section>Delete</q-item-section>
+              <q-item-section>{{ t('delete') }}</q-item-section>
             </q-item>
           </q-list>
         </q-menu>
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
 import { App } from 'src/services/app.js';
@@ -65,12 +66,20 @@ import type { StampCollection } from 'src/types.js';
 import { Satoshis } from 'src/utils/satoshis.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
+// translations
+import translations from './CollectionSelectComponent.i18n.json';
+
 interface SelectOption<T> {
   label: string;
   value: T;
 }
 
 const $q = useQuasar();
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 //---------------------------------------------------------------------------
 // State
@@ -109,8 +118,8 @@ const stampCollectionsOptions = computed(
 
 async function onNewCollection() {
   $q.dialog({
-    title: 'New',
-    message: 'Enter a name for this collection',
+    title: t('new'),
+    message: t('enterNameForCollection'),
     prompt: {
       model: '',
     },
@@ -127,8 +136,8 @@ async function onNewCollection() {
 
 async function onImportCollection() {
   $q.dialog({
-    title: 'Import mnemonic',
-    message: 'Enter your 12 word seed phrase',
+    title: t('importMnemonic'),
+    message: t('enterSeedPhrase'),
     prompt: {
       model: '',
       isValid: (mnemonic) => {
@@ -155,7 +164,7 @@ async function onImportCollection() {
       // Ensure that 12 or 24 words are entered.
       const wordCount = trimmedMnemonic.split(/\s+/).length;
       if (wordCount !== 12 && wordCount !== 24) {
-        throw new Error('Invalid mnemonic: Must be 12 or 24 words');
+        throw new Error(t('invalidMnemonic'));
       }
 
       // Initialize the Stamp Collection.
@@ -167,16 +176,13 @@ async function onImportCollection() {
       // Scan the wallet for existing nodes.
       await wallet.scan();
 
-      // Set our quantity and the default amont to zero.
+      // Set our quantity and the default amount to zero.
       let quantity = wallet.wallets.value.length;
       let amount = 0;
 
       // If there are stamps, attempt to set the amount more accurately.
       if (quantity) {
-        // await wallet.wallets.value[0].refreshHistory();
-
-        // Assume the amount based on the first ever transaction of the first ever stamp.
-        // NOTE: This is guess-work - we're making a pretty big assumption here.
+        // Assume the amount based on the first-ever transaction of the first-ever stamp.
         amount = Satoshis.fromSats(
           wallet.wallets.value[0]?.transactions.value[0]?.getOutputs()[0]
             ?.valueSatoshis || 0n
@@ -197,7 +203,7 @@ async function onImportCollection() {
 
       $q.notify({
         color: 'primary',
-        message: `Mnemonic successfully imported`,
+        message: t('mnemonicImported'),
       });
     } catch (error) {
       console.log(error);
@@ -214,8 +220,8 @@ async function onImportCollection() {
 
 async function onRenameCollection() {
   $q.dialog({
-    title: 'Rename Collection',
-    message: 'Enter a new name for this collection',
+    title: t('renameCollection'),
+    message: t('enterNewNameForCollection'),
     prompt: {
       model: '',
     },
@@ -229,8 +235,8 @@ async function onRenameCollection() {
 
 async function onDeleteCollection() {
   $q.dialog({
-    title: 'Delete',
-    message: 'Are you sure you want to delete this collection?',
+    title: t('delete'),
+    message: t('deleteConfirmation'),
     cancel: true,
     persistent: true,
   }).onOk(() => {
@@ -244,8 +250,8 @@ async function onDeleteCollection() {
 
 async function onShowMnemonicDialog() {
   $q.dialog({
-    title: 'Mnemonic',
-    message: activeCollection.value?.mnemonic || 'No Stamp Collection Selected',
+    title: t('mnemonic'),
+    message: activeCollection.value?.mnemonic || t('noStampCollectionSelected'),
   });
 }
 </script>

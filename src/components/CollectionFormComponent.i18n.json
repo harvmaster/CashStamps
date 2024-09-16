@@ -1,0 +1,16 @@
+{
+  "messages": {
+    "en": {
+      "targetAmount": "Target Amount",
+      "currency": "Currency",
+      "expiryDate": "Expiry Date (YYYY/MM/DD)",
+      "stampQuantity": "Stamp Quantity"
+    },
+    "es": {
+      "targetAmount": "Cantidad Objetivo",
+      "currency": "Moneda",
+      "expiryDate": "Fecha de Expiración (AAAA/MM/DD)",
+      "stampQuantity": "Cantidad de Sellos"
+    }
+  }
+}

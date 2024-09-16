@@ -1,0 +1,18 @@
+{
+  "messages": {
+    "en": {
+      "fundStamps": "Fund Stamps",
+      "reclaimStamps": "Reclaim Stamps",
+      "allClaimed": "All claimed",
+      "funded": "Funded",
+      "notFunded": "Not Funded"
+    },
+    "es": {
+      "fundStamps": "Financiar Sellos",
+      "reclaimStamps": "Reclamar Sellos",
+      "allClaimed": "Todo reclamado",
+      "funded": "Financiado",
+      "notFunded": "No Financiado"
+    }
+  }
+}

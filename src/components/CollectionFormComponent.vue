@@ -3,7 +3,7 @@
     <div class="col-md-4 col-12">
       <q-input
         v-model.number="model.amount"
-        :label="`Target Amount (${currencyName})`"
+        :label="`${t('targetAmount')} (${currencyName})`"
         type="number"
         :min="0"
         filled
@@ -19,7 +19,7 @@
         option-label="label"
         map-options
         emit-value
-        label="Currency"
+        :label="t('currency')"
         filled
       />
     </div>
@@ -32,7 +32,7 @@
         mask="date"
         class="col"
         placeholder="YYYY/MM/DD"
-        label="Expiry Date (YYYY/MM/DD)"
+        :label="t('expiryDate')"
       >
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -48,7 +48,7 @@
     <div class="col-md-2 col-12">
       <q-input
         v-model.number="quantityModel"
-        label="Stamp Quantity"
+        :label="t('stampQuantity')"
         type="number"
         :disable="props.wallet?.isFunded.value || false"
         :step="1"
@@ -64,10 +64,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
+
+import translations from './CollectionFormComponent.i18n.json';
 
 interface Option {
   label: string;
@@ -79,6 +82,13 @@ const model = defineModel<Required<StampCollection>>({
 });
 
 const props = defineProps<{ oracles: OraclesService; wallet: WalletHD }>();
+
+// Set up i18n
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: 'local',
+  messages: translations.messages,
+});
 
 // Get the currency name, Currencies are stored as the public key to that currency for the oracle
 const currencyName = computed(() => {

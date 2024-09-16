@@ -19,7 +19,7 @@
             flat
             icon="img:telegram.svg"
             type="a"
-            href="https://t.me/stampscash"
+            href="https://t.me/cashstamps"
             target="_blank"
           >
             <q-tooltip>Telegram</q-tooltip>
@@ -47,13 +47,22 @@
             <q-tooltip>Source Code</q-tooltip>
           </q-btn>
           <!-- FAQ -->
-          <q-btn
-            round
-            flat
-            icon="img:help.svg"
-            to="/faq"
-          >
+          <q-btn round flat icon="img:help.svg" to="/faq">
             <q-tooltip>FAQ</q-tooltip>
+          </q-btn>
+
+          <!-- Locale Selector -->
+          <q-btn round flat :label="localeIcon">
+            <q-menu auto-close>
+              <q-list style="min-width: 100px">
+                <q-item clickable @click="() => setLocale('en')">
+                  <q-item-section>🇬🇧 English</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('es')">
+                  <q-item-section>🇪🇸 Spanish</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -84,15 +93,36 @@
 }
 
 .q-toolbar a img {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 </style>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 
 const $router = useRouter();
+const { locale } = useI18n();
 const $q = useQuasar();
+
+const localeIcon = computed((): string => {
+  // Map of codes to icons
+  const icons: { [lang: string]: string } = {
+    en: '🇬🇧',
+    es: '🇪🇸',
+  };
+
+  // Get the main locale (e.g. "en" as opposed to "en-GB")
+  const localeMain = locale.value.substring(0, 2);
+
+  // Return the matching icon from our map.
+  return icons[localeMain];
+});
+
+const setLocale = (newLocale: string) => {
+  locale.value = newLocale;
+};
 </script>

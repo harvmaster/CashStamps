@@ -1,0 +1,12 @@
+{
+  "messages": {
+    "en": {
+      "title": "Make cash stamps",
+      "redeem": "Redeem"
+    },
+    "es": {
+      "title": "Hacer estampas de dinero",
+      "redeem": "Canjear"
+    }
+  }
+}
