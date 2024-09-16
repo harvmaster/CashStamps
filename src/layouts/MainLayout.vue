@@ -19,7 +19,7 @@
             flat
             icon="img:telegram.svg"
             type="a"
-            href="https://t.me/stampscash"
+            href="https://t.me/cashstamps"
             target="_blank"
           >
             <q-tooltip>Telegram</q-tooltip>
