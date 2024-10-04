@@ -29,6 +29,14 @@
           <div ref="qrElement" id="invoice-container" class="full-width" />
         </div>
       </q-card-section>
+
+      <!-- BIP70/JPP Wallets -->
+      <q-card-section class="text-center">
+        <small>
+          <div class="text-weight-bold">{{ t('paymentProtocolNotice') }}</div>
+          <div>{{ t('knownWallets') }}</div>
+        </small>
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
