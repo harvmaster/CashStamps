@@ -4,13 +4,17 @@
       "backupWarning": "Your mnemonics and stamps are stored locally and will be lost if you clear your browser's storage.",
       "saveMnemonicWarning": "Save your mnemonic somewhere safe before proceeding!",
       "scanToFund": "Scan to fill the stamps with BCH",
-      "stampsFundedSuccessfully": "Stamps funded successfully!"
+      "stampsFundedSuccessfully": "Stamps funded successfully!",
+      "paymentProtocolNotice": "NOTE: Funding requires a BIP70/JSONPaymentProtocol compatible Wallet.",
+      "knownWallets": "Known Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
     },
     "es": {
       "backupWarning": "Tus mnemónicos y sellos se almacenan localmente y se perderán si borras la caché de tu navegador.",
       "saveMnemonicWarning": "¡Guarda tu mnemónico en algún lugar seguro antes de continuar!",
       "scanToFund": "Escanea para rellenar los sellos con BCH",
-      "stampsFundedSuccessfully": "¡Sellos financiados con éxito!"
+      "stampsFundedSuccessfully": "¡Sellos financiados con éxito!",
+      "paymentProtocolNotice": "NOTA: La financiación requiere una billetera compatible con BIP70/JSONPaymentProtocol.",
+      "knownWallets": "Billeteras conocidas: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
     }
   }
 }
