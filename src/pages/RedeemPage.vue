@@ -62,19 +62,13 @@
                 </div>
 
                 <div>
-                  <a
-                    :href="walletOptions.playStore"
-                    target="_blank"
-                  >
+                  <a :href="walletOptions.playStore" target="_blank">
                     <img src="/google-play.webp" />
                   </a>
                 </div>
 
                 <div>
-                  <a
-                    :href="walletOptions.appStore"
-                    target="_blank"
-                  >
+                  <a :href="walletOptions.appStore" target="_blank">
                     <img src="/apple-store.webp" />
                   </a>
                 </div>
@@ -89,8 +83,13 @@
               <div class="flex column text-center q-col-gutter-y-lg">
                 <!-- If the Wallet supports protocol handlers (e.g. bch-wif:${wif}), show a button... -->
                 <template v-if="walletOptions.protohandler && wifURL">
-                  <div class="flex column text-center q-col-gutter-y-lg" style="width: 496px; max-width: 100%">
-                    <div class="text-weight-bold">{{ t('clickInstructions') }}</div>
+                  <div
+                    class="flex column text-center q-col-gutter-y-lg"
+                    style="width: 496px; max-width: 100%"
+                  >
+                    <div class="text-weight-bold">
+                      {{ t('clickInstructions') }}
+                    </div>
                     <div class="column q-gutter-y-lg">
                       <q-btn
                         icon="img:bch.svg"
@@ -211,23 +210,26 @@ const walletOptions = computed(() => {
   const walletQuery = $route.query['w'];
 
   // p = Payaca Wallet
-  if(walletQuery === 'p') {
+  if (walletQuery === 'p') {
     return {
-      'name': 'Paytaca Wallet',
-      'playStore': 'https://play.google.com/store/apps/details?id=com.paytaca.app',
-      'appStore': 'https://apps.apple.com/app/paytaca/id1451795432',
+      name: 'Paytaca Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=com.paytaca.app',
+      appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
       // TODO: Paytaca will be changing this to "bch-wif" soon.
-      'protohandler': 'bitcoincash',
-    }
+      protohandler: 'bitcoincash',
+    };
   }
 
   // Default (Bitcoin.com)
   return {
-    'name': 'Bitcoin.com Wallet',
-    'playStore': 'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
-    'appStore': 'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
-    'protohandler': ''
-  }
+    name: 'Bitcoin.com Wallet',
+    playStore:
+      'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
+    appStore:
+      'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
+    protohandler: '',
+  };
 });
 
 const wifURL = computed(() => {
