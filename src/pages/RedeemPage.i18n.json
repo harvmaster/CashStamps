@@ -6,9 +6,10 @@
       "spend": "Spend",
       "installInstructions": {
         "before": "Install the",
-        "wallet": "Bitcoin.com Wallet",
         "after": "on your device."
       },
+      "clickInstructions": "Click the button below to redeem the BCH into your wallet",
+      "sweepButton": "Sweep into wallet!",
       "scanInstructions": "In your wallet, click the scan button and then scan your QR Code to sweep the amount into your wallet.",
       "nearbyMerchants": "Nearby Merchants",
       "onlineServices": "Online Services",
@@ -21,9 +22,10 @@
       "spend": "Gastar",
       "installInstructions": {
         "before": "Instala la",
-        "wallet": "Billetera Bitcoin.com",
         "after": "en tu dispositivo."
       },
+      "clickInstructions": "Haz clic en el botón de abajo para canjear el BCH en tu billetera",
+      "sweepButton": "¡Barrido en la billetera!",
       "scanInstructions": "En tu billetera, haz clic en el botón de escanear y luego escanea tu Código QR para transferir el monto a tu billetera.",
       "nearbyMerchants": "Comerciantes Cercanos",
       "onlineServices": "Servicios en Línea",

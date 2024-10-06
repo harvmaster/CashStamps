@@ -55,26 +55,20 @@
               <div class="flex column text-center q-col-gutter-y-lg">
                 <div class="text-weight-bold">
                   {{ t('installInstructions.before') }}
-                  <span class="text-primary">{{
-                    t('installInstructions.wallet')
-                  }}</span>
+                  <span class="text-primary">
+                    {{ walletOptions.name }}
+                  </span>
                   {{ t('installInstructions.after') }}
                 </div>
 
                 <div>
-                  <a
-                    href="https://play.google.com/store/apps/details?id=com.bitcoin.mwallet"
-                    target="_blank"
-                  >
+                  <a :href="walletOptions.playStore" target="_blank">
                     <img src="/google-play.webp" />
                   </a>
                 </div>
 
                 <div>
-                  <a
-                    href="https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728"
-                    target="_blank"
-                  >
+                  <a :href="walletOptions.appStore" target="_blank">
                     <img src="/apple-store.webp" />
                   </a>
                 </div>
@@ -87,13 +81,40 @@
               class="flex col-grow justify-center animated fadeIn"
             >
               <div class="flex column text-center q-col-gutter-y-lg">
-                <div class="text-weight-bold">
-                  {{ t('scanInstructions') }}
-                </div>
+                <!-- If the Wallet supports protocol handlers (e.g. bch-wif:${wif}), show a button... -->
+                <template v-if="walletOptions.protohandler && wifURL">
+                  <div
+                    class="flex column text-center q-col-gutter-y-lg"
+                    style="width: 496px; max-width: 100%"
+                  >
+                    <div class="text-weight-bold">
+                      {{ t('clickInstructions') }}
+                    </div>
+                    <div class="column q-gutter-y-lg">
+                      <q-btn
+                        icon="img:bch.svg"
+                        rounded
+                        color="accent"
+                        :label="t('sweepButton')"
+                        type="a"
+                        :href="wifURL"
+                        target="_blank"
+                        size="xl"
+                        no-caps
+                      />
+                    </div>
+                  </div>
+                </template>
+                <!-- Otherwise, let's assume it's Bitcoin.com Wallet and show a screenshot. -->
+                <template v-else>
+                  <div class="text-weight-bold">
+                    {{ t('scanInstructions') }}
+                  </div>
 
-                <div>
-                  <img src="/bitcoincom-scan.png" />
-                </div>
+                  <div>
+                    <img src="/bitcoincom-scan.png" />
+                  </div>
+                </template>
               </div>
             </div>
 
@@ -165,12 +186,14 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue';
+import { onUnmounted, computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 
 import { useI18n } from 'vue-i18n';
 import Translations from './RedeemPage.i18n.json';
 
+const $route = useRoute();
 const $q = useQuasar();
 
 $q.dark.set(true);
@@ -180,6 +203,50 @@ $q.dark.set(true);
 //-----------------------------------------------------------------------------
 
 const step = ref(1);
+
+const walletOptions = computed(() => {
+  // The query parameter indicating which wallet to use is "p".
+  // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
+  const walletQuery = $route.query['w'];
+
+  // p = Payaca Wallet
+  if (walletQuery === 'p') {
+    return {
+      name: 'Paytaca Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=com.paytaca.app',
+      appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
+      // TODO: Paytaca will be changing this to "bch-wif" soon.
+      protohandler: 'bitcoincash',
+    };
+  }
+
+  // Default (Bitcoin.com)
+  return {
+    name: 'Bitcoin.com Wallet',
+    playStore:
+      'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
+    appStore:
+      'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
+    protohandler: '',
+  };
+});
+
+const wifURL = computed(() => {
+  // Get the WIF from the URL Query Params.
+  const wif = $route.query['wif'];
+  const protohandler = walletOptions.value.protohandler;
+
+  // If no WIF was provided, return an empty string.
+  // NOTE: Empry string because "undefined" is more painful to work with in the templates.
+  if (!wif || !protohandler) {
+    return '';
+  }
+
+  // Prepend the bitcoincash: prefix.
+  // TODO: In future, once wallets support it, this MUST change to
+  return `${protohandler}:${wif}`;
+});
 
 //-----------------------------------------------------------------------------
 // I18n

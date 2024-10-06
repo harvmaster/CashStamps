@@ -13,9 +13,7 @@
           <q-input
             :label="t('payoutAddress')"
             v-model="state.payoutAddress"
-            :rules="[
-              (val) => Address.isValid(val) || t('invalidBCHAddress'),
-            ]"
+            :rules="[(val) => Address.isValid(val) || t('invalidBCHAddress')]"
             filled
           />
           <q-btn

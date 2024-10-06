@@ -12,7 +12,9 @@
         </div>
 
         <!-- Subtitle -->
-        <div class="flex justify-center text-center text-h6 text-weight-medium q-mb-md">
+        <div
+          class="flex justify-center text-center text-h6 text-weight-medium q-mb-md"
+        >
           {{ t('subtitle') }}
         </div>
 
