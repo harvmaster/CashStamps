@@ -141,26 +141,44 @@ export const compileTemplate = async (
 
     let replacement = '';
 
+    // Handle the @qrcode directive.
     if (split[0].toLowerCase() === '@qrcode') {
-      // Prioritize data variables and, if none exist, just use the value provided.
-      const urlArg = data[split[1]] || split[1];
-      const logoArg = data[split[2]] || split[2];
+      // Remove the @qrcode directive from the split array
+      split.shift();
 
-      replacement = await renderQrCode(urlArg, logoArg);
-    } else {
-      replacement = data[split[0]] || split[0] || '';
+      if (split.length >= 2) {
+        // The last element is always the LOGO_URL
+        const logoArg =
+          data[split[split.length - 1]] || split[split.length - 1];
 
-      // if data[split[0]] is an empty string, use the data value. The above line would ignore an empty string as a value and break some stuff
-      replacement = data[split[0]] === undefined ? replacement : data[split[0]];
+        // Join the remaining elements to form the URL, replacing any data variables
+        const urlParts = split.slice(0, -1).map((part) => data[part] || part);
+        const urlArg = urlParts.join('');
+
+        replacement = await renderQrCode(urlArg, logoArg);
+      } else {
+        // Handle the case where there aren't enough arguments
+        console.error('Not enough arguments for @qrcode directive');
+        replacement = 'ERROR: Invalid @qrcode usage';
+      }
     }
 
-    if (split[0].toLowerCase() === '@date') {
+    // Handle the @date directive
+    else if (split[0].toLowerCase() === '@date') {
       const dateArg = data[split[1]] || split[1];
       const formatArg = data[split[2]] || split[2];
 
       const date = DateTime.fromFormat(dateArg, 'yyyy-MM-dd');
 
       replacement = date.toFormat(formatArg);
+    }
+
+    // Handle other literal insertions.
+    else {
+      replacement = data[split[0]] || split[0] || '';
+
+      // if data[split[0]] is an empty string, use the data value. The above line would ignore an empty string as a value and break some stuff
+      replacement = data[split[0]] === undefined ? replacement : data[split[0]];
     }
 
     // Replace the current match in the template
