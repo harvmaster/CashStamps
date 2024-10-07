@@ -8,8 +8,8 @@
         "before": "Install the",
         "after": "on your device."
       },
-      "clickInstructions": "Click the button below to redeem the BCH into your wallet",
-      "sweepButton": "Sweep into wallet!",
+      "clickInstructions": "Click the button below to Claim your BitcoinCash",
+      "sweepButton": "Click here to redeem!",
       "scanInstructions": "In your wallet, click the scan button and then scan your QR Code to sweep the amount into your wallet.",
       "nearbyMerchants": "Nearby Merchants",
       "onlineServices": "Online Services",
@@ -24,8 +24,8 @@
         "before": "Instala la",
         "after": "en tu dispositivo."
       },
-      "clickInstructions": "Haz clic en el botón de abajo para canjear el BCH en tu billetera",
-      "sweepButton": "¡Barrido en la billetera!",
+      "clickInstructions": "Haz clic en el botón de abajo para reclamar tu BitcoinCash",
+      "sweepButton": "¡Haz clic aquí para canjear!",
       "scanInstructions": "En tu billetera, haz clic en el botón de escanear y luego escanea tu Código QR para transferir el monto a tu billetera.",
       "nearbyMerchants": "Comerciantes Cercanos",
       "onlineServices": "Servicios en Línea",

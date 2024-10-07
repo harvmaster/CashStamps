@@ -85,7 +85,7 @@
                 <template v-if="walletOptions.protohandler && wifURL">
                   <div
                     class="flex column text-center q-col-gutter-y-lg"
-                    style="width: 496px; max-width: 100%"
+                    style="max-width: 496px; width: 100%"
                   >
                     <div class="text-weight-bold">
                       {{ t('clickInstructions') }}
@@ -94,7 +94,7 @@
                       <q-btn
                         icon="img:bch.svg"
                         rounded
-                        color="accent"
+                        color="primary"
                         :label="t('sweepButton')"
                         type="a"
                         :href="wifURL"
@@ -170,7 +170,7 @@
               <q-btn
                 v-if="step < 3"
                 @click="step++"
-                color="primary"
+                :color="nextButtonColor"
                 :label="t('next')"
                 class="full-width strong"
                 size="lg"
@@ -246,6 +246,16 @@ const wifURL = computed(() => {
   // Prepend the bitcoincash: prefix.
   // TODO: In future, once wallets support it, this MUST change to
   return `${protohandler}:${wif}`;
+});
+
+const nextButtonColor = computed(() => {
+  // If we're on step 2 and we can use "click to redeem" button...
+  if (step.value === 2 && wifURL.value) {
+    // Make the next button less prominent.
+    return 'accent';
+  }
+
+  return 'primary';
 });
 
 //-----------------------------------------------------------------------------
