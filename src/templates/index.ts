@@ -10,6 +10,8 @@ import A4Horizontal3StepStyle from './Generic/A4-Horizontal3Step_style.html?raw'
 import Avery94104Content from './AveryLabels/Avery-94104_content.html?raw';
 import Avery94104PaytacaContent from './AveryLabels/Avery-94104Paytaca_content.html?raw';
 import Avery94104Style from './AveryLabels/Avery-94104_style.html?raw';
+import ArgentinaConferenceContent from './Special/ArgentinaConference_content.html?raw';
+import ArgentinaConferenceStyle from './Special/ArgentinaConference_style.html?raw';
 
 import { Template } from 'src/types.js';
 
@@ -60,6 +62,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Avery 94104 (2.5") (Paytaca)',
     template: Avery94104PaytacaContent,
     style: Avery94104Style,
+    readonly: true,
+  },
+  '4c1724f3-c9b6-41b6-b8c9-38de7b4ba99a': {
+    version: 1,
+    uuid: '4c1724f3-c9b6-41b6-b8c9-38de7b4ba99a',
+    label: 'Argentina Conference',
+    template: ArgentinaConferenceContent,
+    style: ArgentinaConferenceStyle,
     readonly: true,
   },
   // NOTE: Disabling for now as this won't be needed in newer flows.
