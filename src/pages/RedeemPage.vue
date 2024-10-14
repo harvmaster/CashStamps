@@ -54,11 +54,7 @@
             >
               <div class="flex column text-center q-col-gutter-y-lg">
                 <div class="text-weight-bold">
-                  {{ t('installInstructions.before') }}
-                  <span class="text-primary">
-                    {{ walletOptions.name }}
-                  </span>
-                  {{ t('installInstructions.after') }}
+                  {{ t('installInstructions', { wallet: walletOptions.name }) }}
                 </div>
 
                 <div>
