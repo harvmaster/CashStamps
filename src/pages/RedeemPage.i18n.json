@@ -4,10 +4,7 @@
       "installWallet": "Install a Wallet",
       "redeemBCH": "Redeem BCH",
       "spend": "Spend",
-      "installInstructions": {
-        "before": "Install the",
-        "after": "on your device."
-      },
+      "installInstructions": "First, install the {wallet} by clicking the Android or Apple icons below. If you already have {wallet} installed, click the 'Next' button below.",
       "clickInstructions": "Click the button below to Claim your BitcoinCash",
       "sweepButton": "Click here to redeem!",
       "scanInstructions": "In your wallet, click the scan button and then scan your QR Code to sweep the amount into your wallet.",
@@ -20,10 +17,7 @@
       "installWallet": "Instalar una Billetera",
       "redeemBCH": "Canjear BCH",
       "spend": "Gastar",
-      "installInstructions": {
-        "before": "Instala la",
-        "after": "en tu dispositivo."
-      },
+      "installInstructions": "Primero, instala {wallet} haciendo clic en los íconos de Android o Apple a continuación. Si ya tienes {wallet} instalado, haz clic en el botón 'Siguiente' a continuación.",
       "clickInstructions": "Haz clic en el botón de abajo para reclamar tu BitcoinCash",
       "sweepButton": "¡Haz clic aquí para canjear!",
       "scanInstructions": "En tu billetera, haz clic en el botón de escanear y luego escanea tu Código QR para transferir el monto a tu billetera.",
