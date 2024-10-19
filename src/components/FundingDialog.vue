@@ -178,6 +178,41 @@ async function generateQrCode() {
 
   // Create the QR code by sending request to CashPayServer
   await invoice.create();
+
+  // Apply Paytaca Watchtower Hack.
+  try {
+    await paytacaWatchtowerHack();
+  } catch(error) {
+    console.warn(`Failed to apply Paytaca Hack: ${error}`);
+  }
+}
+
+// HACK: As of 2024-10-20, Paytaca tracks addresses via its watchtower.
+//       Addresses MUST be subscribed to before a balance will be shown.
+//       The wallet, when sweeping, does subscribe but does not reflect the balance right away.
+//       As a work-around, we subscribe here instead PRIOR to funding.
+//       Otherwise, first attempts at sweeping via Paytaca WILL fail.
+async function paytacaWatchtowerHack() {
+  // Get the addresses for each wallet.
+  const addresses = props.wallet.wallets.value.map((wallet) =>
+    wallet.getAddress()
+  );
+
+  // Call the watchtower subscribe endpoint for each address.
+  const subscribePromises = addresses.map((address) => {
+    return fetch('https://watchtower.cash/api/subscription/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address,
+      }),
+    });
+  });
+
+  // Wait for all subscribe promises to complete.
+  await Promise.all(subscribePromises);
 }
 
 // Vue function to allow parent component to call toggleVisible
