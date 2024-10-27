@@ -205,6 +205,18 @@ const walletOptions = computed(() => {
   // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
   const walletQuery = $route.query['w'];
 
+  // f = Flowee Wallet
+  if (walletQuery === 'f') {
+    return {
+      name: 'Flowee Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=org.flowee.pay',
+      // NOTE: For Apple, default to Paytaca (for now).
+      appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
+      protohandler: 'bch-wif',
+    };
+  }
+
   // p = Payaca Wallet
   if (walletQuery === 'p') {
     return {
