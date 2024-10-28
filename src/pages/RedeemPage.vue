@@ -57,13 +57,13 @@
                   {{ t('installInstructions', { wallet: walletOptions.name }) }}
                 </div>
 
-                <div>
+                <div v-if="walletOptions.playStore">
                   <a :href="walletOptions.playStore" target="_blank">
                     <img src="/google-play.webp" />
                   </a>
                 </div>
 
-                <div>
+                <div v-if="walletOptions.appStore">
                   <a :href="walletOptions.appStore" target="_blank">
                     <img src="/apple-store.webp" />
                   </a>
@@ -189,6 +189,13 @@ import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import Translations from './RedeemPage.i18n.json';
 
+interface WalletOptions {
+  name: string;
+  playStore?: string;
+  appStore?: string;
+  protohandler: string;
+}
+
 const $route = useRoute();
 const $q = useQuasar();
 
@@ -201,43 +208,74 @@ $q.dark.set(true);
 const step = ref(1);
 
 const walletOptions = computed(() => {
-  // The query parameter indicating which wallet to use is "p".
-  // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
-  const walletQuery = $route.query['w'];
-
-  // f = Flowee Wallet
-  if (walletQuery === 'f') {
-    return {
+  // Define our list of wallets.
+  // NOTE: We use a single letter to identify wallets to keep the URL short.
+  const wallets: { [key: string]: WalletOptions } = {
+    'b':{
+      name: 'Bitcoin.com Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
+      appStore:
+        'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
+      protohandler: '',
+    },
+    'f': {
       name: 'Flowee Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=org.flowee.pay',
-      // NOTE: For Apple, default to Paytaca (for now).
-      appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
       protohandler: 'bch-wif',
-    };
-  }
-
-  // p = Payaca Wallet
-  if (walletQuery === 'p') {
-    return {
+    },
+    'p': {
       name: 'Paytaca Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=com.paytaca.app',
       appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
       // TODO: Paytaca will be changing this to "bch-wif" soon.
       protohandler: 'bitcoincash',
-    };
+    },
+    's': {
+      name: 'Selene Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=cash.selene.app',
+      appStore: 'https://apps.apple.com/app/selene-wallet-bitcoin-cash/id6449441422',
+      protohandler: 'bch-wif',
+    },
+    'z': {
+      name: 'ZapIt Wallet',
+      playStore:
+        'https://play.google.com/store/apps/details?id=io.wallet.zapit',
+      appStore: 'https://apps.apple.com/in/app/zapit-io/id1558433083',
+      protohandler: 'bch-wif',
+    }
   }
 
-  // Default (Bitcoin.com)
-  return {
-    name: 'Bitcoin.com Wallet',
-    playStore:
-      'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
-    appStore:
-      'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
-    protohandler: '',
-  };
+  // The query parameter indicating which wallet to use is "w".
+  // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
+  const walletQuery = $route.query['w'] as string;
+
+  // Get the wallet to use.
+  const wallet = wallets[walletQuery];
+
+  // If an invalid wallet was specified...
+  if(!wallet) {
+    // Default to Bitcoin.com.
+    return wallets['b'];
+  }
+
+  // If this is an iOS device, but there is no AppStore link for this wallet....
+  if(!wallet.appStore && $q.platform.is.ios) {
+    // Default to Paytaca.
+    return wallets['p'];
+  }
+
+  // If this is an Android device, but there is no Google Play link for this wallet....
+  if(!wallet.playStore && $q.platform.is.android) {
+    // Default to Paytaca.
+    return wallets['p'];
+  }
+
+  // Return the specified wallet.
+  return wallet;
 });
 
 const wifURL = computed(() => {
