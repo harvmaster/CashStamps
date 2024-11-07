@@ -10,6 +10,8 @@ import A4Horizontal3StepStyle from './Generic/A4-Horizontal3Step_style.html?raw'
 import Avery94104Content from './AveryLabels/Avery-94104_content.html?raw';
 import Avery94104PaytacaContent from './AveryLabels/Avery-94104Paytaca_content.html?raw';
 import Avery94104Style from './AveryLabels/Avery-94104_style.html?raw';
+import BCHFest2024Content from './Special/BCHFest2024_content.html?raw';
+import BCHFest2024Style from './Special/BCHFest2024_style.html?raw';
 import HalloweenPaytacaContent from './Special/HalloweenPaytaca_content.html?raw';
 import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 import ArgentinaConferenceContent from './Special/ArgentinaConference_content.html?raw';
@@ -76,6 +78,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     readonly: true,
   },
   */
+  'fb71b38d-cb02-4c52-b761-5732a8d7c53c': {
+    version: 1,
+    uuid: 'fb71b38d-cb02-4c52-b761-5732a8d7c53c',
+    label: 'BCH Fest 2024 (Paytaca)',
+    template: BCHFest2024Content,
+    style: BCHFest2024Style,
+    readonly: true,
+  },
   '20604326-745f-4e09-ac05-bce4df85906a': {
     version: 1,
     uuid: '20604326-745f-4e09-ac05-bce4df85906a',
