@@ -2,20 +2,24 @@ export { default as PageTemplate } from './PageTemplate.html?raw';
 import A4BasicContent from './Generic/A4-Basic_content.html?raw';
 import A4BasicPaytacaContent from './Generic/A4-BasicPaytaca_content.html?raw';
 import A4BasicStyle from './Generic/A4-Basic_style.html?raw';
+import FloweeContent from './Generic/Flowee_content.html?raw';
+import FloweeStyle from './Generic/Flowee_style.html?raw';
+import PaytacaContent from './Generic/Paytaca_content.html?raw';
+import PaytacaStyle from './Generic/Paytaca_style.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
-import A4Horizontal3StepContent from './Generic/A4-Horizontal3Step_content.html?raw';
-import A4Horizontal3StepStyle from './Generic/A4-Horizontal3Step_style.html?raw';
 import Avery94104Content from './AveryLabels/Avery-94104_content.html?raw';
 import Avery94104PaytacaContent from './AveryLabels/Avery-94104Paytaca_content.html?raw';
 import Avery94104Style from './AveryLabels/Avery-94104_style.html?raw';
 import BCHFest2024Content from './Special/BCHFest2024_content.html?raw';
 import BCHFest2024Style from './Special/BCHFest2024_style.html?raw';
+import ThanksgivingPaytacaContent from './Special/ThanksgivingPaytaca_content.html?raw';
+import ThanksgivingPaytacaStyle from './Special/ThanksgivingPaytaca_style.html?raw';
+import ThanksgivingFloweeContent from './Special/ThanksgivingFlowee_content.html?raw';
+import ThanksgivingFloweeStyle from './Special/ThanksgivingFlowee_style.html?raw';
 import HalloweenPaytacaContent from './Special/HalloweenPaytaca_content.html?raw';
 import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
-import ArgentinaConferenceContent from './Special/ArgentinaConference_content.html?raw';
-import ArgentinaConferenceStyle from './Special/ArgentinaConference_style.html?raw';
 
 import { Template } from 'src/types.js';
 
@@ -26,6 +30,38 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'A4 - Basic',
     template: A4BasicContent,
     style: A4BasicStyle,
+    readonly: true,
+  },
+  'a8702429-f56a-46fb-bf50-2f5dc05b7c79': {
+    version: 1,
+    uuid: 'a8702429-f56a-46fb-bf50-2f5dc05b7c79',
+    label: 'Bizcard (Flowee)',
+    template: FloweeContent,
+    style: FloweeStyle,
+    readonly: true,
+  },
+  '68236ba6-a092-4927-90b1-409851ce5973': {
+    version: 1,
+    uuid: '68236ba6-a092-4927-90b1-409851ce5973',
+    label: 'Bizcard (Paytaca)',
+    template: PaytacaContent,
+    style: PaytacaStyle,
+    readonly: true,
+  },
+  '2ac69926-b494-440a-b45d-346dca269183': {
+    version: 1,
+    uuid: '2ac69926-b494-440a-b45d-346dca269183',
+    label: 'Bizcard - Thanksgiving (Flowee)',
+    template: ThanksgivingFloweeContent,
+    style: ThanksgivingFloweeStyle,
+    readonly: true,
+  },
+  'e99ed564-4106-4f3e-96ef-7f6c58ed9e8c': {
+    version: 1,
+    uuid: 'e99ed564-4106-4f3e-96ef-7f6c58ed9e8c',
+    label: 'Bizcard - Thanksgiving (Paytaca)',
+    template: ThanksgivingPaytacaContent,
+    style: ThanksgivingPaytacaStyle,
     readonly: true,
   },
   '1962b0dd-9857-464c-a435-8262d0cfe91a': {
@@ -68,16 +104,6 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     style: Avery94104Style,
     readonly: true,
   },
-  /*
-  '4c1724f3-c9b6-41b6-b8c9-38de7b4ba99a': {
-    version: 1,
-    uuid: '4c1724f3-c9b6-41b6-b8c9-38de7b4ba99a',
-    label: 'Argentina Conference',
-    template: ArgentinaConferenceContent,
-    style: ArgentinaConferenceStyle,
-    readonly: true,
-  },
-  */
   'fb71b38d-cb02-4c52-b761-5732a8d7c53c': {
     version: 1,
     uuid: 'fb71b38d-cb02-4c52-b761-5732a8d7c53c',
@@ -94,15 +120,4 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     style: HalloweenPaytacaStyle,
     readonly: true,
   },
-  // NOTE: Disabling for now as this won't be needed in newer flows.
-  /*
-  '8187b105-c778-4496-8d8f-080c74445e88': {
-    version: 1,
-    uuid: '8187b105-c778-4496-8d8f-080c74445e88',
-    label: 'A4 - Horizontal - 3 Step',
-    template: A4Horizontal3StepContent,
-    style: A4Horizontal3StepStyle,
-    readonly: true,
-  },20604326-745f-4e09-ac05-bce4df85906a
-  */
 };
