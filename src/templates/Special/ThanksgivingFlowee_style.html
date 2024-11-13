@@ -1,0 +1,182 @@
+<style>
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+
+    /*
+    Set your paper size here
+
+    Default: A4
+      A4 Paper is 210mm x 297mm
+      A3 Paper is 297mm x 420mm
+      Letter Paper is 216mm x 279mm
+    */
+
+    /* Computed size helpers in mm */
+    --paper-width-mm: 8.5in;
+    --paper-height-mm: 11in;
+
+    --paper-margin-x: 0.75in;
+    --paper-margin-y: 0.5in;
+
+    /* Page is the internal usable space (i.e. with margins subtracted). */
+    --page-width-mm: calc(var(--paper-width-mm) - var(--paper-margin-x) * 2);
+    --page-height-mm: calc(var(--paper-height-mm) - var(--paper-margin-y) * 2);
+
+    --items-per-row: 2;
+    --rows-per-page: 5;
+
+    --stamp-container-width: calc(var(--page-width-mm) / var(--items-per-row));
+    --stamp-container-height: calc(
+      var(--page-height-mm) / var(--rows-per-page)
+    );
+
+    --stamp-inner-height-mm: 2in;
+    --stamp-inner-width-mm: 3.5in;
+
+    /* Stamp decoration */
+    --padding-size: 7mm;
+  }
+
+  /**
+   * Page Settings
+   */
+  @page {
+    size: letter;
+    /* Chrome sets own margins, we change these printer settings */
+    margin-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    margin-bottom: 0;
+    margin-left: var(--paper-margin-x);
+    margin-right: var(--paper-margin-x);
+  }
+
+  body {
+    width: var(--page-width-mm);
+    min-height: var(--paper-height-mm);
+    padding-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    padding-bottom: 0;
+    padding-left: var(--paper-margin-x);
+    padding-right: var(--paper-margin-x);
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  @media print {
+    body {
+      width: var(--page-width-mm);
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .stamp-container {
+    /* Set this as a block element */
+    display: block;
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Stamp size */
+    width: var(--stamp-container-width);
+    height: var(--stamp-container-height);
+
+    /* Stop stamps from being broken in half between pages */
+    break-inside: avoid;
+
+    /* Center the stamp inside of the stamp container */
+    display: grid;
+    align-items: start;
+    justify-items: center;
+  }
+
+  .stamp-inner {
+    background-image: url('/templates/thanksgiving-flowee.png');
+    background-size: cover; /* Use 'contain' if you don't want cropping */
+    background-position: center; /* Center the image within the container */
+    background-repeat: no-repeat; /* Prevent repeating of the background */
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Set stamp size */
+    width: var(--stamp-inner-width-mm);
+    height: var(--stamp-inner-height-mm);
+
+    /* Define layout inside of the stamp */
+    /*
+    Stamp content is laid out as follows on this template:
+    - QR Code
+    - Stamp Value
+    - Footer
+    */
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 1fr;
+    align-items: space-between;
+
+    /* Allow us to float the claimed badge at the top right */
+    position: relative;
+  }
+
+  .title-primary {
+    font-size: 32px;
+    font-weight: bold;
+  }
+
+  .primary {
+    color: #46ba4f;
+  }
+
+  .secondary {
+    color: #46ba4f;
+  }
+
+  .text-bold {
+    font-weight: bold;
+  }
+
+  .text-muted {
+    color: #686868;
+  }
+
+  .text-sm {
+    font-size: 12px;
+  }
+
+  .qr-container {
+    position: absolute;
+    right: 0.64cm;
+    bottom: 0.55cm;
+  }
+
+  .qr-code {
+    width: 30mm !important;
+    height: 30mm !important;
+  }
+
+  .stamp-expiry {
+    position: absolute;
+    bottom: 0.175cm;
+    left: 2.75cm;
+    font-size: 7.5px;
+    font-weight: bold;
+  }
+
+  .row-contanier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .social-media-icon {
+    width: 1.5em;
+    height: 1.5em;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .currency {
+    font-size: 1.75rem;
+  }
+</style>
