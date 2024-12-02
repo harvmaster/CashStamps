@@ -259,7 +259,7 @@ const walletOptions = computed(() => {
   // If an invalid wallet was specified...
   if(!wallet) {
     // Default to Bitcoin.com.
-    return wallets['b'];
+    return wallets['s'];
   }
 
   // If this is an iOS device, but there is no AppStore link for this wallet....

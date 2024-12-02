@@ -6,6 +6,8 @@ import FloweeContent from './Generic/Flowee_content.html?raw';
 import FloweeStyle from './Generic/Flowee_style.html?raw';
 import PaytacaContent from './Generic/Paytaca_content.html?raw';
 import PaytacaStyle from './Generic/Paytaca_style.html?raw';
+import SeleneContent from './Generic/Selene_content.html?raw';
+import SeleneStyle from './Generic/Selene_style.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
@@ -14,6 +16,12 @@ import Avery94104PaytacaContent from './AveryLabels/Avery-94104Paytaca_content.h
 import Avery94104Style from './AveryLabels/Avery-94104_style.html?raw';
 import BCHFest2024Content from './Special/BCHFest2024_content.html?raw';
 import BCHFest2024Style from './Special/BCHFest2024_style.html?raw';
+import ChristmasFloweeContent from './Special/ChristmasFlowee_content.html?raw';
+import ChristmasFloweeStyle from './Special/ChristmasFlowee_style.html?raw';
+import ChristmasPaytacaContent from './Special/ChristmasPaytaca_content.html?raw';
+import ChristmasPaytacaStyle from './Special/ChristmasPaytaca_style.html?raw';
+import ChristmasSeleneContent from './Special/ChristmasSelene_content.html?raw';
+import ChristmasSeleneStyle from './Special/ChristmasSelene_style.html?raw';
 import ThanksgivingPaytacaContent from './Special/ThanksgivingPaytaca_content.html?raw';
 import ThanksgivingPaytacaStyle from './Special/ThanksgivingPaytaca_style.html?raw';
 import ThanksgivingFloweeContent from './Special/ThanksgivingFlowee_content.html?raw';
@@ -46,6 +54,38 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard (Paytaca)',
     template: PaytacaContent,
     style: PaytacaStyle,
+    readonly: true,
+  },
+  '92d3fa79-bbbb-42ed-8d7e-6ad588584371': {
+    version: 1,
+    uuid: '92d3fa79-bbbb-42ed-8d7e-6ad588584371',
+    label: 'Bizcard (Selene)',
+    template: SeleneContent,
+    style: SeleneStyle,
+    readonly: true,
+  },
+  '2858c961-fff8-4a9f-8ca3-8697a1928af8': {
+    version: 1,
+    uuid: '2858c961-fff8-4a9f-8ca3-8697a1928af8',
+    label: 'Bizcard - Christmas (Flowee)',
+    template: ChristmasFloweeContent,
+    style: ChristmasFloweeStyle,
+    readonly: true,
+  },
+  '8d16785e-2440-44ad-9a06-7b05117f22d9': {
+    version: 1,
+    uuid: '8d16785e-2440-44ad-9a06-7b05117f22d9',
+    label: 'Bizcard - Christmas (Paytaca)',
+    template: ChristmasPaytacaContent,
+    style: ChristmasPaytacaStyle,
+    readonly: true,
+  },
+  '8d4eb862-db90-49c3-89f6-8a15e93fcf51': {
+    version: 1,
+    uuid: '8d4eb862-db90-49c3-89f6-8a15e93fcf51',
+    label: 'Bizcard - Christmas (Selene)',
+    template: ChristmasSeleneContent,
+    style: ChristmasSeleneStyle,
     readonly: true,
   },
   '2ac69926-b494-440a-b45d-346dca269183': {
