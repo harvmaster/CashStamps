@@ -56,6 +56,12 @@
                 <div class="text-weight-bold">
                   {{ t('installInstructions', { wallet: walletOptions.name }) }}
                 </div>
+                <div class="text-weight-bold">
+                  {{ t('returnInstructions', { wallet: walletOptions.name }) }}
+                </div>
+                <div>
+                  <small>{{ t('skipInstructions', { wallet: walletOptions.name }) }}</small>
+                </div>
 
                 <div v-if="walletOptions.playStore">
                   <a :href="walletOptions.playStore" target="_blank">
@@ -257,21 +263,24 @@ const walletOptions = computed(() => {
   const wallet = wallets[walletQuery];
 
   // If an invalid wallet was specified...
+  // NOTE: We default to Selene because:
+  //       1. It works on both iOS and Android
+  //       2. It fetches from Electrum directly (Paytaca has a watchtower bug currently).
   if(!wallet) {
-    // Default to Bitcoin.com.
+    // Default to Selene.
     return wallets['s'];
   }
 
   // If this is an iOS device, but there is no AppStore link for this wallet....
   if(!wallet.appStore && $q.platform.is.ios) {
-    // Default to Paytaca.
-    return wallets['p'];
+    // Default to Selene.
+    return wallets['s'];
   }
 
   // If this is an Android device, but there is no Google Play link for this wallet....
   if(!wallet.playStore && $q.platform.is.android) {
-    // Default to Paytaca.
-    return wallets['p'];
+    // Default to Selene.
+    return wallets['s'];
   }
 
   // Return the specified wallet.
