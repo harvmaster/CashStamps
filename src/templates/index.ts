@@ -8,6 +8,8 @@ import PaytacaContent from './Generic/Paytaca_content.html?raw';
 import PaytacaStyle from './Generic/Paytaca_style.html?raw';
 import SeleneContent from './Generic/Selene_content.html?raw';
 import SeleneStyle from './Generic/Selene_style.html?raw';
+import SeleneGadsdenContent from './Generic/SeleneGadsden_content.html?raw';
+import SeleneGadsdenStyle from './Generic/SeleneGadsden_style.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
@@ -64,6 +66,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard (Selene)',
     template: SeleneContent,
     style: SeleneStyle,
+    readonly: true,
+  },
+  'e652a61a-c6f5-45af-8f4e-fab344e823fc': {
+    version: 1,
+    uuid: 'e652a61a-c6f5-45af-8f4e-fab344e823fc',
+    label: 'Bizcard (Selene - Gadsden)',
+    template: SeleneGadsdenContent,
+    style: SeleneGadsdenStyle,
     readonly: true,
   },
   '2858c961-fff8-4a9f-8ca3-8697a1928af8': {
