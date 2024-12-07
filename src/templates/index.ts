@@ -22,6 +22,8 @@ import ChristmasPaytacaContent from './Special/ChristmasPaytaca_content.html?raw
 import ChristmasPaytacaStyle from './Special/ChristmasPaytaca_style.html?raw';
 import ChristmasSeleneContent from './Special/ChristmasSelene_content.html?raw';
 import ChristmasSeleneStyle from './Special/ChristmasSelene_style.html?raw';
+import AFOGSeleneContent from './Special/AFOGSelene_content.html?raw';
+import AFOGSeleneStyle from './Special/AFOGSelene_style.html?raw';
 import ThanksgivingPaytacaContent from './Special/ThanksgivingPaytaca_content.html?raw';
 import ThanksgivingPaytacaStyle from './Special/ThanksgivingPaytaca_style.html?raw';
 import ThanksgivingFloweeContent from './Special/ThanksgivingFlowee_content.html?raw';
@@ -86,6 +88,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard - Christmas (Selene)',
     template: ChristmasSeleneContent,
     style: ChristmasSeleneStyle,
+    readonly: true,
+  },
+  '7a3c5f31-fca6-4734-bb42-53adbe3b81dd': {
+    version: 1,
+    uuid: '7a3c5f31-fca6-4734-bb42-53adbe3b81dd',
+    label: 'Bizcard - A Fifth of Gaming (Selene)',
+    template: AFOGSeleneContent,
+    style: AFOGSeleneStyle,
     readonly: true,
   },
   '2ac69926-b494-440a-b45d-346dca269183': {
