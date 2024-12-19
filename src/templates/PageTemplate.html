@@ -9,6 +9,7 @@
       body {
         margin: 0;
         padding: 0;
+        background-color: #fff;
       }
 
       /* Avoid printing a stamp across pages. */
@@ -18,6 +19,12 @@
 
       .stamp-container.claimed {
         filter: grayscale(100%);
+      }
+
+      @media print {
+        body {
+          background-color: transparent;
+        }
       }
     </style>
     {{ cutlines }}
