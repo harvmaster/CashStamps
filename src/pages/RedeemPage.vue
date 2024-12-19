@@ -141,6 +141,8 @@
                     size="xl"
                     no-caps
                   />
+                  <!--
+                  NOTE: As of 2024-12-19, this service is down.
                   <q-btn
                     icon="img:bch.svg"
                     rounded
@@ -152,6 +154,7 @@
                     size="xl"
                     no-caps
                   />
+                  -->
                   <q-btn
                     icon="img:info.svg"
                     rounded
