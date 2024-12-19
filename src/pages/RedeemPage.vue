@@ -191,7 +191,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, computed, ref } from 'vue';
+import { onMounted, onUnmounted, computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 
@@ -329,6 +329,16 @@ const { t } = useI18n({
 //-----------------------------------------------------------------------------
 // Initialization/Lifecycle
 //-----------------------------------------------------------------------------
+
+onMounted(() => {
+  if($route.query['a']) {
+    if(walletOptions.value.playStore && $q.platform.is.android) {
+      window.location.href = walletOptions.value.playStore
+    } else if (walletOptions.value.appStore && $q.platform.is.ios) {
+      window.location.href = walletOptions.value.appStore
+    }
+  }
+});
 
 onUnmounted(() => {
   // HACK: Disable dark mode as we leave this page.
