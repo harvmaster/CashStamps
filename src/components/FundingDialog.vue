@@ -182,7 +182,7 @@ async function generateQrCode() {
   // Apply Paytaca Watchtower Hack.
   try {
     await paytacaWatchtowerHack();
-  } catch(error) {
+  } catch (error) {
     console.warn(`Failed to apply Paytaca Hack: ${error}`);
   }
 }

@@ -60,7 +60,9 @@
                   {{ t('returnInstructions', { wallet: walletOptions.name }) }}
                 </div>
                 <div>
-                  <small>{{ t('skipInstructions', { wallet: walletOptions.name }) }}</small>
+                  <small>{{
+                    t('skipInstructions', { wallet: walletOptions.name })
+                  }}</small>
                 </div>
 
                 <div v-if="walletOptions.playStore">
@@ -220,7 +222,7 @@ const walletOptions = computed(() => {
   // Define our list of wallets.
   // NOTE: We use a single letter to identify wallets to keep the URL short.
   const wallets: { [key: string]: WalletOptions } = {
-    'b':{
+    b: {
       name: 'Bitcoin.com Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=com.bitcoin.mwallet',
@@ -228,13 +230,12 @@ const walletOptions = computed(() => {
         'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
       protohandler: '',
     },
-    'f': {
+    f: {
       name: 'Flowee Wallet',
-      playStore:
-        'https://play.google.com/store/apps/details?id=org.flowee.pay',
+      playStore: 'https://play.google.com/store/apps/details?id=org.flowee.pay',
       protohandler: 'bch-wif',
     },
-    'p': {
+    p: {
       name: 'Paytaca Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=com.paytaca.app',
@@ -242,21 +243,22 @@ const walletOptions = computed(() => {
       // TODO: Paytaca will be changing this to "bch-wif" soon.
       protohandler: 'bitcoincash',
     },
-    's': {
+    s: {
       name: 'Selene Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=cash.selene.app',
-      appStore: 'https://apps.apple.com/app/selene-wallet-bitcoin-cash/id6449441422',
+      appStore:
+        'https://apps.apple.com/app/selene-wallet-bitcoin-cash/id6449441422',
       protohandler: 'bch-wif',
     },
-    'z': {
+    z: {
       name: 'ZapIt Wallet',
       playStore:
         'https://play.google.com/store/apps/details?id=io.wallet.zapit',
       appStore: 'https://apps.apple.com/in/app/zapit-io/id1558433083',
       protohandler: 'bch-wif',
-    }
-  }
+    },
+  };
 
   // The query parameter indicating which wallet to use is "w".
   // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
@@ -269,19 +271,19 @@ const walletOptions = computed(() => {
   // NOTE: We default to Selene because:
   //       1. It works on both iOS and Android
   //       2. It fetches from Electrum directly (Paytaca has a watchtower bug currently).
-  if(!wallet) {
+  if (!wallet) {
     // Default to Selene.
     return wallets['s'];
   }
 
   // If this is an iOS device, but there is no AppStore link for this wallet....
-  if(!wallet.appStore && $q.platform.is.ios) {
+  if (!wallet.appStore && $q.platform.is.ios) {
     // Default to Selene.
     return wallets['s'];
   }
 
   // If this is an Android device, but there is no Google Play link for this wallet....
-  if(!wallet.playStore && $q.platform.is.android) {
+  if (!wallet.playStore && $q.platform.is.android) {
     // Default to Selene.
     return wallets['s'];
   }
@@ -331,11 +333,11 @@ const { t } = useI18n({
 //-----------------------------------------------------------------------------
 
 onMounted(() => {
-  if($route.query['a']) {
-    if(walletOptions.value.playStore && $q.platform.is.android) {
-      window.location.href = walletOptions.value.playStore
+  if ($route.query['a']) {
+    if (walletOptions.value.playStore && $q.platform.is.android) {
+      window.location.href = walletOptions.value.playStore;
     } else if (walletOptions.value.appStore && $q.platform.is.ios) {
-      window.location.href = walletOptions.value.appStore
+      window.location.href = walletOptions.value.appStore;
     }
   }
 });

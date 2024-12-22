@@ -1,0 +1,41 @@
+<div class="stamp-inner cutline">
+  <!-- Top Section -->
+  <div class="row">
+    <div class="left">
+      <div class="top-text emphasis">Congratulations!</div>
+      <div class="top-text">You've received BCH!</div>
+    </div>
+    <div class="right">
+      <div class="top-text">Powered by</div>
+      <div class="branding"><img class="logo" src="./img/logo.png" /></div>
+    </div>
+  </div>
+
+  <!-- QR Section -->
+  <div class="row">
+    <div class="left">
+      <div class="qr-container">
+        <div class="step">Step 1</div>
+        <div class="qr">
+          {{ @QRCODE https://stamps.cash/#/redeem?a=1&w=s /icons/selene.png }}
+        </div>
+        <div class="title">Install Wallet</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="qr-container">
+        <div class="step">Step 2</div>
+        <div class="qr">{{ @QRCODE bch-wif: wif /bch.svg }}</div>
+        <div class="title">Redeem</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="row">
+    <div class="left"></div>
+    <div class="right">
+      <div class="valid-until">Valid until {{ @DATE expiry DD }}</div>
+    </div>
+  </div>
+</div>
