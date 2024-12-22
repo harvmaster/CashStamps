@@ -10,6 +10,8 @@ import SeleneContent from './Generic/Selene_content.html?raw';
 import SeleneStyle from './Generic/Selene_style.html?raw';
 import SeleneGadsdenContent from './Generic/SeleneGadsden_content.html?raw';
 import SeleneGadsdenStyle from './Generic/SeleneGadsden_style.html?raw';
+import BizcardTwoQRContent from './Generic/Bizcard-TwoQR_content.html?raw';
+import BizcardTwoQRStyle from './Generic/Bizcard-TwoQR_style.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
@@ -74,6 +76,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard (Selene - Gadsden)',
     template: SeleneGadsdenContent,
     style: SeleneGadsdenStyle,
+    readonly: true,
+  },
+  'b17c9b83-2bab-48bd-904b-caba4f1eefef': {
+    version: 1,
+    uuid: 'b17c9b83-2bab-48bd-904b-caba4f1eefef',
+    label: 'Bizcard (Two QR)',
+    template: BizcardTwoQRContent,
+    style: BizcardTwoQRStyle,
     readonly: true,
   },
   '2858c961-fff8-4a9f-8ca3-8697a1928af8': {
