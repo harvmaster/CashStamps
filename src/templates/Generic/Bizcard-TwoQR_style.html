@@ -14,8 +14,8 @@
     */
 
     /* Computed size helpers in mm */
-    --paper-width: 8.5in;
-    --paper-height: 11in;
+    --paper-width: 210mm;
+    --paper-height: 297mm;
 
     --stamp-container-width: 3.5in;
     --stamp-container-height: 2in;
@@ -49,7 +49,7 @@
    * Page Settings
    */
   @page {
-    size: letter;
+    size: A4;
     /* Chrome sets own margins, we change these printer settings */
     margin-top: var(--paper-margin-y);
     /* See HACK above as to why this is zero. */
@@ -180,6 +180,13 @@
 
   .top-text {
     font-size: 12px;
+  }
+
+  .branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
   }
 
   .logo {
