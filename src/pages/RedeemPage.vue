@@ -143,20 +143,17 @@
                     size="xl"
                     no-caps
                   />
-                  <!--
-                  NOTE: As of 2024-12-19, this service is down.
                   <q-btn
                     icon="img:bch.svg"
                     rounded
                     color="accent"
                     :label="t('onlineServices')"
                     type="a"
-                    href="https://bchportal.cash/"
+                    href="https://minisatoshi.cash/ecosystem"
                     target="_blank"
                     size="xl"
                     no-caps
                   />
-                  -->
                   <q-btn
                     icon="img:info.svg"
                     rounded
