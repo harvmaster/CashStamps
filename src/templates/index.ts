@@ -11,7 +11,8 @@ import SeleneStyle from './Generic/Selene_style.html?raw';
 import SeleneGadsdenContent from './Generic/SeleneGadsden_content.html?raw';
 import SeleneGadsdenStyle from './Generic/SeleneGadsden_style.html?raw';
 import BizcardTwoQRContent from './Generic/Bizcard-TwoQR_content.html?raw';
-import BizcardTwoQRStyle from './Generic/Bizcard-TwoQR_style.html?raw';
+import BizcardTwoQRStyleLetter from './Generic/Bizcard-TwoQR_style_letter.html?raw';
+import BizcardTwoQRStyleA4 from './Generic/Bizcard-TwoQR_style_a4.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
@@ -78,12 +79,20 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     style: SeleneGadsdenStyle,
     readonly: true,
   },
+  '9c025b6b-9652-46e3-be27-fc56fe3cef95': {
+    version: 1,
+    uuid: '9c025b6b-9652-46e3-be27-fc56fe3cef95',
+    label: 'Bizcard (Two QR) (Letter)',
+    template: BizcardTwoQRContent,
+    style: BizcardTwoQRStyleLetter,
+    readonly: true,
+  },
   'b17c9b83-2bab-48bd-904b-caba4f1eefef': {
     version: 1,
     uuid: 'b17c9b83-2bab-48bd-904b-caba4f1eefef',
-    label: 'Bizcard (Two QR)',
+    label: 'Bizcard (Two QR) (A4)',
     template: BizcardTwoQRContent,
-    style: BizcardTwoQRStyle,
+    style: BizcardTwoQRStyleA4,
     readonly: true,
   },
   '2858c961-fff8-4a9f-8ca3-8697a1928af8': {
