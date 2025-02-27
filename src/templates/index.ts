@@ -13,6 +13,7 @@ import SeleneGadsdenStyle from './Generic/SeleneGadsden_style.html?raw';
 import BizcardTwoQRContent from './Generic/Bizcard-TwoQR_content.html?raw';
 import BizcardTwoQRStyleLetter from './Generic/Bizcard-TwoQR_style_letter.html?raw';
 import BizcardTwoQRStyleA4 from './Generic/Bizcard-TwoQR_style_a4.html?raw';
+import BizcardTwoQRStyleLetterLPTN from './Generic/Bizcard-TwoQR_style_letter_lptn.html?raw';
 import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
 import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
 import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
@@ -39,12 +40,20 @@ import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 import { Template } from 'src/types.js';
 
 export const builtInTemplates: { [uuid: string]: Template } = {
-  '6259722c-452c-441a-be48-d8c7c282f9a2': {
+  '9c025b6b-9652-46e3-be27-fc56fe3cef95': {
     version: 1,
-    uuid: '6259722c-452c-441a-be48-d8c7c282f9a2',
-    label: 'A4 - Basic',
-    template: A4BasicContent,
-    style: A4BasicStyle,
+    uuid: '9c025b6b-9652-46e3-be27-fc56fe3cef95',
+    label: 'Bizcard (Two QR) (Letter)',
+    template: BizcardTwoQRContent,
+    style: BizcardTwoQRStyleLetter,
+    readonly: true,
+  },
+  'b17c9b83-2bab-48bd-904b-caba4f1eefef': {
+    version: 1,
+    uuid: 'b17c9b83-2bab-48bd-904b-caba4f1eefef',
+    label: 'Bizcard (Two QR) (A4)',
+    template: BizcardTwoQRContent,
+    style: BizcardTwoQRStyleA4,
     readonly: true,
   },
   'a8702429-f56a-46fb-bf50-2f5dc05b7c79': {
@@ -77,22 +86,6 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard (Selene - Gadsden)',
     template: SeleneGadsdenContent,
     style: SeleneGadsdenStyle,
-    readonly: true,
-  },
-  '9c025b6b-9652-46e3-be27-fc56fe3cef95': {
-    version: 1,
-    uuid: '9c025b6b-9652-46e3-be27-fc56fe3cef95',
-    label: 'Bizcard (Two QR) (Letter)',
-    template: BizcardTwoQRContent,
-    style: BizcardTwoQRStyleLetter,
-    readonly: true,
-  },
-  'b17c9b83-2bab-48bd-904b-caba4f1eefef': {
-    version: 1,
-    uuid: 'b17c9b83-2bab-48bd-904b-caba4f1eefef',
-    label: 'Bizcard (Two QR) (A4)',
-    template: BizcardTwoQRContent,
-    style: BizcardTwoQRStyleA4,
     readonly: true,
   },
   '2858c961-fff8-4a9f-8ca3-8697a1928af8': {
@@ -141,6 +134,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard - Thanksgiving (Paytaca)',
     template: ThanksgivingPaytacaContent,
     style: ThanksgivingPaytacaStyle,
+    readonly: true,
+  },
+  '6259722c-452c-441a-be48-d8c7c282f9a2': {
+    version: 1,
+    uuid: '6259722c-452c-441a-be48-d8c7c282f9a2',
+    label: 'A4 - Basic',
+    template: A4BasicContent,
+    style: A4BasicStyle,
     readonly: true,
   },
   '1962b0dd-9857-464c-a435-8262d0cfe91a': {
@@ -197,6 +198,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Halloween (Paytaca)',
     template: HalloweenPaytacaContent,
     style: HalloweenPaytacaStyle,
+    readonly: true,
+  },
+  'c77c7ea4-974f-4cdc-8771-7b9bfdd8ef09': {
+    version: 1,
+    uuid: 'c77c7ea4-974f-4cdc-8771-7b9bfdd8ef09',
+    label: 'Bizcard (Two QR) (Letter) (LPTN)',
+    template: BizcardTwoQRContent,
+    style: BizcardTwoQRStyleLetterLPTN,
     readonly: true,
   },
 };
