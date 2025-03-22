@@ -1,52 +1,7 @@
 <template>
   <!-- Collection Preview -->
   <div class="inner-page">
-    <div class="q-gutter-y-md q-mb-xl">
-
-      <div class="row q-col-gutter-md">
-        <!-- Template selection -->
-        <div class="col-md-3 col-12">
-          <q-select
-            :label="t('template')"
-            :options="['BizCard']"
-            v-model="state.template"
-            @update:model-value="renderStamps"
-            dense
-            filled
-          />
-        </div>
-        <div class="col-md-3 col-6">
-          <q-select
-            :label="t('Theme')"
-            :options="['Flowee', 'Paytaca', 'Selene', 'Christmas #1', 'Christmas #2']"
-            v-model="state.theme"
-            @update:model-value="renderStamps"
-            dense
-            filled
-          />
-        </div>
-        <div class="col-md-3 col-6">
-          <q-select
-            :label="t('Use Wallet')"
-            :options="['Flowee', 'Paytaca', 'Selene']"
-            v-model="state.wallet"
-            @update:model-value="renderStamps"
-            dense
-            filled
-          />
-        </div>
-        <div class="col-md-3 col-6">
-          <q-select
-            :label="t('Paper Size')"
-            :options="['Letter', 'A4']"
-            v-model="state.paper"
-            @update:model-value="renderStamps"
-            dense
-            filled
-          />
-        </div>
-      </div>
-
+    <div class="q-col-gutter-y-md q-mb-xl">
       <div class="row">
         <!-- Controls for print/show mnemonic -->
         <div class="col-md-8 col-12 q-gutter-x-sm">
@@ -105,6 +60,53 @@
           </q-select>
         </div>
       </div>
+
+      <template v-if="state.activeTemplate.version === 2">
+        <div class="row q-col-gutter-md">
+          <div class="col-md-3 col-6">
+            <q-select
+              :label="t('Paper Size')"
+              :options="Object.keys(paperSizes)"
+              v-model="state.templateData.paperSize"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+          </div>
+          <div class="col-md-3 col-6">
+            <q-select
+              :label="t('Wallet')"
+              :options="Object.keys(wallets)"
+              v-model="state.templateData.wallet"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+          </div>
+          <div class="col-md-3 col-6">
+            <q-select
+              :label="t('Background')"
+              :options="['NA']"
+              disable
+              v-model="state.wallet"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+          </div>
+          <div class="col-md-3 col-6">
+            <q-select
+              :label="t('Language')"
+              :options="['English']"
+              disable
+              v-model="state.wallet"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 
@@ -154,6 +156,7 @@ import { debounce, exportFile } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
+import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
 import type { StampCollection, Template } from 'src/types.js';
 import { compileTemplate, formatStampValue } from 'src/utils/misc.js';
@@ -173,11 +176,47 @@ interface RenderedStamp {
   claimed: boolean;
 }
 
+const paperSizes = {
+  'A4': {
+    paperSize: 'a4',
+    paperWidth: '210mm',
+    paperHeight: '297mm',
+  },
+  'Letter': {
+    paperSize: 'letter',
+    paperWidth: '8.5in',
+    paperHeight: '11in',
+  },
+}
+
+const wallets = {
+  'Flowee': {
+    walletName: 'Flowee',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=f&wif=',
+    walletLogo: '/icons/flowee.png',
+  },
+  'Paytaca': {
+    walletName: 'Paytaca',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=p&wif=',
+    walletLogo: '/icons/paytaca.png',
+  },
+  'Selene': {
+    walletName: 'Selene',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=s&wif=',
+    walletLogo: '/icons/selene.png',
+  },
+  'ZapIt': {
+    walletName: 'ZapIt',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=z&wif=',
+    walletLogo: '/icons/zapit.png',
+  },
+}
+
 //---------------------------------------------------------------------------
 // State
 //---------------------------------------------------------------------------
 
-const emits = defineEmits(['templateSelected']);
+const emits = defineEmits(['templateSelected', 'templateDataUpdated']);
 
 const props = defineProps<{
   app: App;
@@ -197,12 +236,20 @@ const state = reactive<{
   renderedStamps: Array<RenderedStamp>;
   showClaimedStamps: boolean;
   showCutLines: boolean;
+
+  // V2 Template State
+  templateData: TemplateData;
 }>({
   loading: false,
   activeTemplate: undefined,
   renderedStamps: [],
   showClaimedStamps: true,
   showCutLines: true,
+  templateData: {
+    paperSize: 'Letter',
+    wallet: 'Selene',
+    ...props.stampCollection.templateData,
+  }
 });
 
 // Computeds.
@@ -253,6 +300,23 @@ async function onTemplateDeleted(templateToDelete: Template) {
 // Stamps and Preview
 //---------------------------------------------------------------------------
 
+function compileGlobalVariables() {
+  // To improve legibility, destructure our selected collection.
+  const { templateData } = props.stampCollection;
+
+  // Get the appropriate paper size and wallet configuration
+  const paperSizeKey = templateData?.['paperSize'] as keyof typeof paperSizes || 'Letter';
+  const walletKey = templateData?.['wallet'] as keyof typeof wallets || 'Selene';
+
+  // Define default global variables.
+  const globalVariables: Record<string, string> = {
+    ...paperSizes[paperSizeKey] || paperSizes['Letter'],
+    ...wallets[walletKey] || wallets['Selene']
+  };
+
+  return globalVariables;
+}
+
 async function renderStamps() {
   try {
     // Show the loading indicator as this can take some time (to render the QR Codes).
@@ -263,11 +327,17 @@ async function renderStamps() {
       return;
     }
 
-    // Save this as the active template UUID for this collection.
+    // Save the current template UUID as the active template UUID for this collection.
     emits('templateSelected', state.activeTemplate.uuid);
+
+    // Save the Template Data.
+    emits('templateDataUpdated', state.templateData);
 
     // To improve legibility, destructure our selected collection.
     const { amount, currency, quantity, expiry } = props.stampCollection;
+
+    // Get our global variables.
+    const globalVariables = compileGlobalVariables();
 
     // If this wallet has not been funded, manually set a quantity.
     if (!props.wallet.isFunded.value) {
@@ -290,6 +360,7 @@ async function renderStamps() {
           expiry,
           wif: wallet.toWif(),
           address: wallet.getAddress(),
+          ...globalVariables,
         }
       );
 
@@ -378,6 +449,9 @@ watch(
       throw new Error('IFrame element does not exist');
     }
 
+    // Compile the stamp CSS.
+    const stampsCSS = await compileTemplate(state.activeTemplate?.style || '', compileGlobalVariables());
+
     // Compile the stamp HTML.
     const stampsHtml = visibleStamps.value
       .map((stamp) => {
@@ -393,7 +467,7 @@ watch(
         ? '<style>.cutline { border: 1px dashed #82d853 }</style>'
         : '',
       html: stampsHtml,
-      style: state.activeTemplate?.style || '',
+      style: stampsCSS,
     });
   }, 500)
 );

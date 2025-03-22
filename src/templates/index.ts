@@ -1,4 +1,12 @@
 export { default as PageTemplate } from './PageTemplate.html?raw';
+
+// V2 Templates
+import BizcardTwoQRFront from './V2/Bizcard-TwoQR/Front.html?raw';
+import BizcardTwoQRStyle from './V2/Bizcard-TwoQR/Style.html?raw';
+import TrifoldMiniSatoshiFront from './V2/Trifold-Minisatoshi/Front.html?raw';
+import TrifoldMiniSatoshiStyle from './V2/Trifold-Minisatoshi/Style.html?raw';
+
+// V1 Templates
 import A4BasicContent from './Generic/A4-Basic_content.html?raw';
 import A4BasicPaytacaContent from './Generic/A4-BasicPaytaca_content.html?raw';
 import A4BasicStyle from './Generic/A4-Basic_style.html?raw';
@@ -40,6 +48,22 @@ import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 import { Template } from 'src/types.js';
 
 export const builtInTemplates: { [uuid: string]: Template } = {
+  '5e24043e-47aa-4cc1-ab05-7a548a18a8fd': {
+    version: 2,
+    uuid: '5e24043e-47aa-4cc1-ab05-7a548a18a8fd',
+    label: 'Bizcard - Two QR',
+    template: BizcardTwoQRFront,
+    style: BizcardTwoQRStyle,
+    readonly: true,
+  },
+  'ce702692-6070-4b4d-97d8-db4b940ab4de': {
+    version: 2,
+    uuid: 'ce702692-6070-4b4d-97d8-db4b940ab4de',
+    label: 'Trifold - Minisatoshi',
+    template: TrifoldMiniSatoshiFront,
+    style: TrifoldMiniSatoshiStyle,
+    readonly: true,
+  },
   '9c025b6b-9652-46e3-be27-fc56fe3cef95': {
     version: 1,
     uuid: '9c025b6b-9652-46e3-be27-fc56fe3cef95',

@@ -1,0 +1,47 @@
+<div class="stamp-inner cutline">
+  <div class="row">
+    <!-- Left Pane -->
+    <div class="column left-pane">
+      <div class="left-pane-content">
+        <div class="left-pane-qr-container">
+          {{ @QRCODE walletURL wif walletLogo }}
+        </div>
+        <div class="step-heading">Step 1</div>
+        <div class="step-subheading">Install Wallet</div>
+      </div>
+    </div>
+    <!-- Center Pane -->
+    <div class="column center-pane">
+      <div class="center-pane-content">
+        <p style="font-size: 14px">Congratulations!</p>
+        <p style="font-size: 12px">
+          You have found a Bitcoin Cash paper wallet!
+        </p>
+        <p>Yes, this paper is worth real money!</p>
+        <p>
+          Bitcoin Cash is a form of digital currency. It allows you to send or
+          receive any amount of money, to or from anyone in the world, anytime
+          you want, virtually for free.
+        </p>
+        <p>
+          To claim, first scan the Install Wallet QR, then hit "Scan" in the app
+          and scan the Redeem Key QR!
+        </p>
+        <p>Learn more about Bitcoin Cash at:</p>
+        <p style="font-size: 11px">https://minisatoshi.cash</p>
+      </div>
+    </div>
+    <!-- Right Pane -->
+    <div class="column right-pane">
+      <div class="right-pane-content">
+        <div class="step-heading" style="margin-top: 3mm">Step 2</div>
+        <div class="step-subheading">Redeem</div>
+        <div class="right-pane-qr-container">
+          {{ @QRCODE bch-wif: wif /bch.svg }}
+        </div>
+        <div class="do-not-expose">Do NOT expose QR to ANYONE.</div>
+        <!--<div class="valid-until"><span class="valid-until-text">Valid until {{ @DATE expiry DD }}</span></div>-->
+      </div>
+    </div>
+  </div>
+</div>

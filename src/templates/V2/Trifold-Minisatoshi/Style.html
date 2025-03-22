@@ -1,0 +1,291 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Anton&family=Anton+SC&family=Bree+Serif&family=Orelega+One&family=Patua+One&family=Protest+Strike&display=swap');
+
+    :root {
+      font-family: Arial, Helvetica, sans-serif;
+
+      /*
+      Set your paper size here
+
+      Default: A4
+        A4 Paper is 210mm x 297mm
+        A3 Paper is 297mm x 420mm
+        Letter Paper is 8.5in x 11in
+      */
+
+      /* NOTE: Inverted because we want landscape */
+      --paper-width: {{ paperHeight }};
+      --paper-height: {{ paperWidth }};
+
+      --stamp-container-width: 5in;
+      --stamp-container-height: 2.59in;
+
+      --items-per-row: 2;
+      --rows-per-page: 3;
+
+      --paper-margin-x: calc(
+        (var(--paper-width) - var(--items-per-row) * var(--stamp-container-width)) /
+          2
+      );
+      --paper-margin-y: calc(
+        (
+            var(--paper-height) - var(--rows-per-page) *
+              var(--stamp-container-height)
+          ) / 2
+      );
+
+      /* Page is the internal usable space (i.e. with margins subtracted). */
+      --page-width: calc(var(--paper-width) - var(--paper-margin-x) * 2);
+      --page-height: calc(var(--paper-height) - var(--paper-margin-y) * 2);
+
+      --background-color: #000;
+      --text-color: #fff;
+      --primary-color: #82d853;
+    }
+
+    /**
+     * Page Settings
+     */
+    @page {
+      size: {{ paperSize }} landscape;
+      /* Chrome sets own margins, we change these printer settings */
+      margin-top: var(--paper-margin-y);
+      /* See HACK above as to why this is zero. */
+      margin-bottom: 0;
+      margin-left: var(--paper-margin-x);
+      margin-right: var(--paper-margin-x);
+    }
+
+    body {
+      width: var(--page-width);
+      min-height: calc(var(--page-height) + var(--paper-margin-y));
+      margin: 0;
+      padding-top: var(--paper-margin-y);
+      /* See HACK above as to why this is zero. */
+      padding-bottom: 0;
+      padding-left: var(--paper-margin-x);
+      padding-right: var(--paper-margin-x);
+      display: flex;
+      align-content: flex-start;
+      flex-wrap: wrap;
+      font-size:9px;
+      font-family: Ubuntu;
+    }
+
+    @media print {
+      body {
+        width: var(--page-width);
+        margin: 0;
+        padding: 0;
+      }
+    }
+
+    .stamp-container {
+      /* Set this as a block element */
+      display: block;
+
+      /* Do not exceed the width and height due to padding and margins */
+      box-sizing: border-box;
+
+      /* Stamp size */
+      width: var(--stamp-container-width);
+      height: var(--stamp-container-height);
+
+      /* Stop stamps from being broken in half between pages */
+      break-inside: avoid;
+
+      /* Center the stamp inside of the stamp container */
+      display: grid;
+      align-items: start;
+      justify-items: center;
+    }
+
+    .stamp-inner {
+      width: 100%;
+      height: 100%;
+
+      background: url('./templates/minisatoshi.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      /* Do not exceed the width and height due to padding and margins */
+      box-sizing: border-box;
+    }
+
+      /* Row class - container for columns */
+      .row {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-wrap: nowrap;
+      }
+
+      /* Column class - each panel of the trifold */
+      .column {
+        flex: 1;
+        /*border: 1px dotted #F00;*/
+        box-sizing: border-box;
+      }
+
+      .left-pane {
+          flex: 0 0 auto; /* Don't grow or shrink, use the specified width */
+        width: 30%;
+        padding-right:0.8%;
+      }
+
+      .center-pane {
+          flex: 0 0 auto; /* Don't grow or shrink, use the specified width */
+        width: 38.5%;
+      }
+
+      .right-pane {
+          flex: 0 0 auto; /* Don't grow or shrink, use the specified width */
+          width:31.5%;
+          padding-left:0.5%;
+      }
+
+      .left-pane-content {
+          text-align: center;
+      }
+
+      .center-pane-content {
+          text-align: center;
+          padding-top:2mm;
+          padding-left:4mm;
+          padding-right:4mm;
+          font-weight:bold;
+      }
+
+      .center-pane-content p {
+          margin: 1mm;
+      }
+
+      .right-pane-content {
+          text-align: center;
+      }
+
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1mm;
+      margin-top: 1mm;
+      margin-bottom: 1mm;
+      margin-left: 5mm;
+      margin-right: 5mm;
+    }
+
+    .left-pane-qr-container {
+        margin-top:8mm;
+        margin-bottom:3mm;
+    }
+
+     .right-pane-qr-container {
+        margin-top:16.5mm;
+    }
+
+    .step {
+      color: #fff;
+      line-height: 17px;
+      text-shadow: 1px 1px black;
+    }
+
+    .qr {
+      margin-top: 0px;
+    }
+
+    .qr-code {
+      margin: auto;
+      width: 24mm !important;
+      height: 24mm !important;
+    }
+
+    .title {
+      color: #fff;
+      text-shadow: 1px 1px black !important;
+    }
+
+    .emphasis {
+      color: #fff !important;
+      font-weight: bold;
+      text-shadow: 1px 1px black !important;
+    }
+
+    .top-text {
+      font-size: 12px;
+      color:#333;
+    }
+
+    .top-text-text {
+      background:#82d853;
+      padding:2px;
+    }
+
+    .branding {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15px;
+      text-shadow: 1px 1px black;
+    }
+
+    .logo {
+      height: 12px;
+    }
+
+    .primary {
+      color: var(--primary-color);
+    }
+
+    .step-heading {
+        font-size:14px;
+        margin-bottom:1mm;
+        font-weight:bold;
+    text-shadow:
+      -1px -1px 0 #81e348,
+      -1px 0px 0 #81e348,
+      -1px 1px 0 #81e348,
+      0px -1px 0 #81e348,
+      0px 1px 0 #81e348,
+      1px -1px 0 #81e348,
+      1px 0px 0 #81e348,
+      1px 1px 0 #81e348;
+    }
+
+    .step-subheading {
+        font-size:12px;
+        font-weight:bold;
+        color:#fff;
+    text-shadow:
+      -1px -1px 0 black,
+      -1px 0px 0 black,
+      -1px 1px 0 black,
+      0px -1px 0 black,
+      0px 1px 0 black,
+      1px -1px 0 black,
+      1px 0px 0 black,
+      1px 1px 0 black;
+    }
+
+    .do-not-expose {
+  margin-top: 3mm;
+      margin-left: 10mm;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .valid-until {
+      color:#000;
+      width: 100%;
+      text-align: center;
+      font-size: 8px;
+      font-family: 'monospace';
+    }
+
+    .valid-until-text {
+      background:#82d853;
+      padding:2px;
+    }
+</style>
