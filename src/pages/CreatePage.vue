@@ -67,22 +67,24 @@
           <div class="col-12">
             <q-separator />
           </div>
-
-          <!-- Collection Preview -->
-          <div class="col-12">
-            <CollectionPreviewComponent
-              :app="app"
-              :stampCollection="activeCollection"
-              :wallet="activeWallet"
-              @templateSelected="
-                (uuid) => (activeCollection.templateUUID = uuid)
-              "
-              class="animated fadeIn"
-            />
-          </div>
         </template>
       </div>
     </div>
+
+      <!-- Collection Preview -->
+      <template v-if="activeWallet && activeCollection">
+        <div class="col-12">
+          <CollectionPreviewComponent
+            :app="app"
+            :stampCollection="activeCollection"
+            :wallet="activeWallet"
+            @templateSelected="
+              (uuid) => (activeCollection.templateUUID = uuid)
+            "
+            class="animated fadeIn"
+          />
+        </div>
+      </template>
   </q-page>
 </template>
 

@@ -1,62 +1,109 @@
 <template>
   <!-- Collection Preview -->
-  <div class="q-mb-xl">
-    <div class="row">
-      <!-- Controls for print/show mnemonic -->
-      <div class="col-md-8 col-12 q-gutter-x-sm">
-        <q-btn-group>
-          <!-- Print Stamps -->
-          <q-btn
-            outline
-            icon="print"
-            color="primary"
-            :disable="!state.renderedStamps.length"
-            @click="printStamps"
-          >
-            <q-tooltip class="print-hide">{{ t('printStamps') }}</q-tooltip>
-          </q-btn>
+  <div class="inner-page">
+    <div class="q-gutter-y-md q-mb-xl">
 
-          <!-- Export as JSON -->
-          <q-btn
-            outline
-            icon="file_download"
-            color="secondary"
-            :disable="!state.renderedStamps.length"
-            @click="exportAsJson"
-          >
-            <q-tooltip class="print-hide">{{ t('exportAsJson') }}</q-tooltip>
-          </q-btn>
-        </q-btn-group>
-
-        <q-toggle
-          v-model="state.showClaimedStamps"
-          :label="t('showClaimedStamps')"
-        />
-        <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+      <div class="row q-col-gutter-md">
+        <!-- Template selection -->
+        <div class="col-md-3 col-12">
+          <q-select
+            :label="t('template')"
+            :options="['BizCard']"
+            v-model="state.template"
+            @update:model-value="renderStamps"
+            dense
+            filled
+          />
+        </div>
+        <div class="col-md-3 col-6">
+          <q-select
+            :label="t('Theme')"
+            :options="['Flowee', 'Paytaca', 'Selene', 'Christmas #1', 'Christmas #2']"
+            v-model="state.theme"
+            @update:model-value="renderStamps"
+            dense
+            filled
+          />
+        </div>
+        <div class="col-md-3 col-6">
+          <q-select
+            :label="t('Use Wallet')"
+            :options="['Flowee', 'Paytaca', 'Selene']"
+            v-model="state.wallet"
+            @update:model-value="renderStamps"
+            dense
+            filled
+          />
+        </div>
+        <div class="col-md-3 col-6">
+          <q-select
+            :label="t('Paper Size')"
+            :options="['Letter', 'A4']"
+            v-model="state.paper"
+            @update:model-value="renderStamps"
+            dense
+            filled
+          />
+        </div>
       </div>
 
-      <!-- Template selection -->
-      <div class="col-md-4 col-12">
-        <q-select
-          :label="t('template')"
-          :options="templates"
-          v-model="state.activeTemplate"
-          @update:model-value="renderStamps"
-          dense
-          filled
-        >
-          <template v-slot:after>
+      <div class="row">
+        <!-- Controls for print/show mnemonic -->
+        <div class="col-md-8 col-12 q-gutter-x-sm">
+          <q-btn-group>
+            <!-- Print Stamps -->
             <q-btn
-              round
-              dense
-              flat
-              icon="edit"
-              @click="showTemplateEditorDialog"
+              outline
+              icon="print"
+              color="primary"
+              :disable="!state.renderedStamps.length"
+              @click="printStamps"
             >
-              <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+              <q-tooltip class="print-hide">{{ t('printStamps') }}</q-tooltip>
             </q-btn>
-          </template>
-        </q-select>
+
+            <!-- Export as JSON -->
+            <q-btn
+              outline
+              icon="file_download"
+              color="secondary"
+              :disable="!state.renderedStamps.length"
+              @click="exportAsJson"
+            >
+              <q-tooltip class="print-hide">{{ t('exportAsJson') }}</q-tooltip>
+            </q-btn>
+          </q-btn-group>
+
+          <q-toggle
+            v-model="state.showClaimedStamps"
+            :label="t('showClaimedStamps')"
+          />
+          <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+        </div>
+
+        <!-- Template selection -->
+        <div class="col-md-4 col-12">
+          <q-select
+            :label="t('template')"
+            :options="templates"
+            v-model="state.activeTemplate"
+            @update:model-value="renderStamps"
+            dense
+            filled
+          >
+            <template v-slot:after>
+              <q-btn
+                round
+                dense
+                flat
+                icon="edit"
+                @click="showTemplateEditorDialog"
+              >
+                <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+              </q-btn>
+            </template>
+          </q-select>
+        </div>
       </div>
     </div>
   </div>
