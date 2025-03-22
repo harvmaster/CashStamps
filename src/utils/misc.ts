@@ -120,7 +120,7 @@ export const compileTemplate = async (
   //       So, instead, we're just going to write a simple template engine ourselves.
 
   // Define RegEx to capture all mustaches ({{ captureThis }}).
-  const mustacheRegEx = /\{\{(.*?)\}\}/g;
+  const mustacheRegEx = /\{\{(.*?)\}\}/gs;
 
   // Create a copy of the template to work on
   let compiledTemplate = template;
