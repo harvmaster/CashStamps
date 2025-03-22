@@ -8,11 +8,25 @@
         <div class="q-gutter-y-md">
           <div class="col-grow q-gutter-y-md">
             <!-- Name Input -->
-            <q-input
-              v-model="state.activeTemplate.label"
-              :label="t('name')"
-              filled
-            />
+            <div class="row q-col-gutter-sm">
+              <div class="col">
+                <q-input
+                  v-model="state.activeTemplate.label"
+                  :label="t('name')"
+                  filled
+                />
+              </div>
+              <div>
+              <q-btn
+                label="Export"
+                color="secondary"
+                @click="exportTemplate"
+              />
+              </div>
+              <div>
+              <UploadButtonComponent @file-content="(content) => importTemplate(content)">Test</UploadButtonComponent>
+              </div>
+            </div>
 
             <!-- Warning Banner -->
             <q-banner class="bg-negative text-white">
@@ -38,6 +52,7 @@
                     <v-ace-editor
                       v-model:value="state.activeTemplate.template"
                       lang="html"
+                      @init="editorInit"
                     />
                   </div>
                 </div>
@@ -50,6 +65,9 @@
                     <v-ace-editor
                       v-model:value="state.activeTemplate.style"
                       lang="html"
+                      :options="{
+
+                      }"
                     />
                   </div>
                 </div>
@@ -84,10 +102,12 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { uid } from 'quasar';
+import { useQuasar, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 import type { Template } from 'src/types.js';
+
+import UploadButtonComponent from './UploadButtonComponent.vue';
 
 import { VAceEditor } from 'vue3-ace-editor';
 import ace from 'ace-builds';
@@ -101,6 +121,8 @@ import translation from './TemplateEditorDialog.i18n.json';
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
 ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
+
+const $q = useQuasar();
 
 const { t } = useI18n({
   inheritLocale: true,
@@ -134,6 +156,10 @@ const toggleVisible = () => {
   state.visible = !state.visible;
 };
 
+function editorInit(editor: any) {
+  editor.session.setTabSize(2);
+}
+
 function saveTemplate() {
   emits('template:updated', state.activeTemplate, props.activeTemplate);
 
@@ -144,6 +170,28 @@ function copyTemplate() {
   emits('template:created', { ...state.activeTemplate, uuid: uid() });
 
   toggleVisible();
+}
+
+function exportTemplate() {
+  const stringifiedTemplate = JSON.stringify(state.activeTemplate);
+  exportFile(`CashStamps Template - ${state.activeTemplate.label}.json`, stringifiedTemplate);
+}
+
+function importTemplate(content: string) {
+  try {
+    // Parse the JSON data.
+    const parsedTemplate = JSON.parse(content);
+
+    // NOTE: Make sure we don't allow over-writing the UUID.
+    //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
+    state.activeTemplate = { ...parsedTemplate, uuid: state.activeTemplate.uuid };
+  } catch(error) {
+    console.error(error);
+    $q.dialog({
+        title: 'Error importing template',
+        message: `${error}`
+    })
+  }
 }
 
 function deleteTemplate() {
