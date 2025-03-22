@@ -259,7 +259,19 @@ const walletOptions = computed(() => {
 
   // The query parameter indicating which wallet to use is "w".
   // NOTE: We do not use Wallet's full name as we want to minimize URL length for the QR Codes.
-  const walletQuery = $route.query['w'] as string;
+  let walletQuery = $route.query['w'] as string;
+
+  // "r" is a special value which means select a wallet at random.
+  if (walletQuery === 'r') {
+    // Get all keys from the wallets object
+    const walletKeys = Object.keys(wallets);
+
+    // Select a random index between 0 and walletKeys.length-1
+    const randomIndex = Math.floor(Math.random() * walletKeys.length);
+
+    // Set the wallet query to the random key.
+    walletQuery = walletKeys[randomIndex];
+  }
 
   // Get the wallet to use.
   const wallet = wallets[walletQuery];

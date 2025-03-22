@@ -1,6 +1,8 @@
 export { default as PageTemplate } from './PageTemplate.html?raw';
 
 // V2 Templates
+import BasicSingleQRRFront from './V2/Basic-SingleQR/Front.html?raw';
+import BasicSingleQRStyle from './V2/Basic-SingleQR/Style.html?raw';
 import BizcardTwoQRFront from './V2/Bizcard-TwoQR/Front.html?raw';
 import BizcardTwoQRStyle from './V2/Bizcard-TwoQR/Style.html?raw';
 import TrifoldMiniSatoshiFront from './V2/Trifold-Minisatoshi/Front.html?raw';
@@ -54,6 +56,14 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     label: 'Bizcard - Two QR',
     template: BizcardTwoQRFront,
     style: BizcardTwoQRStyle,
+    readonly: true,
+  },
+  'c2c22dd6-760f-47c3-b57d-33bfa6616178': {
+    version: 2,
+    uuid: 'c2c22dd6-760f-47c3-b57d-33bfa6616178',
+    label: 'Basic - Single QR',
+    template: BasicSingleQRRFront,
+    style: BasicSingleQRStyle,
     readonly: true,
   },
   'ce702692-6070-4b4d-97d8-db4b940ab4de': {

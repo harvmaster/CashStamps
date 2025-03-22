@@ -210,6 +210,11 @@ const wallets = {
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=z&wif=',
     walletLogo: '/icons/zapit.png',
   },
+  'Random': {
+    walletName: 'Random',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=r&wif=',
+    walletLogo: '/bch.svg',
+  },
 }
 
 //---------------------------------------------------------------------------
