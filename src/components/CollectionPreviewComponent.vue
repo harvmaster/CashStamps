@@ -46,6 +46,14 @@
             dense
             filled
           >
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section>
+                  <q-item-label :caption="scope.opt.version === 1 && scope.opt.readonly">{{ scope.opt.label }}</q-item-label>
+                  <q-item-label v-if="!scope.opt.readonly" caption>Custom</q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
             <template v-slot:after>
               <q-btn
                 round
@@ -63,7 +71,7 @@
 
       <template v-if="state.activeTemplate.version === 2">
         <div class="row q-col-gutter-md">
-          <div class="col-md-3 col-6">
+          <div class="col-md-4 col-6">
             <q-select
               :label="t('Paper Size')"
               :options="Object.keys(paperSizes)"
@@ -73,7 +81,7 @@
               filled
             />
           </div>
-          <div class="col-md-3 col-6">
+          <div class="col-md-4 col-6">
             <q-select
               :label="t('Wallet')"
               :options="Object.keys(wallets)"
@@ -83,7 +91,17 @@
               filled
             />
           </div>
-          <div class="col-md-3 col-6">
+          <div class="col-md-4 col-6">
+            <q-select
+              :label="t('Language (Coming Soon)')"
+              :options="['English', 'Spanish']"
+              disable
+              v-model="state.wallet"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+            <!--
             <q-select
               :label="t('Background')"
               :options="['NA']"
@@ -93,11 +111,13 @@
               dense
               filled
             />
+            -->
           </div>
+          <!--
           <div class="col-md-3 col-6">
             <q-select
-              :label="t('Language')"
-              :options="['English']"
+              :label="t('Language (Coming Soon)')"
+              :options="['English', 'Spanish']"
               disable
               v-model="state.wallet"
               @update:model-value="renderStamps"
@@ -105,28 +125,29 @@
               filled
             />
           </div>
+          -->
         </div>
       </template>
     </div>
   </div>
 
-      <!-- Show Front/Back Toggle -->
-      <template v-if="state.activeTemplate.back">
-        <div class="row justify-center q-mb-md">
-          <q-btn-toggle
-            v-model="state.showingSide"
-            :options="[
-              { label: 'Front', value: 'front' },
-              { label: 'Back', value: 'back' }
-            ]"
-            toggle-color="primary"
-            style="width:375px"
-            @update:model-value="renderStamps"
-            spread
-            rounded
-          />
-        </div>
-      </template>
+  <!-- Show Front/Back Toggle -->
+  <template v-if="state.activeTemplate.back">
+    <div class="row justify-center q-mb-md">
+      <q-btn-toggle
+        v-model="state.showingSide"
+        :options="[
+          { label: 'Front', value: 'front' },
+          { label: 'Back', value: 'back' }
+        ]"
+        toggle-color="primary"
+        style="width:375px"
+        @update:model-value="renderStamps"
+        spread
+        rounded
+      />
+    </div>
+  </template>
 
   <!-- IFrame Page -->
   <div>
