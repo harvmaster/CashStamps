@@ -24,7 +24,7 @@
               />
               </div>
               <div>
-              <UploadButtonComponent @file-content="(content) => importTemplate(content)">Test</UploadButtonComponent>
+              <UploadButtonComponent @file-content="(content) => importTemplate(content)"></UploadButtonComponent>
               </div>
             </div>
 
@@ -40,17 +40,33 @@
               align="justify"
               active-color="primary"
             >
-              <q-tab name="content" :label="t('content')" />
+              <q-tab name="front" :label="t('front')" />
+              <q-tab name="back" :label="t('back')" />
               <q-tab name="style" :label="t('style')" />
             </q-tabs>
 
             <q-tab-panels v-model="state.activeTab" animated>
-              <q-tab-panel name="content">
+              <q-tab-panel name="front">
+                <p>This is the front-side of the template.</p>
                 <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
                     <v-ace-editor
-                      v-model:value="state.activeTemplate.template"
+                      v-model:value="state.activeTemplate.front"
+                      lang="html"
+                      @init="editorInit"
+                    />
+                  </div>
+                </div>
+              </q-tab-panel>
+
+              <q-tab-panel name="back">
+                <p>This is the back side of the template. Leave this blank if the template should be one-sided.</p>
+                <!-- Text Editor -->
+                <div class="scroll" style="height: 800px">
+                  <div class="editor-container">
+                    <v-ace-editor
+                      v-model:value="state.activeTemplate.back"
                       lang="html"
                       @init="editorInit"
                     />
@@ -145,11 +161,11 @@ const props = defineProps<{ activeTemplate: Template }>();
 const state = reactive<{
   visible: boolean;
   activeTemplate: Template;
-  activeTab: 'content' | 'style';
+  activeTab: 'front' | 'back' | 'style';
 }>({
   visible: false,
   activeTemplate: { ...props.activeTemplate, readonly: false },
-  activeTab: 'content',
+  activeTab: 'front',
 });
 
 const toggleVisible = () => {

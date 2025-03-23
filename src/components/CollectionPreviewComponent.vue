@@ -110,6 +110,24 @@
     </div>
   </div>
 
+      <!-- Show Front/Back Toggle -->
+      <template v-if="state.activeTemplate.back">
+        <div class="row justify-center q-mb-md">
+          <q-btn-toggle
+            v-model="state.showingSide"
+            :options="[
+              { label: 'Front', value: 'front' },
+              { label: 'Back', value: 'back' }
+            ]"
+            toggle-color="primary"
+            style="width:375px"
+            @update:model-value="renderStamps"
+            spread
+            rounded
+          />
+        </div>
+      </template>
+
   <!-- IFrame Page -->
   <div>
     <div class="relative-position">
@@ -241,8 +259,7 @@ const state = reactive<{
   renderedStamps: Array<RenderedStamp>;
   showClaimedStamps: boolean;
   showCutLines: boolean;
-
-  // V2 Template State
+  showingSide: 'front' | 'back';
   templateData: TemplateData;
 }>({
   loading: false,
@@ -250,6 +267,7 @@ const state = reactive<{
   renderedStamps: [],
   showClaimedStamps: true,
   showCutLines: true,
+  showingSide: 'front',
   templateData: {
     paperSize: 'Letter',
     wallet: 'Selene',
@@ -332,6 +350,11 @@ async function renderStamps() {
       return;
     }
 
+    // If this template does not have a "back" side, but "back" is selected, switch to front.
+    if (!state.activeTemplate.back && state.showingSide === 'back') {
+      state.showingSide = 'front';
+    }
+
     // Save the current template UUID as the active template UUID for this collection.
     emits('templateSelected', state.activeTemplate.uuid);
 
@@ -354,9 +377,12 @@ async function renderStamps() {
 
     // Iterate over each stamp and render them.
     for (const wallet of props.wallet.wallets.value) {
+      // Get the template side we are printing (front or back).
+      const templateSide = state.activeTemplate[state.showingSide];
+
       // Compile this stamp.
       const compiledStamp = await compileTemplate(
-        state.activeTemplate.template,
+        templateSide,
         {
           valueBch: formatStampValue(wallet.balance.value, 'BCH'),
           value: formatStampValue(amount, currency),
