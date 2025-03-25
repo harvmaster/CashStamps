@@ -78,10 +78,10 @@
           :app="app"
           :stampCollection="activeCollection"
           :wallet="activeWallet"
-          @templateSelected="
-            (uuid) => (activeCollection.templateUUID = uuid)
+          @templateSelected="(uuid) => (activeCollection.templateUUID = uuid)"
+          @templateDataUpdated="
+            (templateData) => (activeCollection.templateData = templateData)
           "
-          @templateDataUpdated="(templateData) => activeCollection.templateData = templateData"
           class="animated fadeIn"
         />
       </div>

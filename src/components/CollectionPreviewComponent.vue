@@ -49,8 +49,13 @@
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
-                  <q-item-label :caption="scope.opt.version === 1 && scope.opt.readonly">{{ scope.opt.label }}</q-item-label>
-                  <q-item-label v-if="!scope.opt.readonly" caption>Custom</q-item-label>
+                  <q-item-label
+                    :caption="scope.opt.version === 1 && scope.opt.readonly"
+                    >{{ scope.opt.label }}</q-item-label
+                  >
+                  <q-item-label v-if="!scope.opt.readonly" caption
+                    >Custom</q-item-label
+                  >
                 </q-item-section>
               </q-item>
             </template>
@@ -138,10 +143,10 @@
         v-model="state.showingSide"
         :options="[
           { label: 'Front', value: 'front' },
-          { label: 'Back', value: 'back' }
+          { label: 'Back', value: 'back' },
         ]"
         toggle-color="primary"
-        style="width:375px"
+        style="width: 375px"
         @update:model-value="renderStamps"
         spread
         rounded
@@ -216,45 +221,45 @@ interface RenderedStamp {
 }
 
 const paperSizes = {
-  'A4': {
+  A4: {
     paperSize: 'a4',
     paperWidth: '210mm',
     paperHeight: '297mm',
   },
-  'Letter': {
+  Letter: {
     paperSize: 'letter',
     paperWidth: '8.5in',
     paperHeight: '11in',
   },
-}
+};
 
 const wallets = {
-  'Flowee': {
+  Flowee: {
     walletName: 'Flowee',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=f&wif=',
     walletLogo: '/icons/flowee.png',
   },
-  'Paytaca': {
+  Paytaca: {
     walletName: 'Paytaca',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=p&wif=',
     walletLogo: '/icons/paytaca.png',
   },
-  'Selene': {
+  Selene: {
     walletName: 'Selene',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=s&wif=',
     walletLogo: '/icons/selene.png',
   },
-  'ZapIt': {
+  ZapIt: {
     walletName: 'ZapIt',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=z&wif=',
     walletLogo: '/icons/zapit.png',
   },
-  'Random': {
+  Random: {
     walletName: 'Random',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=r&wif=',
     walletLogo: '/bch.svg',
   },
-}
+};
 
 //---------------------------------------------------------------------------
 // State
@@ -293,7 +298,7 @@ const state = reactive<{
     paperSize: 'Letter',
     wallet: 'Selene',
     ...props.stampCollection.templateData,
-  }
+  },
 });
 
 // Computeds.
@@ -349,13 +354,15 @@ function compileGlobalVariables() {
   const { templateData } = props.stampCollection;
 
   // Get the appropriate paper size and wallet configuration
-  const paperSizeKey = templateData?.['paperSize'] as keyof typeof paperSizes || 'Letter';
-  const walletKey = templateData?.['wallet'] as keyof typeof wallets || 'Selene';
+  const paperSizeKey =
+    (templateData?.['paperSize'] as keyof typeof paperSizes) || 'Letter';
+  const walletKey =
+    (templateData?.['wallet'] as keyof typeof wallets) || 'Selene';
 
   // Define default global variables.
   const globalVariables: Record<string, string> = {
-    ...paperSizes[paperSizeKey] || paperSizes['Letter'],
-    ...wallets[walletKey] || wallets['Selene']
+    ...(paperSizes[paperSizeKey] || paperSizes['Letter']),
+    ...(wallets[walletKey] || wallets['Selene']),
   };
 
   return globalVariables;
@@ -402,19 +409,16 @@ async function renderStamps() {
       const templateSide = state.activeTemplate[state.showingSide];
 
       // Compile this stamp.
-      const compiledStamp = await compileTemplate(
-        templateSide,
-        {
-          valueBch: formatStampValue(wallet.balance.value, 'BCH'),
-          value: formatStampValue(amount, currency),
-          symbol: props.app.oracles.getOracleSymbol(currency),
-          currency: props.app.oracles.getOracleUnitCode(currency),
-          expiry,
-          wif: wallet.toWif(),
-          address: wallet.getAddress(),
-          ...globalVariables,
-        }
-      );
+      const compiledStamp = await compileTemplate(templateSide, {
+        valueBch: formatStampValue(wallet.balance.value, 'BCH'),
+        value: formatStampValue(amount, currency),
+        symbol: props.app.oracles.getOracleSymbol(currency),
+        currency: props.app.oracles.getOracleUnitCode(currency),
+        expiry,
+        wif: wallet.toWif(),
+        address: wallet.getAddress(),
+        ...globalVariables,
+      });
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
@@ -502,7 +506,10 @@ watch(
     }
 
     // Compile the stamp CSS.
-    const stampsCSS = await compileTemplate(state.activeTemplate?.style || '', compileGlobalVariables());
+    const stampsCSS = await compileTemplate(
+      state.activeTemplate?.style || '',
+      compileGlobalVariables()
+    );
 
     // Compile the stamp HTML.
     const stampsHtml = visibleStamps.value

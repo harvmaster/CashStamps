@@ -1,7 +1,12 @@
 <template>
   <div>
     <q-btn label="Import" color="secondary" @click="pickFile" />
-    <q-file ref="fileInput" v-model="file" style="display: none" @update:model-value="onFileSelected" />
+    <q-file
+      ref="fileInput"
+      v-model="file"
+      style="display: none"
+      @update:model-value="onFileSelected"
+    />
   </div>
 </template>
 

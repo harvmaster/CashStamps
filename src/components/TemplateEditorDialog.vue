@@ -17,14 +17,16 @@
                 />
               </div>
               <div>
-              <q-btn
-                label="Export"
-                color="secondary"
-                @click="exportTemplate"
-              />
+                <q-btn
+                  label="Export"
+                  color="secondary"
+                  @click="exportTemplate"
+                />
               </div>
               <div>
-              <UploadButtonComponent @file-content="(content) => importTemplate(content)"></UploadButtonComponent>
+                <UploadButtonComponent
+                  @file-content="(content) => importTemplate(content)"
+                ></UploadButtonComponent>
               </div>
             </div>
 
@@ -61,7 +63,10 @@
               </q-tab-panel>
 
               <q-tab-panel name="back">
-                <p>This is the back side of the template. Leave this blank if the template should be one-sided.</p>
+                <p>
+                  This is the back side of the template. Leave this blank if the
+                  template should be one-sided.
+                </p>
                 <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
@@ -81,9 +86,7 @@
                     <v-ace-editor
                       v-model:value="state.activeTemplate.style"
                       lang="html"
-                      :options="{
-
-                      }"
+                      :options="{}"
                     />
                   </div>
                 </div>
@@ -190,7 +193,10 @@ function copyTemplate() {
 
 function exportTemplate() {
   const stringifiedTemplate = JSON.stringify(state.activeTemplate);
-  exportFile(`CashStamps Template - ${state.activeTemplate.label}.json`, stringifiedTemplate);
+  exportFile(
+    `CashStamps Template - ${state.activeTemplate.label}.json`,
+    stringifiedTemplate
+  );
 }
 
 function importTemplate(content: string) {
@@ -200,13 +206,16 @@ function importTemplate(content: string) {
 
     // NOTE: Make sure we don't allow over-writing the UUID.
     //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
-    state.activeTemplate = { ...parsedTemplate, uuid: state.activeTemplate.uuid };
-  } catch(error) {
+    state.activeTemplate = {
+      ...parsedTemplate,
+      uuid: state.activeTemplate.uuid,
+    };
+  } catch (error) {
     console.error(error);
     $q.dialog({
-        title: 'Error importing template',
-        message: `${error}`
-    })
+      title: 'Error importing template',
+      message: `${error}`,
+    });
   }
 }
 
