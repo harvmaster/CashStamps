@@ -3,30 +3,18 @@ export { default as PageTemplate } from './PageTemplate.html?raw';
 // V2 Templates
 import BasicSingleQRRFront from './V2/Basic-SingleQR/Front.html?raw';
 import BasicSingleQRStyle from './V2/Basic-SingleQR/Style.html?raw';
+import BizcardOneQRFront from './V2/Bizcard-OneQR/Front.html?raw';
+import BizcardOneQRStyle from './V2/Bizcard-OneQR/Style.html?raw';
 import BizcardTwoQRFront from './V2/Bizcard-TwoQR/Front.html?raw';
 import BizcardTwoQRStyle from './V2/Bizcard-TwoQR/Style.html?raw';
 import TrifoldMiniSatoshiFront from './V2/Trifold-Minisatoshi/Front.html?raw';
 import TrifoldMiniSatoshiStyle from './V2/Trifold-Minisatoshi/Style.html?raw';
 
 // V1 Templates
-import A4BasicContent from './Generic/A4-Basic_content.html?raw';
-import A4BasicPaytacaContent from './Generic/A4-BasicPaytaca_content.html?raw';
-import A4BasicStyle from './Generic/A4-Basic_style.html?raw';
-import FloweeContent from './Generic/Flowee_content.html?raw';
-import FloweeStyle from './Generic/Flowee_style.html?raw';
-import PaytacaContent from './Generic/Paytaca_content.html?raw';
-import PaytacaStyle from './Generic/Paytaca_style.html?raw';
-import SeleneContent from './Generic/Selene_content.html?raw';
-import SeleneStyle from './Generic/Selene_style.html?raw';
 import SeleneGadsdenContent from './Generic/SeleneGadsden_content.html?raw';
 import SeleneGadsdenStyle from './Generic/SeleneGadsden_style.html?raw';
 import BizcardTwoQRContent from './Generic/Bizcard-TwoQR_content.html?raw';
-import BizcardTwoQRStyleLetter from './Generic/Bizcard-TwoQR_style_letter.html?raw';
-import BizcardTwoQRStyleA4 from './Generic/Bizcard-TwoQR_style_a4.html?raw';
 import BizcardTwoQRStyleLetterLPTN from './Generic/Bizcard-TwoQR_style_letter_lptn.html?raw';
-import LetterBasicContent from './Generic/Letter-Basic_content.html?raw';
-import LetterBasicPaytacaContent from './Generic/Letter-BasicPaytaca_content.html?raw';
-import LetterBasicStyle from './Generic/Letter-Basic_style.html?raw';
 import Avery94104Content from './AveryLabels/Avery-94104_content.html?raw';
 import Avery94104PaytacaContent from './AveryLabels/Avery-94104Paytaca_content.html?raw';
 import Avery94104Style from './AveryLabels/Avery-94104_style.html?raw';
@@ -59,6 +47,15 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     style: BizcardTwoQRStyle,
     readonly: true,
   },
+  'e8df206c-fd3c-4c66-a4f9-d9631f32ed02': {
+    version: 2,
+    uuid: 'e8df206c-fd3c-4c66-a4f9-d9631f32ed02',
+    label: 'Bizcard - One QR',
+    front: BizcardOneQRFront,
+    back: '',
+    style: BizcardOneQRStyle,
+    readonly: true,
+  },
   'c2c22dd6-760f-47c3-b57d-33bfa6616178': {
     version: 2,
     uuid: 'c2c22dd6-760f-47c3-b57d-33bfa6616178',
@@ -75,51 +72,6 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     front: TrifoldMiniSatoshiFront,
     back: '',
     style: TrifoldMiniSatoshiStyle,
-    readonly: true,
-  },
-  '9c025b6b-9652-46e3-be27-fc56fe3cef95': {
-    version: 1,
-    uuid: '9c025b6b-9652-46e3-be27-fc56fe3cef95',
-    label: 'Bizcard (Two QR) (Letter)',
-    front: BizcardTwoQRContent,
-    back: '',
-    style: BizcardTwoQRStyleLetter,
-    readonly: true,
-  },
-  'b17c9b83-2bab-48bd-904b-caba4f1eefef': {
-    version: 1,
-    uuid: 'b17c9b83-2bab-48bd-904b-caba4f1eefef',
-    label: 'Bizcard (Two QR) (A4)',
-    front: BizcardTwoQRContent,
-    back: '',
-    style: BizcardTwoQRStyleA4,
-    readonly: true,
-  },
-  'a8702429-f56a-46fb-bf50-2f5dc05b7c79': {
-    version: 1,
-    uuid: 'a8702429-f56a-46fb-bf50-2f5dc05b7c79',
-    label: 'Bizcard (Flowee)',
-    front: FloweeContent,
-    back: '',
-    style: FloweeStyle,
-    readonly: true,
-  },
-  '68236ba6-a092-4927-90b1-409851ce5973': {
-    version: 1,
-    uuid: '68236ba6-a092-4927-90b1-409851ce5973',
-    label: 'Bizcard (Paytaca)',
-    front: PaytacaContent,
-    back: '',
-    style: PaytacaStyle,
-    readonly: true,
-  },
-  '92d3fa79-bbbb-42ed-8d7e-6ad588584371': {
-    version: 1,
-    uuid: '92d3fa79-bbbb-42ed-8d7e-6ad588584371',
-    label: 'Bizcard (Selene)',
-    front: SeleneContent,
-    back: '',
-    style: SeleneStyle,
     readonly: true,
   },
   'e652a61a-c6f5-45af-8f4e-fab344e823fc': {
@@ -183,42 +135,6 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     front: ThanksgivingPaytacaContent,
     back: '',
     style: ThanksgivingPaytacaStyle,
-    readonly: true,
-  },
-  '6259722c-452c-441a-be48-d8c7c282f9a2': {
-    version: 1,
-    uuid: '6259722c-452c-441a-be48-d8c7c282f9a2',
-    label: 'A4 - Basic',
-    front: A4BasicContent,
-    back: '',
-    style: A4BasicStyle,
-    readonly: true,
-  },
-  '1962b0dd-9857-464c-a435-8262d0cfe91a': {
-    version: 1,
-    uuid: '1962b0dd-9857-464c-a435-8262d0cfe91a',
-    label: 'A4 - Basic (Paytaca)',
-    front: A4BasicPaytacaContent,
-    back: '',
-    style: A4BasicStyle,
-    readonly: true,
-  },
-  '2f739f8e-bd27-4ec8-a89d-9c829c8e0c74': {
-    version: 1,
-    uuid: '2f739f8e-bd27-4ec8-a89d-9c829c8e0c74',
-    label: 'Letter - Basic',
-    front: LetterBasicContent,
-    back: '',
-    style: LetterBasicStyle,
-    readonly: true,
-  },
-  'c20672ba-22cc-4c3a-9bf1-526e71f51990': {
-    version: 1,
-    uuid: 'c20672ba-22cc-4c3a-9bf1-526e71f51990',
-    label: 'Letter - Basic (Paytaca)',
-    front: LetterBasicPaytacaContent,
-    back: '',
-    style: LetterBasicStyle,
     readonly: true,
   },
   '0a7533d1-6df5-44a9-a000-d5485d75c907': {
