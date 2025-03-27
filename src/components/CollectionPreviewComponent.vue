@@ -76,7 +76,7 @@
 
       <template v-if="state.activeTemplate.version === 2">
         <div class="row q-col-gutter-md">
-          <div class="col-md-4 col-6">
+          <div class="col-md-3 col-6">
             <q-select
               :label="t('Paper Size')"
               :options="Object.keys(paperSizes)"
@@ -86,7 +86,7 @@
               filled
             />
           </div>
-          <div class="col-md-4 col-6">
+          <div class="col-md-3 col-6">
             <q-select
               :label="t('Wallet')"
               :options="Object.keys(wallets)"
@@ -96,12 +96,21 @@
               filled
             />
           </div>
-          <div class="col-md-4 col-6">
+          <div class="col-md-3 col-6">
+            <q-select
+              :label="t('Theme (Coming Soon)')"
+              :options="['English', 'Spanish']"
+              disable
+              @update:model-value="renderStamps"
+              dense
+              filled
+            />
+          </div>
+          <div class="col-md-3 col-6">
             <q-select
               :label="t('Language (Coming Soon)')"
               :options="['English', 'Spanish']"
               disable
-              v-model="state.wallet"
               @update:model-value="renderStamps"
               dense
               filled
