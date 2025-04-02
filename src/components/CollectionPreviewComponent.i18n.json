@@ -6,7 +6,11 @@
       "showClaimedStamps": "Show Claimed Stamps",
       "showCutLines": "Show Cut Lines",
       "template": "Template",
-      "editTemplate": "Edit Template"
+      "editTemplate": "Edit Template",
+      "paperSize": "Paper Size",
+      "wallet": "Wallet",
+      "theme": "Theme (Coming Soon)",
+      "language": "Language (Coming Soon)"
     },
     "es": {
       "printStamps": "Imprimir Sellos",
@@ -14,7 +18,11 @@
       "showClaimedStamps": "Mostrar Sellos Reclamados",
       "showCutLines": "Mostrar Líneas Cortadas",
       "template": "Plantilla",
-      "editTemplate": "Editar Plantilla"
+      "editTemplate": "Editar Plantilla",
+      "paperSize": "Tamaño del papel",
+      "wallet": "Billetera",
+      "theme": "Tema (Próximamente)",
+      "language": "Idioma (Próximamente)"
     }
   }
 }

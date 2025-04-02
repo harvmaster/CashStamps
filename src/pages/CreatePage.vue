@@ -78,7 +78,7 @@
           :app="app"
           :stampCollection="activeCollection"
           :wallet="activeWallet"
-          @templateSelected="(uuid) => (activeCollection.templateUUID = uuid)"
+          @templateSelected="(uuid: string) => (activeCollection.templateUUID = uuid)"
           @templateDataUpdated="
             (templateData) => (activeCollection.templateData = templateData)
           "

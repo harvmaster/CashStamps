@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="row q-col-gutter-x-md">
     <!-- Form and Summary -->
     <div class="col-md-9 col-12">
@@ -86,6 +87,7 @@
     :electrum="app.electrum"
     :wallet="props.wallet"
   />
+  </div>
 </template>
 
 <script setup lang="ts">

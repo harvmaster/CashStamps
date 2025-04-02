@@ -1,4 +1,5 @@
 <template>
+  <div>
   <!-- Collection Preview -->
   <div class="inner-page">
     <div class="q-col-gutter-y-md q-mb-xl">
@@ -78,7 +79,7 @@
         <div class="row q-col-gutter-md">
           <div class="col-md-3 col-6">
             <q-select
-              :label="t('Paper Size')"
+              :label="t('paperSize')"
               :options="Object.keys(paperSizes)"
               v-model="state.templateData.paperSize"
               @update:model-value="renderStamps"
@@ -88,7 +89,7 @@
           </div>
           <div class="col-md-3 col-6">
             <q-select
-              :label="t('Wallet')"
+              :label="t('wallet')"
               :options="Object.keys(wallets)"
               v-model="state.templateData.wallet"
               @update:model-value="renderStamps"
@@ -98,8 +99,9 @@
           </div>
           <div class="col-md-3 col-6">
             <q-select
-              :label="t('Theme (Coming Soon)')"
-              :options="['English', 'Spanish']"
+              :label="t('theme')"
+              :options="['Default']"
+              v-model="state.tempTheme"
               disable
               @update:model-value="renderStamps"
               dense
@@ -108,38 +110,15 @@
           </div>
           <div class="col-md-3 col-6">
             <q-select
-              :label="t('Language (Coming Soon)')"
+              :label="t('language')"
               :options="['English', 'Spanish']"
+              v-model="state.tempLanguage"
               disable
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-            <!--
-            <q-select
-              :label="t('Background')"
-              :options="['NA']"
-              disable
-              v-model="state.wallet"
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-            -->
-          </div>
-          <!--
-          <div class="col-md-3 col-6">
-            <q-select
-              :label="t('Language (Coming Soon)')"
-              :options="['English', 'Spanish']"
-              disable
-              v-model="state.wallet"
               @update:model-value="renderStamps"
               dense
               filled
             />
           </div>
-          -->
         </div>
       </template>
     </div>
@@ -201,6 +180,7 @@
     @template:updated="onTemplateUpdated"
     @template:deleted="onTemplateDeleted"
   />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -296,6 +276,9 @@ const state = reactive<{
   showCutLines: boolean;
   showingSide: 'front' | 'back';
   templateData: TemplateData;
+  // TODO: Remove me.
+  tempTheme: undefined;
+  tempLanguage: undefined;
 }>({
   loading: false,
   activeTemplate: undefined,
@@ -308,6 +291,9 @@ const state = reactive<{
     wallet: 'Selene',
     ...props.stampCollection.templateData,
   },
+  // TODO: Remove me.
+  tempTheme: undefined,
+  tempLanguage: undefined,
 });
 
 // Computeds.
@@ -336,7 +322,7 @@ async function showTemplateEditorDialog() {
   templateEditorDialog.value?.toggleVisible();
 }
 
-async function onTemplateUpdated(newTemplate: Template, oldTemplate: Template) {
+async function onTemplateUpdated(newTemplate: Template, _oldTemplate: Template) {
   props.app.setTemplate(newTemplate);
 
   state.activeTemplate = newTemplate;
