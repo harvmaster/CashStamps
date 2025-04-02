@@ -37,13 +37,18 @@
               {{ t('contactSupport') }}
             </q-banner>
 
-            <q-expansion-item :label="t('instructions')" header-class="bg-primary text-white">
+            <q-expansion-item
+              :label="t('instructions')"
+              header-class="bg-primary text-white"
+            >
               <q-separator />
               <q-card>
                 <q-card-section>
                   <p>
-                    Use handlebars to echo placeholders/directives into a template. For example:
-                    <code v-pre>{{ valueBCH }}</code> or <code v-pre>{{ @QRCODE walletURL wif walletLogo }}</code>
+                    Use handlebars to echo placeholders/directives into a
+                    template. For example:
+                    <code v-pre>{{ valueBCH }}</code> or
+                    <code v-pre>{{ @QRCODE walletURL wif walletLogo }}</code>
                   </p>
                   <p>The following placeholders/directives are supported:</p>
                   <q-markup-table>
@@ -57,57 +62,105 @@
                       <tr>
                         <td>@QRCODE</td>
                         <td>
-                        <p>Renders a QR code that encodes a URL. The URL is constructed by concatenating all arguments except the last one.</p>
-                        <ul>
-                          <li>All arguments except the final one are joined to form the QR code's content</li>
-                          <li>The last argument specifies the URL of an image to display as a centered logo within the QR code</li>
-                          <li>Both arguments can be either literal values or variable references</li>
-                        </ul>
-                        <p>
-                          Example using placeholders to autofill according to selected wallet:<br/>
-                          <code v-pre>{{ @QRCODE walletURL wif walletLogo }}</code>
-                        </p>
-                        <p>
-                          Example using custom wallet URL/Logo<br/>
-                          <code v-pre>{{ @QRCODE https://my-custom-redeem-url.com/wif= wif https://my-custom-logo.png }}</code>
-                        </p>
+                          <p>
+                            Renders a QR code that encodes a URL. The URL is
+                            constructed by concatenating all arguments except
+                            the last one.
+                          </p>
+                          <ul>
+                            <li>
+                              All arguments except the final one are joined to
+                              form the QR code's content
+                            </li>
+                            <li>
+                              The last argument specifies the URL of an image to
+                              display as a centered logo within the QR code
+                            </li>
+                            <li>
+                              Both arguments can be either literal values or
+                              variable references
+                            </li>
+                          </ul>
+                          <p>
+                            Example using placeholders to autofill according to
+                            selected wallet:<br />
+                            <code
+                              v-pre
+                              >{{ @QRCODE walletURL wif walletLogo }}</code
+                            >
+                          </p>
+                          <p>
+                            Example using custom wallet URL/Logo<br />
+                            <code
+                              v-pre
+                              >{{ @QRCODE https://my-custom-redeem-url.com/wif= wif https://my-custom-logo.png }}</code
+                            >
+                          </p>
                         </td>
                       </tr>
                       <tr>
                         <td>@DATE</td>
                         <td>
-                          <p>Formats a date according to the specified format string.</p>
+                          <p>
+                            Formats a date according to the specified format
+                            string.
+                          </p>
                           <ul>
-                            <li>The first argument is the date in 'yyyy-MM-dd' format (e.g., '2025-04-02')</li>
-                            <li>The second argument is the output format string (using Luxon DateTime format patterns)</li>
-                            <li>Both arguments can be either literal values or variable references</li>
+                            <li>
+                              The first argument is the date in 'yyyy-MM-dd'
+                              format (e.g., '2025-04-02')
+                            </li>
+                            <li>
+                              The second argument is the output format string
+                              (using Luxon DateTime format patterns)
+                            </li>
+                            <li>
+                              Both arguments can be either literal values or
+                              variable references
+                            </li>
                           </ul>
-                          <p>The directive will parse the input date and output it in the requested format.</p>
+                          <p>
+                            The directive will parse the input date and output
+                            it in the requested format.
+                          </p>
 
-                          <p>Example to display expiry date in format like "2 Dec 2024":<br/>
+                          <p>
+                            Example to display expiry date in format like "2 Dec
+                            2024":<br />
                             <code v-pre>{{ @DATE expiry DD }}</code>
                           </p>
                         </td>
                       </tr>
                       <tr>
                         <td>paperSize</td>
-                        <td>The name of the selected paper size ("letter" or "a4")</td>
+                        <td>
+                          The name of the selected paper size ("letter" or "a4")
+                        </td>
                       </tr>
                       <tr>
                         <td>paperWidth</td>
-                        <td>The width of the selected paper size in CSS units</td>
+                        <td>
+                          The width of the selected paper size in CSS units
+                        </td>
                       </tr>
                       <tr>
                         <td>paperHeight</td>
-                        <td>The height of the selected paper size in CSS units</td>
+                        <td>
+                          The height of the selected paper size in CSS units
+                        </td>
                       </tr>
                       <tr>
                         <td>walletName</td>
-                        <td>The name of the selected wallet ("Flowee", "Paytaca", "Selene", "ZapIt" or "Random")</td>
+                        <td>
+                          The name of the selected wallet ("Flowee", "Paytaca",
+                          "Selene", "ZapIt" or "Random")
+                        </td>
                       </tr>
                       <tr>
                         <td>walletURL</td>
-                        <td>Installation/Redeem URL for the selected wallet.</td>
+                        <td>
+                          Installation/Redeem URL for the selected wallet.
+                        </td>
                       </tr>
                       <tr>
                         <td>walletLogo</td>
@@ -169,8 +222,7 @@
 
               <q-tab-panel name="back">
                 <q-banner class="bg-warning text-white">
-                  Leave this empty if the
-                  template should be one-sided.
+                  Leave this empty if the template should be one-sided.
                 </q-banner>
                 <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">

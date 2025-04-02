@@ -1,185 +1,187 @@
 <template>
   <div>
-  <!-- Collection Preview -->
-  <div class="inner-page">
-    <div class="q-col-gutter-y-md q-mb-xl">
-      <div class="row">
-        <!-- Controls for print/show mnemonic -->
-        <div class="col-md-8 col-12 q-gutter-x-sm">
-          <q-btn-group>
-            <!-- Print Stamps -->
-            <q-btn
-              outline
-              icon="print"
-              color="primary"
-              :disable="!state.renderedStamps.length"
-              @click="printStamps"
-            >
-              <q-tooltip class="print-hide">{{ t('printStamps') }}</q-tooltip>
-            </q-btn>
-
-            <!-- Export as JSON -->
-            <q-btn
-              outline
-              icon="file_download"
-              color="secondary"
-              :disable="!state.renderedStamps.length"
-              @click="exportAsJson"
-            >
-              <q-tooltip class="print-hide">{{ t('exportAsJson') }}</q-tooltip>
-            </q-btn>
-          </q-btn-group>
-
-          <q-toggle
-            v-model="state.showClaimedStamps"
-            :label="t('showClaimedStamps')"
-          />
-          <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
-        </div>
-
-        <!-- Template selection -->
-        <div class="col-md-4 col-12">
-          <q-select
-            :label="t('template')"
-            :options="templates"
-            v-model="state.activeTemplate"
-            @update:model-value="renderStamps"
-            dense
-            filled
-          >
-            <template v-slot:option="scope">
-              <q-item v-bind="scope.itemProps">
-                <q-item-section>
-                  <q-item-label
-                    :caption="scope.opt.version === 1 && scope.opt.readonly"
-                    >{{ scope.opt.label }}</q-item-label
-                  >
-                  <q-item-label v-if="!scope.opt.readonly" caption
-                    >Custom</q-item-label
-                  >
-                </q-item-section>
-              </q-item>
-            </template>
-            <template v-slot:after>
+    <!-- Collection Preview -->
+    <div class="inner-page">
+      <div class="q-col-gutter-y-md q-mb-xl">
+        <div class="row">
+          <!-- Controls for print/show mnemonic -->
+          <div class="col-md-8 col-12 q-gutter-x-sm">
+            <q-btn-group>
+              <!-- Print Stamps -->
               <q-btn
-                round
-                dense
-                flat
-                icon="edit"
-                @click="showTemplateEditorDialog"
+                outline
+                icon="print"
+                color="primary"
+                :disable="!state.renderedStamps.length"
+                @click="printStamps"
               >
-                <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+                <q-tooltip class="print-hide">{{ t('printStamps') }}</q-tooltip>
               </q-btn>
-            </template>
-          </q-select>
+
+              <!-- Export as JSON -->
+              <q-btn
+                outline
+                icon="file_download"
+                color="secondary"
+                :disable="!state.renderedStamps.length"
+                @click="exportAsJson"
+              >
+                <q-tooltip class="print-hide">{{
+                  t('exportAsJson')
+                }}</q-tooltip>
+              </q-btn>
+            </q-btn-group>
+
+            <q-toggle
+              v-model="state.showClaimedStamps"
+              :label="t('showClaimedStamps')"
+            />
+            <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+          </div>
+
+          <!-- Template selection -->
+          <div class="col-md-4 col-12">
+            <q-select
+              :label="t('template')"
+              :options="templates"
+              v-model="state.activeTemplate"
+              @update:model-value="renderStamps"
+              dense
+              filled
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label
+                      :caption="scope.opt.version === 1 && scope.opt.readonly"
+                      >{{ scope.opt.label }}</q-item-label
+                    >
+                    <q-item-label v-if="!scope.opt.readonly" caption
+                      >Custom</q-item-label
+                    >
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:after>
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="edit"
+                  @click="showTemplateEditorDialog"
+                >
+                  <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+                </q-btn>
+              </template>
+            </q-select>
+          </div>
+        </div>
+
+        <template v-if="state.activeTemplate.version === 2">
+          <div class="row q-col-gutter-md">
+            <div class="col-md-3 col-6">
+              <q-select
+                :label="t('paperSize')"
+                :options="Object.keys(paperSizes)"
+                v-model="state.templateData.paperSize"
+                @update:model-value="renderStamps"
+                dense
+                filled
+              />
+            </div>
+            <div class="col-md-3 col-6">
+              <q-select
+                :label="t('wallet')"
+                :options="Object.keys(wallets)"
+                v-model="state.templateData.wallet"
+                @update:model-value="renderStamps"
+                dense
+                filled
+              />
+            </div>
+            <div class="col-md-3 col-6">
+              <q-select
+                :label="t('theme')"
+                :options="['Default']"
+                v-model="state.tempTheme"
+                disable
+                @update:model-value="renderStamps"
+                dense
+                filled
+              />
+            </div>
+            <div class="col-md-3 col-6">
+              <q-select
+                :label="t('language')"
+                :options="['English', 'Spanish']"
+                v-model="state.tempLanguage"
+                disable
+                @update:model-value="renderStamps"
+                dense
+                filled
+              />
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- Show Front/Back Toggle -->
+    <template v-if="state.activeTemplate.back">
+      <div class="row justify-center q-mb-md">
+        <q-btn-toggle
+          v-model="state.showingSide"
+          :options="[
+            { label: 'Front', value: 'front' },
+            { label: 'Back', value: 'back' },
+          ]"
+          toggle-color="primary"
+          style="width: 375px"
+          @update:model-value="renderStamps"
+          spread
+          rounded
+        />
+      </div>
+    </template>
+
+    <!-- IFrame Page -->
+    <div>
+      <div class="relative-position">
+        <div class="flex justify-center">
+          <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
+          <iframe
+            ref="printIFrame"
+            style="
+              width: 210mm;
+              height: 297mm;
+              border: none;
+              overflow-x: hidden;
+              overflow-y: hidden;
+            "
+            scrolling="no"
+            class="shadow-20 animate fadeIn"
+            sandbox="allow-same-origin allow-scripts allow-modals"
+            credentialless="true"
+          ></iframe>
+
+          <q-inner-loading
+            :showing="state.loading || !state.renderedStamps.length"
+          >
+            <q-spinner size="100px" color="primary" />
+          </q-inner-loading>
         </div>
       </div>
-
-      <template v-if="state.activeTemplate.version === 2">
-        <div class="row q-col-gutter-md">
-          <div class="col-md-3 col-6">
-            <q-select
-              :label="t('paperSize')"
-              :options="Object.keys(paperSizes)"
-              v-model="state.templateData.paperSize"
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-          </div>
-          <div class="col-md-3 col-6">
-            <q-select
-              :label="t('wallet')"
-              :options="Object.keys(wallets)"
-              v-model="state.templateData.wallet"
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-          </div>
-          <div class="col-md-3 col-6">
-            <q-select
-              :label="t('theme')"
-              :options="['Default']"
-              v-model="state.tempTheme"
-              disable
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-          </div>
-          <div class="col-md-3 col-6">
-            <q-select
-              :label="t('language')"
-              :options="['English', 'Spanish']"
-              v-model="state.tempLanguage"
-              disable
-              @update:model-value="renderStamps"
-              dense
-              filled
-            />
-          </div>
-        </div>
-      </template>
     </div>
-  </div>
 
-  <!-- Show Front/Back Toggle -->
-  <template v-if="state.activeTemplate.back">
-    <div class="row justify-center q-mb-md">
-      <q-btn-toggle
-        v-model="state.showingSide"
-        :options="[
-          { label: 'Front', value: 'front' },
-          { label: 'Back', value: 'back' },
-        ]"
-        toggle-color="primary"
-        style="width: 375px"
-        @update:model-value="renderStamps"
-        spread
-        rounded
-      />
-    </div>
-  </template>
-
-  <!-- IFrame Page -->
-  <div>
-    <div class="relative-position">
-      <div class="flex justify-center">
-        <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
-        <iframe
-          ref="printIFrame"
-          style="
-            width: 210mm;
-            height: 297mm;
-            border: none;
-            overflow-x: hidden;
-            overflow-y: hidden;
-          "
-          scrolling="no"
-          class="shadow-20 animate fadeIn"
-          sandbox="allow-same-origin allow-scripts allow-modals"
-          credentialless="true"
-        ></iframe>
-
-        <q-inner-loading
-          :showing="state.loading || !state.renderedStamps.length"
-        >
-          <q-spinner size="100px" color="primary" />
-        </q-inner-loading>
-      </div>
-    </div>
-  </div>
-
-  <!-- Model for editing template code -->
-  <template-editor-dialog
-    :key="state.activeTemplate"
-    ref="templateEditorDialog"
-    :activeTemplate="state.activeTemplate"
-    @template:created="onTemplateCreated"
-    @template:updated="onTemplateUpdated"
-    @template:deleted="onTemplateDeleted"
-  />
+    <!-- Model for editing template code -->
+    <template-editor-dialog
+      :key="state.activeTemplate"
+      ref="templateEditorDialog"
+      :activeTemplate="state.activeTemplate"
+      @template:created="onTemplateCreated"
+      @template:updated="onTemplateUpdated"
+      @template:deleted="onTemplateDeleted"
+    />
   </div>
 </template>
 
@@ -322,7 +324,10 @@ async function showTemplateEditorDialog() {
   templateEditorDialog.value?.toggleVisible();
 }
 
-async function onTemplateUpdated(newTemplate: Template, _oldTemplate: Template) {
+async function onTemplateUpdated(
+  newTemplate: Template,
+  _oldTemplate: Template
+) {
   props.app.setTemplate(newTemplate);
 
   state.activeTemplate = newTemplate;
