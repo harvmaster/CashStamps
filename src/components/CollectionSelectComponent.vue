@@ -85,7 +85,7 @@ const { t } = useI18n({
 // State
 //---------------------------------------------------------------------------
 
-const emits = defineEmits(['wallet:updated']);
+const _emits = defineEmits(['wallet:updated']);
 
 const model = defineModel<Required<string>>({
   required: true,
@@ -102,7 +102,7 @@ const activeCollection = computed(() => {
 
 const stampCollectionsOptions = computed(
   (): Array<SelectOption<StampCollection>> => {
-    return Object.values(props.app.stampCollections).map((collection, i) => {
+    return Object.values(props.app.stampCollections).map((collection) => {
       return {
         mnemonic: collection.mnemonic,
         label: collection.name,
