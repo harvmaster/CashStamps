@@ -527,6 +527,7 @@ watch(
         : '',
       html: stampsHtml,
       style: stampsCSS,
+      showingSide: state.showingSide,
     });
   }, 500)
 );

@@ -87,7 +87,7 @@ const { t } = useI18n({
 
 const _emits = defineEmits(['wallet:updated']);
 
-const model = defineModel<Required<string>>({
+const model = defineModel<string>({
   required: true,
 });
 
