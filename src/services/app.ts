@@ -11,7 +11,10 @@ import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
 // Database Migrations
-import { migrateCollection_v2_to_v3 } from 'src/migrations/migrations.js';
+import {
+  migrateCollection_v2_to_v3,
+  migration202504021400,
+} from 'src/migrations/migrations.js';
 
 // Import a simple key-value storage that uses the IndexedDB feature of modern browsers.
 import { get, set } from 'idb-keyval';
@@ -86,6 +89,7 @@ export class App {
     // Migrate the database to the latest format.
     // NOTE: We skip V1 to V2. It was only used in early development.
     await migrateCollection_v2_to_v3();
+    await migration202504021400();
 
     // Get stamp collections from IndexedDB and save them to our reactive propery.
     this.stampCollections = reactive((await get('stampCollections')) || {});

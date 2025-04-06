@@ -1,5 +1,20 @@
 <template>
   <div class="row q-col-gutter-md">
+    <!-- Quantity Input -->
+    <div class="col-md-2 col-12">
+      <q-input
+        v-model.number="quantityModel"
+        :label="t('stampQuantity')"
+        type="number"
+        :disable="props.wallet?.isFunded.value || false"
+        :step="1"
+        :min="0"
+        :max="100"
+        filled
+      />
+    </div>
+
+    <!-- Amount Input -->
     <div class="col-md-4 col-12">
       <q-input
         v-model.number="model.amount"
@@ -42,20 +57,6 @@
           </q-icon>
         </template>
       </q-input>
-    </div>
-
-    <!-- Quantity Input -->
-    <div class="col-md-2 col-12">
-      <q-input
-        v-model.number="quantityModel"
-        :label="t('stampQuantity')"
-        type="number"
-        :disable="props.wallet?.isFunded.value || false"
-        :step="1"
-        :min="0"
-        :max="100"
-        filled
-      />
     </div>
   </div>
 </template>

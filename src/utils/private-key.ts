@@ -7,7 +7,6 @@ import {
   generatePrivateKey,
   hexToBin,
   isHex,
-  binToUtf8,
   utf8ToBin,
   bigIntToCompactUint,
   secp256k1,

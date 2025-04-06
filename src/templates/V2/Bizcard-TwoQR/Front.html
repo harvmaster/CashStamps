@@ -16,10 +16,7 @@
     <div class="left">
       <div class="qr-container">
         <div class="step">Step 1</div>
-        <div class="qr">
-          {{ @QRCODE https://stamps.cash/#/redeem?a=1&w=s&wif= wif
-          /icons/selene.png }}
-        </div>
+        <div class="qr">{{ @QRCODE walletURL wif walletLogo }}</div>
         <div class="title">Install Wallet</div>
       </div>
     </div>

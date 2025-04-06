@@ -1,0 +1,206 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Anton+SC&family=Bree+Serif&family=Orelega+One&family=Patua+One&family=Protest+Strike&display=swap');
+
+  :root {
+    font-family: Arial, Helvetica, sans-serif;
+
+    /*
+    Set your paper size here
+
+    Default: A4
+      A4 Paper is 210mm x 297mm
+      A3 Paper is 297mm x 420mm
+      Letter Paper is 8.5in x 11in
+    */
+
+    /* Computed size helpers in mm */
+    --paper-width: {{ paperWidth }};
+    --paper-height: {{ paperHeight }};
+
+    --stamp-container-width: 3.5in;
+    --stamp-container-height: 2in;
+    --stamp-inner-width: 3.5in;
+    --stamp-inner-height: 2in;
+
+    --items-per-row: 2;
+    --rows-per-page: 5;
+
+    --paper-margin-x: calc(
+      (var(--paper-width) - var(--items-per-row) * var(--stamp-container-width)) /
+        2
+    );
+    --paper-margin-y: calc(
+      (
+          var(--paper-height) - var(--rows-per-page) *
+            var(--stamp-container-height)
+        ) / 2
+    );
+
+    /* Page is the internal usable space (i.e. with margins subtracted). */
+    --page-width: calc(var(--paper-width) - var(--paper-margin-x) * 2);
+    --page-height: calc(var(--paper-height) - var(--paper-margin-y) * 2);
+
+    --background-color: #000;
+    --text-color: #fff;
+    --primary-color: #82d853;
+  }
+
+  /**
+   * Page Settings
+   */
+  @page {
+    size: {{ paperSize }};
+    /* Chrome sets own margins, we change these printer settings */
+    margin-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    margin-bottom: 0;
+    margin-left: var(--paper-margin-x);
+    margin-right: var(--paper-margin-x);
+  }
+
+  body {
+    width: var(--page-width);
+    min-height: calc(var(--page-height) + var(--paper-margin-y));
+    margin: 0;
+    padding-top: var(--paper-margin-y);
+    /* See HACK above as to why this is zero. */
+    padding-bottom: 0;
+    padding-left: var(--paper-margin-x);
+    padding-right: var(--paper-margin-x);
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  @media print {
+    body {
+      width: var(--page-width);
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .stamp-container {
+    /* Set this as a block element */
+    display: block;
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Stamp size */
+    width: var(--stamp-container-width);
+    height: var(--stamp-container-height);
+
+    /* Stop stamps from being broken in half between pages */
+    break-inside: avoid;
+
+    /* Center the stamp inside of the stamp container */
+    display: grid;
+    align-items: start;
+    justify-items: center;
+  }
+
+  .stamp-inner {
+    background: url('./templates/bizcard-two-qr-black.png');
+    background-size: cover; /* Use 'contain' if you don't want cropping */
+    background-position: center; /* Center the image within the container */
+    background-repeat: no-repeat; /* Prevent repeating of the background */
+
+    /* Do not exceed the width and height due to padding and margins */
+    box-sizing: border-box;
+
+    /* Set stamp size */
+    width: var(--stamp-inner-width);
+    height: var(--stamp-inner-height);
+
+    /* Define layout inside of the stamp */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+  }
+
+  /* General styling for the top container */
+  .row {
+    display: flex; /* Use flexbox for layout */
+    width: 100%; /* Full width of the container */
+
+    /* Set the default font to use */
+    color: var(--text-color);
+    font-size: 11px;
+    font-family: 'Patua One', serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  /* Left and right sections */
+  .left,
+  .right {
+    flex: 1; /* Each takes up 50% of the width */
+    display: flex; /* Use flexbox for centering text */
+    flex-direction: column;
+    justify-content: flex-start; /* Center horizontally */
+    text-align: center; /* Center text within the section */
+  }
+
+  .qr-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1mm;
+    margin-top: 1mm;
+    margin-bottom: 1mm;
+    margin-left: 5mm;
+    margin-right: 5mm;
+  }
+
+  .step {
+    color: #000;
+    line-height: 17px;
+  }
+
+  .qr {
+    margin-top: 0px;
+  }
+
+  .qr-code {
+    margin: auto;
+    width: 27mm !important;
+    height: 27mm !important;
+  }
+
+  .title {
+    color: #fff;
+  }
+
+  .emphasis {
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
+  .top-text {
+    font-size: 12px;
+  }
+
+  .branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15px;
+  }
+
+  .logo {
+    height: 12px;
+  }
+
+  .primary {
+    color: var(--primary-color);
+  }
+
+  .valid-until {
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    font-family: 'monospace';
+  }
+</style>

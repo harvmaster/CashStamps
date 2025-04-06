@@ -132,7 +132,7 @@ const fundingSats = computed(() => {
   return sats;
 });
 
-const currentStampValue = computed(() => {
+const _currentStampValue = computed(() => {
   // Calculate the current value of each stamp in BCH.
   const eachStampBch = Number(fundingSats.value) / totalStamps.value;
 

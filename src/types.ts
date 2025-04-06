@@ -1,11 +1,24 @@
-export interface Template {
+export interface TemplateV1 {
   version: 1;
   uuid: string;
   label: string;
-  template: string;
+  front: string;
+  back: string;
   style: string;
   readonly: boolean;
 }
+
+export interface TemplateV2 {
+  version: 2;
+  uuid: string;
+  label: string;
+  front: string;
+  back: string;
+  style: string;
+  readonly: boolean;
+}
+
+export type Template = TemplateV1 | TemplateV2;
 
 export type TemplateData = { [key: string]: string };
 
@@ -18,6 +31,7 @@ export type StampCollection = {
   quantity: number;
   expiry: string;
   templateUUID?: string;
+  templateData?: TemplateData;
 };
 
 export type CashPayServer_Output = {
