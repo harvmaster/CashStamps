@@ -4,6 +4,29 @@
     <div class="inner-page">
       <div class="q-col-gutter-y-md q-mb-xl">
         <div class="row">
+          <div class="col-12">
+            <q-banner
+              v-if="!$q.platform.is.chrome"
+              class="bg-negative text-white"
+              inline-actions
+            >
+              Your browser is unsupported and may not render/print correctly.
+              For best results, please use a Chrome-based browser.
+              <template v-slot:action>
+                <q-btn
+                  flat
+                  type="a"
+                  href="https://brave.com"
+                  target="_blank"
+                  color="white"
+                  label="Brave Browser"
+                />
+              </template>
+            </q-banner>
+          </div>
+        </div>
+
+        <div class="row">
           <!-- Controls for print/show mnemonic -->
           <div class="col-md-8 col-12 q-gutter-x-sm">
             <q-btn-group>
@@ -187,7 +210,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
-import { debounce, exportFile } from 'quasar';
+import { useQuasar, debounce, exportFile } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
@@ -210,6 +233,8 @@ interface RenderedStamp {
   html: string;
   claimed: boolean;
 }
+
+const $q = useQuasar();
 
 const paperSizes = {
   A4: {
