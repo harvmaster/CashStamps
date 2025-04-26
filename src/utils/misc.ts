@@ -173,6 +173,18 @@ export const compileTemplate = async (
       replacement = date.toFormat(formatArg);
     }
 
+    // Handle the @number directive
+    else if (split[0].toLowerCase() === '@number') {
+      const numberArg = data[split[1]] || split[1];
+      const digitsArg = parseInt(data[split[2]] || split[2], 10);
+
+      // Convert the number argument to a string
+      const numberStr = String(numberArg);
+
+      // Add leading zeros to match the desired number of digits
+      replacement = numberStr.padStart(digitsArg, '0');
+    }
+
     // Handle other literal insertions.
     else {
       replacement = data[split[0]] || split[0] || '';

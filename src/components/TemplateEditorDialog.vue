@@ -190,6 +190,10 @@
                         <td>address</td>
                         <td>The CashAddr of this Stamp.</td>
                       </tr>
+                      <tr>
+                        <td>stampNumber</td>
+                        <td>The number of this Stamp.</td>
+                      </tr>
                     </tbody>
                   </q-markup-table>
                 </q-card-section>
