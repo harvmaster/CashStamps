@@ -429,7 +429,7 @@ async function renderStamps() {
     const newRenderedStamps: Array<RenderedStamp> = [];
 
     // Iterate over each stamp and render them.
-    for (const wallet of props.wallet.wallets.value) {
+    for (const [index, wallet] of props.wallet.wallets.value.entries()) {
       // Get the template side we are printing (front or back).
       const templateSide = state.activeTemplate[state.showingSide];
 
@@ -442,6 +442,7 @@ async function renderStamps() {
         expiry,
         wif: wallet.toWif(),
         address: wallet.getAddress(),
+        stampNumber: Number(index + 1).toString(),
         ...globalVariables,
       });
 
