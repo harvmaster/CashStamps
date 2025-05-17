@@ -8,6 +8,10 @@
           <p>{{ t('whatAreCashstampsContent') }}</p>
         </section>
         <section class="faq-section">
+          <h2>{{ t('whatAreSTAMPTokensTitle') }}</h2>
+          <div v-html="t('whatAreSTAMPTokensContent')"></div>
+        </section>
+        <section class="faq-section">
           <h2>{{ t('whyCashStampsTitle') }}</h2>
           <p>{{ t('whyCashStampsContent') }}</p>
         </section>
