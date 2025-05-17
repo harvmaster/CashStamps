@@ -428,10 +428,21 @@ async function renderStamps() {
     // Declare a variable to store our new rendered stamps.
     const newRenderedStamps: Array<RenderedStamp> = [];
 
+    // Try to compile list of stamps that should be ignored.
+    const ignoreStamps = props.stampCollection.filterStamps ? props.stampCollection.filterStamps.split(/\r?\n/).map((value) => Number(value)) : [];
+
     // Iterate over each stamp and render them.
     for (const [index, wallet] of props.wallet.wallets.value.entries()) {
       // Get the template side we are printing (front or back).
       const templateSide = state.activeTemplate[state.showingSide];
+
+      // Assign the stamp number (indexes start at zero, so we plus one).
+      const stampNumber = index + 1;
+
+      // Filter out any stamps that should be ignored.
+      if(ignoreStamps.includes(stampNumber)) {
+        continue;
+      }
 
       // Compile this stamp.
       const compiledStamp = await compileTemplate(templateSide, {
@@ -442,7 +453,7 @@ async function renderStamps() {
         expiry,
         wif: wallet.toWif(),
         address: wallet.getAddress(),
-        stampNumber: Number(index + 1).toString(),
+        stampNumber: Number(stampNumber).toString(),
         ...globalVariables,
       });
 
