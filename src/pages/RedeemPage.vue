@@ -219,6 +219,7 @@ const walletOptions = computed(() => {
   // Define our list of wallets.
   // NOTE: We use a single letter to identify wallets to keep the URL short.
   const wallets: { [key: string]: WalletOptions } = {
+    /*
     b: {
       name: 'Bitcoin.com Wallet',
       playStore:
@@ -227,6 +228,7 @@ const walletOptions = computed(() => {
         'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
       protohandler: '',
     },
+    */
     f: {
       name: 'Flowee Wallet',
       playStore: 'https://play.google.com/store/apps/details?id=org.flowee.pay',
@@ -238,7 +240,7 @@ const walletOptions = computed(() => {
         'https://play.google.com/store/apps/details?id=com.paytaca.app',
       appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
       // TODO: Paytaca will be changing this to "bch-wif" soon.
-      protohandler: 'bitcoincash',
+      protohandler: 'bch-wif',
     },
     s: {
       name: 'Selene Wallet',
