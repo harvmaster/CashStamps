@@ -218,7 +218,7 @@ const step = ref(1);
 const walletOptions = computed(() => {
   // Define our list of wallets.
   // NOTE: We use a single letter to identify wallets to keep the URL short.
-  const wallets: { [key: string]: WalletOptions } = {
+  const wallets: { [wallet: string]: WalletOptions } = {
     b: {
       name: 'Bitcoin.com Wallet',
       playStore:
@@ -237,8 +237,7 @@ const walletOptions = computed(() => {
       playStore:
         'https://play.google.com/store/apps/details?id=com.paytaca.app',
       appStore: 'https://apps.apple.com/app/paytaca/id1451795432',
-      // TODO: Paytaca will be changing this to "bch-wif" soon.
-      protohandler: 'bitcoincash',
+      protohandler: 'bch-wif',
     },
     s: {
       name: 'Selene Wallet',
@@ -263,8 +262,9 @@ const walletOptions = computed(() => {
 
   // "r" is a special value which means select a wallet at random.
   if (walletQuery === 'r') {
-    // Get all keys from the wallets object
-    const walletKeys = Object.keys(wallets);
+    // Get all keys from the wallets object.
+    // NOTE: We remove Bitcoin.com as it does not support bch-wif: handler.
+    const walletKeys = Object.keys(wallets).filter(key => key !== 'b');
 
     // Select a random index between 0 and walletKeys.length-1
     const randomIndex = Math.floor(Math.random() * walletKeys.length);
