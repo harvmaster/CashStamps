@@ -40,8 +40,14 @@
           {{ @QRCODE bch-wif: wif templates/minisatoshi-bch.svg }}
         </div>
         <div class="do-not-expose">Do NOT expose QR to ANYONE.</div>
-        <!--<div class="valid-until"><span class="valid-until-text">Valid until {{ @DATE expiry DD }}</span></div>-->
+        <div class="valid-until">
+          <span class="valid-until-text"
+            >Valid until {{ @DATE expiry DD }}</span
+          >
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="stamp-number">{{ batchId }}{{ stampNumber }}</div>
 </div>

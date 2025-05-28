@@ -217,7 +217,7 @@ import { useI18n } from 'vue-i18n';
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
 import type { StampCollection, Template } from 'src/types.js';
-import { compileTemplate, formatStampValue } from 'src/utils/misc.js';
+import { compileTemplate, formatStampValue, generateBatchID } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
@@ -383,11 +383,13 @@ function compileGlobalVariables() {
     (templateData?.['paperSize'] as keyof typeof paperSizes) || 'Letter';
   const walletKey =
     (templateData?.['wallet'] as keyof typeof wallets) || 'Selene';
+  const batchId = generateBatchID(props.stampCollection.mnemonic);
 
   // Define default global variables.
   const globalVariables: Record<string, string> = {
     ...(paperSizes[paperSizeKey] || paperSizes['Letter']),
     ...(wallets[walletKey] || wallets['Selene']),
+    batchId,
   };
 
   return globalVariables;

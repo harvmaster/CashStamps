@@ -191,6 +191,10 @@
                         <td>The CashAddr of this Stamp.</td>
                       </tr>
                       <tr>
+                        <td>batchId</td>
+                        <td>A two character identifier for this collection (generated deterministically from the mnemonic phrase).</td>
+                      </tr>
+                      <tr>
                         <td>stampNumber</td>
                         <td>The number of this Stamp.</td>
                       </tr>

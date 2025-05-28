@@ -81,6 +81,9 @@
   }
 
   .stamp-container {
+    /* Allow absolute positioned elements */
+    position: relative;
+
     /* Set this as a block element */
     display: block;
 
@@ -200,6 +203,16 @@
   .valid-until {
     width: 100%;
     text-align: center;
+    font-size: 8px;
+    font-family: 'monospace';
+  }
+
+  .stamp-number {
+    position: absolute;
+    top: 2mm;
+    right: 2mm;
+    color: var(--text-color);
+    text-align: left;
     font-size: 8px;
     font-family: 'monospace';
   }
