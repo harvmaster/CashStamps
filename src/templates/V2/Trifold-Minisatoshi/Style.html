@@ -102,10 +102,12 @@
   }
 
   .stamp-inner {
+    position: relative;
+
     width: 100%;
     height: 100%;
 
-    background: url('./templates/minisatoshi.svg');
+    background: url('./templates/minisatoshi-v2.svg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -186,7 +188,7 @@
   }
 
   .right-pane-qr-container {
-    margin-top: 16.5mm;
+    margin-top: 13.0mm;
   }
 
   .step {
@@ -240,5 +242,22 @@
     margin-left: 10mm;
     font-weight: bold;
     font-size: 13px;
+  }
+
+  .valid-until {
+    margin-top: 2mm;
+    color: #000;
+    font-size: 8px;
+    font-family: 'monospace';
+  }
+
+  .stamp-number {
+    position: absolute;
+    top: 2mm;
+    right: 2mm;
+    color: #000;
+    text-align: left;
+    font-size: 8px;
+    font-family: 'monospace';
   }
 </style>

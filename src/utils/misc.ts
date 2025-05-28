@@ -2,6 +2,7 @@ import QRCode from 'easyqrcodejs';
 import { DateTime } from 'luxon';
 import { watch } from 'vue';
 import type { ComputedGetter, Ref, WatchStopHandle } from 'vue';
+import { sha256, utf8ToBin, binToHex } from '@bitauth/libauth';
 
 // Convert a date to a string in the format of "YYYY/MM/DD"
 export const dateToString = (date = new Date()) => {
@@ -199,6 +200,20 @@ export const compileTemplate = async (
 
   // Return the compiled template.
   return compiledTemplate;
+};
+
+export const generateBatchID = function (mnemonic: string) {
+  // Hash the mnemonic.
+  const mnemonicHash = sha256.hash(utf8ToBin(mnemonic));
+
+  // Take first 4 bytes and convert to numbers for better distribution
+  const byte1 = mnemonicHash[0];
+  const byte2 = mnemonicHash[1];
+
+  const firstLetter = String.fromCharCode(65 + (byte1 % 26));
+  const secondLetter = String.fromCharCode(65 + (byte2 % 26));
+
+  return `${firstLetter}${secondLetter}`;
 };
 
 /**
