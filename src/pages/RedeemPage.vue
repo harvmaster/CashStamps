@@ -227,6 +227,13 @@ const walletOptions = computed(() => {
         'https://apps.apple.com/us/app/bitcoin-com-crypto-defi-wallet/id1252903728',
       protohandler: '',
     },
+    c: {
+      name: 'Cashonize Wallet',
+      // NOTE: We use an APK link as Play Store isn't currently available.
+      playStore:
+        'https://github.com/cashonize/cashonize-wallet/releases/download/v0.4.0/cashonize-android.apk',
+      protohandler: 'bch-wif',
+    },
     f: {
       name: 'Flowee Wallet',
       playStore: 'https://play.google.com/store/apps/details?id=org.flowee.pay',
