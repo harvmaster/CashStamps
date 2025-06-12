@@ -231,7 +231,7 @@ const walletOptions = computed(() => {
       name: 'Cashonize Wallet',
       // NOTE: We use an APK link as Play Store isn't currently available.
       playStore:
-        'https://github.com/cashonize/cashonize-wallet/releases/download/v0.4.0/cashonize-android.apk',
+        'https://github.com/cashonize/cashonize-wallet/releases/latest',
       protohandler: 'bch-wif',
     },
     f: {
