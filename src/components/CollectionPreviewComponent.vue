@@ -250,6 +250,11 @@ const paperSizes = {
 };
 
 const wallets = {
+  Cashonize: {
+    walletName: 'Cashonize',
+    walletURL: 'https://stamps.cash/#/redeem?a=1&w=c&wif=',
+    walletLogo: '/icons/cashonize.png',
+  },
   Flowee: {
     walletName: 'Flowee',
     walletURL: 'https://stamps.cash/#/redeem?a=1&w=f&wif=',
