@@ -48,6 +48,12 @@
               </q-item-section>
               <q-item-section>{{ t('delete') }}</q-item-section>
             </q-item>
+            <q-item clickable v-close-popup @click="onFilterStampsDialog">
+              <q-item-section avatar>
+                <q-icon name="filter" />
+              </q-item-section>
+              <q-item-section>{{ t('filterStamps') }}</q-item-section>
+            </q-item>
           </q-list>
         </q-menu>
       </q-btn>
@@ -56,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, triggerRef } from 'vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
@@ -252,6 +258,24 @@ async function onShowMnemonicDialog() {
   $q.dialog({
     title: t('mnemonic'),
     message: activeCollection.value?.mnemonic || t('noStampCollectionSelected'),
+  });
+}
+
+async function onFilterStampsDialog() {
+  $q.dialog({
+    title: t('filterStamps'),
+    message: t('enterListOfStampsNumberToExclude'),
+    prompt: {
+      model: activeCollection.value.filterStamps || '',
+      type: 'textarea',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk(async (code: string) => {
+    // Set the name of the currently active stamp collection.
+    activeCollection.value.filterStamps = code;
+
+    triggerRef(activeCollection);
   });
 }
 </script>
