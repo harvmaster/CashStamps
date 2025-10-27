@@ -250,29 +250,34 @@ const paperSizes = {
 };
 
 const wallets = {
+  Cashonize: {
+    walletName: 'Cashonize',
+    walletURL: 'https://stamps.cash/#/redeem?w=c&wif=',
+    walletLogo: '/icons/cashonize.png',
+  },
   Flowee: {
     walletName: 'Flowee',
-    walletURL: 'https://stamps.cash/#/redeem?a=1&w=f&wif=',
+    walletURL: 'https://stamps.cash/#/redeem?w=f&wif=',
     walletLogo: '/icons/flowee.png',
   },
   Paytaca: {
     walletName: 'Paytaca',
-    walletURL: 'https://stamps.cash/#/redeem?a=1&w=p&wif=',
+    walletURL: 'https://stamps.cash/#/redeem?w=p&wif=',
     walletLogo: '/icons/paytaca.png',
   },
   Selene: {
     walletName: 'Selene',
-    walletURL: 'https://stamps.cash/#/redeem?a=1&w=s&wif=',
+    walletURL: 'https://stamps.cash/#/redeem?w=s&wif=',
     walletLogo: '/icons/selene.png',
   },
   ZapIt: {
     walletName: 'ZapIt',
-    walletURL: 'https://stamps.cash/#/redeem?a=1&w=z&wif=',
+    walletURL: 'https://stamps.cash/#/redeem?w=z&wif=',
     walletLogo: '/icons/zapit.png',
   },
   Random: {
     walletName: 'Random',
-    walletURL: 'https://stamps.cash/#/redeem?a=1&w=r&wif=',
+    walletURL: 'https://stamps.cash/#/redeem?w=r&wif=',
     walletLogo: '/bch.svg',
   },
 };
