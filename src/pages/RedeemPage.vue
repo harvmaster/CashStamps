@@ -116,7 +116,7 @@
                   </div>
 
                   <div>
-                    <img src="/bitcoincom-scan.png" />
+                    <img src="/selene-scan.png" />
                   </div>
                 </template>
               </div>
@@ -349,7 +349,10 @@ const { t } = useI18n({
 //-----------------------------------------------------------------------------
 
 onMounted(() => {
-  if ($route.query['a']) {
+  // Should we auto-redirect to the App/Playstore?
+  const shouldAutoRedirectToAppInstall = $route.query['a'] === '0' ? false : true;
+
+  if (shouldAutoRedirectToAppInstall) {
     if (walletOptions.value.playStore && $q.platform.is.android) {
       window.location.href = walletOptions.value.playStore;
     } else if (walletOptions.value.appStore && $q.platform.is.ios) {
