@@ -239,6 +239,11 @@ const walletOptions = computed(() => {
       playStore: 'https://play.google.com/store/apps/details?id=org.flowee.pay',
       protohandler: 'bch-wif',
     },
+    o: {
+      name: 'Optn Wallet',
+      playStore: 'https://play.google.com/store/apps/details?id=optn.wallet.app',
+      protohandler: 'bch-wif',
+    },
     p: {
       name: 'Paytaca Wallet',
       playStore:
