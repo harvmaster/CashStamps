@@ -260,6 +260,11 @@ const wallets = {
     walletURL: 'https://stamps.cash/#/redeem?w=f&wif=',
     walletLogo: '/icons/flowee.png',
   },
+  Optn: {
+    walletName: 'OPTN Wallet',
+    walletURL: 'https://stamps.cash/#/redeem?w=o&wif=',
+    walletLogo: '/icons/optn.png',
+  },
   Paytaca: {
     walletName: 'Paytaca',
     walletURL: 'https://stamps.cash/#/redeem?w=p&wif=',
