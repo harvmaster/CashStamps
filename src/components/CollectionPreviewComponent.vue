@@ -100,6 +100,7 @@
           </div>
         </div>
 
+        <!-- V2 Template Options -->
         <template v-if="state.activeTemplate.version === 2">
           <div class="row q-col-gutter-md">
             <div class="col-md-3 col-6">
@@ -146,6 +147,9 @@
             </div>
           </div>
         </template>
+
+        <!-- Theme Customizer -->
+        <TemplateCustomizationComponent :template="state.activeTemplate" v-model:themeData="state.themeData" />
       </div>
     </div>
 
@@ -221,6 +225,7 @@ import { compileTemplate, formatStampValue, generateBatchID } from 'src/utils/mi
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
+import TemplateCustomizationComponent from 'src/components/TemplateCustomizationComponent.vue';
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
 
 // Pre-built Templates
@@ -313,6 +318,7 @@ const state = reactive<{
   showCutLines: boolean;
   showingSide: 'front' | 'back';
   templateData: TemplateData;
+  themeData: Record<string, string>;
   // TODO: Remove me.
   tempTheme: undefined;
   tempLanguage: undefined;
@@ -328,6 +334,7 @@ const state = reactive<{
     wallet: 'Selene',
     ...props.stampCollection.templateData,
   },
+  themeData: {},
   // TODO: Remove me.
   tempTheme: undefined,
   tempLanguage: undefined,
@@ -405,6 +412,18 @@ function compileGlobalVariables() {
   return globalVariables;
 }
 
+function compileThemeVariables() {
+  // Populate theme data from wallet variables.
+  if (state.activeTemplate.variables) {
+    state.themeData = Object.values(state.activeTemplate.variables).reduce((acc, section) => {
+      for (const [key, field] of Object.entries(section)) {
+        acc[key] = field.value;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }
+}
+
 async function renderStamps() {
   try {
     // Show the loading indicator as this can take some time (to render the QR Codes).
@@ -431,6 +450,7 @@ async function renderStamps() {
 
     // Get our global variables.
     const globalVariables = compileGlobalVariables();
+    compileThemeVariables();
 
     // If this wallet has not been funded, manually set a quantity.
     if (!props.wallet.isFunded.value) {
@@ -456,7 +476,10 @@ async function renderStamps() {
         address: wallet.getAddress(),
         stampNumber: Number(index + 1).toString(),
         ...globalVariables,
+        ...state.themeData,
       });
+
+      console.log({ ...state.themeData });
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
@@ -546,7 +569,10 @@ watch(
     // Compile the stamp CSS.
     const stampsCSS = await compileTemplate(
       state.activeTemplate?.style || '',
-      compileGlobalVariables()
+      {
+        ...compileGlobalVariables(),
+        ...state.themeData,
+      }
     );
 
     // Compile the stamp HTML.

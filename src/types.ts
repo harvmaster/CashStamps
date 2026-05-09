@@ -15,6 +15,17 @@ export interface TemplateV2 {
   front: string;
   back: string;
   style: string;
+  variables?: Record<
+    string,
+    Record<
+      string,
+      {
+        label: string;
+        type: 'color' | 'image' | 'string' | 'text';
+        hint?: string;
+      }
+    >
+  >;
   readonly: boolean;
 }
 

@@ -212,6 +212,7 @@
               <q-tab name="front" :label="t('front')" />
               <q-tab name="back" :label="t('back')" />
               <q-tab name="style" :label="t('style')" />
+              <q-tab name="variables" :label="t('variables')" />
             </q-tabs>
 
             <q-tab-panels v-model="state.activeTab" animated>
@@ -256,6 +257,19 @@
                   </div>
                 </div>
               </q-tab-panel>
+
+              <q-tab-panel name="variables">
+                <!-- Text Editor -->
+                <div class="scroll" style="height: 800px">
+                  <div class="editor-container">
+                    <v-ace-editor
+                      v-model:value="variablesJson"
+                      lang="json"
+                      :options="{}"
+                    />
+                  </div>
+                </div>
+              </q-tab-panel>
             </q-tab-panels>
           </div>
           <div class="col-shrink q-gutter-x-md">
@@ -285,7 +299,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { useQuasar, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
@@ -335,6 +349,19 @@ const state = reactive<{
   activeTemplate: { ...props.activeTemplate, readonly: false },
   activeTab: 'front',
 });
+
+const variablesJson = computed({
+  get() {
+    return JSON.stringify(state.activeTemplate.variables, null, 2)
+  },
+  set(newValue) {
+    try {
+      state.activeTemplate.variables = JSON.parse(newValue)
+    } catch {
+      // ignore invalid JSON while the user is still typing
+    }
+  }
+})
 
 const toggleVisible = () => {
   state.visible = !state.visible;
