@@ -241,7 +241,8 @@ const walletOptions = computed(() => {
     },
     o: {
       name: 'Optn Wallet',
-      playStore: 'https://play.google.com/store/apps/details?id=optn.wallet.app',
+      playStore:
+        'https://play.google.com/store/apps/details?id=optn.wallet.app',
       protohandler: 'bch-wif',
     },
     p: {
@@ -276,7 +277,7 @@ const walletOptions = computed(() => {
   if (walletQuery === 'r') {
     // Get all keys from the wallets object.
     // NOTE: We remove Bitcoin.com as it does not support bch-wif: handler.
-    const walletKeys = Object.keys(wallets).filter(key => key !== 'b');
+    const walletKeys = Object.keys(wallets).filter((key) => key !== 'b');
 
     // Select a random index between 0 and walletKeys.length-1
     const randomIndex = Math.floor(Math.random() * walletKeys.length);
@@ -355,7 +356,8 @@ const { t } = useI18n({
 
 onMounted(() => {
   // Should we auto-redirect to the App/Playstore?
-  const shouldAutoRedirectToAppInstall = $route.query['a'] === '0' ? false : true;
+  const shouldAutoRedirectToAppInstall =
+    $route.query['a'] === '0' ? false : true;
 
   if (shouldAutoRedirectToAppInstall) {
     if (walletOptions.value.playStore && $q.platform.is.android) {

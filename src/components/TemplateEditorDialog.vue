@@ -192,7 +192,11 @@
                       </tr>
                       <tr>
                         <td>batchId</td>
-                        <td>A two character identifier for this collection (generated deterministically from the mnemonic phrase).</td>
+                        <td>
+                          A two character identifier for this collection
+                          (generated deterministically from the mnemonic
+                          phrase).
+                        </td>
                       </tr>
                       <tr>
                         <td>stampNumber</td>
@@ -343,7 +347,7 @@ export type UpdateTemplate = {
   newValue: Template;
 };
 
-const isVisible = defineModel({ type: Boolean })
+const isVisible = defineModel({ type: Boolean });
 
 const emits = defineEmits([
   'template:created',
@@ -378,7 +382,7 @@ function saveTemplate() {
     emits('template:updated', state.activeTemplate, props.activeTemplate);
     toggleVisible();
     state.error = undefined;
-  } catch(error) {
+  } catch (error) {
     state.error = `${error}`;
   }
 }
@@ -391,7 +395,7 @@ function copyTemplate() {
     emits('template:created', { ...state.activeTemplate, uuid: uid() });
     toggleVisible();
     state.error = undefined;
-  } catch(error) {
+  } catch (error) {
     state.error = `${error}`;
   }
 }
@@ -399,7 +403,7 @@ function copyTemplate() {
 function exportTemplate() {
   try {
     // Attempt to parse the variables field to ensure it is valid JSON.
-    if(state.activeTemplate.version === 2 && state.activeTemplate.variables) {
+    if (state.activeTemplate.version === 2 && state.activeTemplate.variables) {
       JSON.parse(state.activeTemplate.variables || '');
     }
 
@@ -410,7 +414,7 @@ function exportTemplate() {
     );
 
     state.error = undefined;
-  } catch(error) {
+  } catch (error) {
     state.error = `${error}`;
   }
 }

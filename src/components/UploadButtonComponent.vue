@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div
-      @click.capture.stop="pickFile"
-      class="inline-block"
-    >
+    <div @click.capture.stop="pickFile" class="inline-block">
       <slot>
         <q-btn label="Import" color="secondary" />
       </slot>

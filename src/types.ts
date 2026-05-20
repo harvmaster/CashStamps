@@ -22,19 +22,18 @@ export interface TemplateV2 {
 
 export type Template = TemplateV1 | TemplateV2;
 
-export type TemplateVariables =
-Record<
+export type TemplateVariables = Record<
+  string,
+  Record<
     string,
-    Record<
-      string,
-      {
-        label: string;
-        type: 'color' | 'image' | 'string' | 'text';
-        value: string;
-        hint?: string;
-      }
-    >
-  >;
+    {
+      label: string;
+      type: 'color' | 'image' | 'string' | 'text';
+      value: string;
+      hint?: string;
+    }
+  >
+>;
 
 export type TemplateData = { [key: string]: string };
 

@@ -109,13 +109,7 @@
                 </q-btn>
 
                 <!-- Import Template -->
-                <q-btn
-                  round
-                  dense
-                  flat
-                  icon="upload"
-                  @click="importTemplate()"
-                >
+                <q-btn round dense flat icon="upload" @click="importTemplate()">
                   <q-tooltip>{{ t('importTemplate') }}</q-tooltip>
                 </q-btn>
 
@@ -148,7 +142,9 @@
         </div>
 
         <!-- V2 Template Options -->
-        <template v-if="state.activeTemplate && state.activeTemplate.version === 2">
+        <template
+          v-if="state.activeTemplate && state.activeTemplate.version === 2"
+        >
           <div class="row q-col-gutter-md">
             <div class="col-md-4 col-6">
               <q-select
@@ -185,7 +181,10 @@
         </template>
 
         <!-- Theme Customizer -->
-        <TemplateCustomizationComponent v-if="state.activeTemplate?.version === 2" v-model:template="state.activeTemplate" />
+        <TemplateCustomizationComponent
+          v-if="state.activeTemplate?.version === 2"
+          v-model:template="state.activeTemplate"
+        />
       </div>
     </div>
 
@@ -271,8 +270,18 @@ import { useI18n } from 'vue-i18n';
 // App / Service / Utils Imports
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
-import type { StampCollection, Template, TemplateVariables } from 'src/types.js';
-import { compileTemplate, confirm, formatStampValue, generateBatchID, pickFile } from 'src/utils/misc.js';
+import type {
+  StampCollection,
+  Template,
+  TemplateVariables,
+} from 'src/types.js';
+import {
+  compileTemplate,
+  confirm,
+  formatStampValue,
+  generateBatchID,
+  pickFile,
+} from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
@@ -445,16 +454,20 @@ async function copyTemplate() {
     cancel: true,
     persistent: true,
   }).onOk(async (newLabel: string) => {
-    if(!state.activeTemplate) {
+    if (!state.activeTemplate) {
       return;
     }
 
-    await onTemplateCreated({ ...state.activeTemplate, label: newLabel, uuid: uid() });
+    await onTemplateCreated({
+      ...state.activeTemplate,
+      label: newLabel,
+      uuid: uid(),
+    });
   });
 }
 
 function exportTemplate() {
-  if(!state.activeTemplate) {
+  if (!state.activeTemplate) {
     return;
   }
 
@@ -469,7 +482,7 @@ async function importTemplate() {
   try {
     const content = await pickFile();
 
-    if(!content) {
+    if (!content) {
       return;
     }
 
@@ -492,16 +505,18 @@ async function importTemplate() {
 }
 
 async function deleteTemplate() {
-  if (!await confirm({
-    title: 'Delete Template',
-    message: 'Are you sure you want to delete this template?',
-    cancel: true,
-    persistent: true,
-  })) {
+  if (
+    !(await confirm({
+      title: 'Delete Template',
+      message: 'Are you sure you want to delete this template?',
+      cancel: true,
+      persistent: true,
+    }))
+  ) {
     return;
   }
 
-  if(!state.activeTemplate) {
+  if (!state.activeTemplate) {
     return;
   }
 
@@ -535,12 +550,13 @@ function compileGlobalVariables() {
 
 function compileTemplateVariables(): Record<string, string> {
   // If this is not a V2 template with variables, return empty.
-  if(!state.activeTemplate || state.activeTemplate.version !== 2) {
+  if (!state.activeTemplate || state.activeTemplate.version !== 2) {
     return {};
   }
 
   // Decode variables to a JS Object (note: It is technically a string).
-  const variables: TemplateVariables = JSON.parse(state.activeTemplate.variables || '{}') || {};
+  const variables: TemplateVariables =
+    JSON.parse(state.activeTemplate.variables || '{}') || {};
 
   return Object.entries(variables).reduce((acc, [section, variables]) => {
     for (const [key, field] of Object.entries(variables)) {
@@ -704,13 +720,10 @@ watch(
     }
 
     // Compile the stamp CSS.
-    const stampsCSS = await compileTemplate(
-      state.activeTemplate?.style || '',
-      {
-        ...compileGlobalVariables(),
-        ...compileTemplateVariables(),
-      }
-    );
+    const stampsCSS = await compileTemplate(state.activeTemplate?.style || '', {
+      ...compileGlobalVariables(),
+      ...compileTemplateVariables(),
+    });
 
     // Compile the stamp HTML.
     const stampsHtml = visibleStamps.value
