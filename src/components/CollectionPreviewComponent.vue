@@ -2,7 +2,7 @@
   <div>
     <!-- Collection Preview -->
     <div class="inner-page">
-      <div class="q-col-gutter-y-md q-mb-xl">
+      <div class="q-col-gutter-y-md q-mb-lg">
         <div class="row">
           <div class="col-12">
             <q-banner
@@ -28,7 +28,7 @@
 
         <div class="row">
           <!-- Controls for print/show mnemonic -->
-          <div class="col-md-8 col-12 q-gutter-x-sm">
+          <div class="col-md-7 col-12 q-gutter-x-sm">
             <q-btn-group>
               <!-- Print Stamps -->
               <q-btn
@@ -63,7 +63,7 @@
           </div>
 
           <!-- Template selection -->
-          <div class="col-md-4 col-12">
+          <div class="col-md-5 col-12">
             <q-select
               :label="t('template')"
               :options="templates"
@@ -86,6 +86,53 @@
                 </q-item>
               </template>
               <template v-slot:after>
+                <!-- Copy Template -->
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="file_copy"
+                  @click="copyTemplate()"
+                >
+                  <q-tooltip>{{ t('cloneTemplate') }}</q-tooltip>
+                </q-btn>
+
+                <!-- Export Template -->
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="download"
+                  @click="exportTemplate()"
+                >
+                  <q-tooltip>{{ t('exportTemplate') }}</q-tooltip>
+                </q-btn>
+
+                <!-- Import Template -->
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="upload"
+                  @click="importTemplate()"
+                >
+                  <q-tooltip>{{ t('importTemplate') }}</q-tooltip>
+                </q-btn>
+
+                <!-- Delete Template -->
+                <q-btn
+                  v-if="!state.activeTemplate?.readonly"
+                  round
+                  dense
+                  flat
+                  icon="delete"
+                  color="negative"
+                  @click="deleteTemplate()"
+                >
+                  <q-tooltip>{{ t('deleteTemplate') }}</q-tooltip>
+                </q-btn>
+
+                <!-- Advanced Template Editor -->
                 <q-btn
                   round
                   dense
@@ -101,9 +148,9 @@
         </div>
 
         <!-- V2 Template Options -->
-        <template v-if="state.activeTemplate.version === 2">
+        <template v-if="state.activeTemplate && state.activeTemplate.version === 2">
           <div class="row q-col-gutter-md">
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('paperSize')"
                 :options="Object.keys(paperSizes)"
@@ -113,7 +160,7 @@
                 filled
               />
             </div>
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('wallet')"
                 :options="Object.keys(wallets)"
@@ -123,18 +170,7 @@
                 filled
               />
             </div>
-            <div class="col-md-3 col-6">
-              <q-select
-                :label="t('theme')"
-                :options="['Default']"
-                v-model="state.tempTheme"
-                disable
-                @update:model-value="renderStamps"
-                dense
-                filled
-              />
-            </div>
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('language')"
                 :options="['English', 'Spanish']"
@@ -149,13 +185,13 @@
         </template>
 
         <!-- Theme Customizer -->
-        <TemplateCustomizationComponent :template="state.activeTemplate" v-model:themeData="state.themeData" />
+        <TemplateCustomizationComponent v-if="state.activeTemplate?.version === 2" v-model:template="state.activeTemplate" />
       </div>
     </div>
 
     <!-- Show Front/Back Toggle -->
-    <template v-if="state.activeTemplate.back">
-      <div class="row justify-center q-mb-md">
+    <template v-if="state.activeTemplate?.back">
+      <div class="row justify-center q-mb-lg">
         <q-btn-toggle
           v-model="state.showingSide"
           :options="[
@@ -188,6 +224,7 @@
             scrolling="no"
             class="shadow-20 animate fadeIn"
             sandbox="allow-same-origin allow-scripts allow-modals"
+            csp="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';"
             credentialless="true"
           ></iframe>
 
@@ -200,9 +237,23 @@
       </div>
     </div>
 
+    <div class="row justify-center q-mt-xl q-mb-md">
+      <q-btn
+        label="Print Stamps"
+        icon="print"
+        color="primary"
+        :disable="!state.renderedStamps.length"
+        @click="printStamps"
+        class="q-pl-xl q-pr-xl"
+        rounded
+      />
+    </div>
+
     <!-- Model for editing template code -->
     <template-editor-dialog
-      :key="state.activeTemplate"
+      v-if="state.activeTemplate"
+      v-model="state.isEditorVisible"
+      :key="state.activeTemplate.uuid"
       ref="templateEditorDialog"
       :activeTemplate="state.activeTemplate"
       @template:created="onTemplateCreated"
@@ -214,14 +265,14 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
-import { useQuasar, debounce, exportFile } from 'quasar';
+import { useQuasar, debounce, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
-import type { StampCollection, Template } from 'src/types.js';
-import { compileTemplate, formatStampValue, generateBatchID } from 'src/utils/misc.js';
+import type { StampCollection, Template, TemplateVariables } from 'src/types.js';
+import { compileTemplate, confirm, formatStampValue, generateBatchID, pickFile } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
@@ -318,7 +369,7 @@ const state = reactive<{
   showCutLines: boolean;
   showingSide: 'front' | 'back';
   templateData: TemplateData;
-  themeData: Record<string, string>;
+  isEditorVisible: boolean;
   // TODO: Remove me.
   tempTheme: undefined;
   tempLanguage: undefined;
@@ -334,7 +385,7 @@ const state = reactive<{
     wallet: 'Selene',
     ...props.stampCollection.templateData,
   },
-  themeData: {},
+  isEditorVisible: false,
   // TODO: Remove me.
   tempTheme: undefined,
   tempLanguage: undefined,
@@ -363,28 +414,98 @@ const templateEditorDialog = ref<typeof TemplateEditorDialog | null>(null);
 //---------------------------------------------------------------------------
 
 async function showTemplateEditorDialog() {
-  templateEditorDialog.value?.toggleVisible();
+  state.isEditorVisible = true;
 }
 
 async function onTemplateUpdated(
   newTemplate: Template,
-  _oldTemplate: Template
+  _oldTemplate?: Template
 ) {
   props.app.setTemplate(newTemplate);
-
   state.activeTemplate = newTemplate;
 }
 
 async function onTemplateCreated(template: Template) {
   props.app.setTemplate(template);
-
   state.activeTemplate = template;
 }
 
 async function onTemplateDeleted(templateToDelete: Template) {
   props.app.deleteTemplate(templateToDelete);
-
   state.activeTemplate = templates.value[0];
+}
+
+async function copyTemplate() {
+  $q.dialog({
+    title: 'Copy Template',
+    message: 'Enter a new name for this template',
+    prompt: {
+      model: '',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk(async (newLabel: string) => {
+    if(!state.activeTemplate) {
+      return;
+    }
+
+    await onTemplateCreated({ ...state.activeTemplate, label: newLabel, uuid: uid() });
+  });
+}
+
+function exportTemplate() {
+  if(!state.activeTemplate) {
+    return;
+  }
+
+  const stringifiedTemplate = JSON.stringify(state.activeTemplate);
+  exportFile(
+    `CashStamps Template - ${state.activeTemplate.label}.json`,
+    stringifiedTemplate
+  );
+}
+
+async function importTemplate() {
+  try {
+    const content = await pickFile();
+
+    if(!content) {
+      return;
+    }
+
+    // Parse the JSON data.
+    const parsedTemplate = JSON.parse(content);
+
+    // NOTE: Make sure we don't allow over-writing the UUID.
+    //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
+    await onTemplateCreated({
+      ...parsedTemplate,
+      uuid: uid(),
+    });
+  } catch (error) {
+    console.error(error);
+    $q.dialog({
+      title: 'Error importing template',
+      message: `${error}`,
+    });
+  }
+}
+
+async function deleteTemplate() {
+  if (!await confirm({
+    title: 'Delete Template',
+    message: 'Are you sure you want to delete this template?',
+    cancel: true,
+    persistent: true,
+  })) {
+    return;
+  }
+
+  if(!state.activeTemplate) {
+    return;
+  }
+
+  await onTemplateDeleted(state.activeTemplate);
 }
 
 //---------------------------------------------------------------------------
@@ -412,16 +533,21 @@ function compileGlobalVariables() {
   return globalVariables;
 }
 
-function compileThemeVariables() {
-  // Populate theme data from wallet variables.
-  if (state.activeTemplate.variables) {
-    state.themeData = Object.values(state.activeTemplate.variables).reduce((acc, section) => {
-      for (const [key, field] of Object.entries(section)) {
-        acc[key] = field.value;
-      }
-      return acc;
-    }, {} as Record<string, string>);
+function compileTemplateVariables(): Record<string, string> {
+  // If this is not a V2 template with variables, return empty.
+  if(!state.activeTemplate || state.activeTemplate.version !== 2) {
+    return {};
   }
+
+  // Decode variables to a JS Object (note: It is technically a string).
+  const variables: TemplateVariables = JSON.parse(state.activeTemplate.variables || '{}') || {};
+
+  return Object.entries(variables).reduce((acc, [section, variables]) => {
+    for (const [key, field] of Object.entries(variables)) {
+      acc[`${section}.${key}`] = field.value;
+    }
+    return acc;
+  }, {} as Record<string, string>);
 }
 
 async function renderStamps() {
@@ -450,7 +576,7 @@ async function renderStamps() {
 
     // Get our global variables.
     const globalVariables = compileGlobalVariables();
-    compileThemeVariables();
+    const templateVariables = compileTemplateVariables();
 
     // If this wallet has not been funded, manually set a quantity.
     if (!props.wallet.isFunded.value) {
@@ -476,10 +602,8 @@ async function renderStamps() {
         address: wallet.getAddress(),
         stampNumber: Number(index + 1).toString(),
         ...globalVariables,
-        ...state.themeData,
+        ...templateVariables,
       });
-
-      console.log({ ...state.themeData });
 
       // Add the compiled template to our list of visible stamps.
       newRenderedStamps.push({
@@ -533,7 +657,6 @@ function onIframeResized(event: MessageEvent) {
 
   printIFrame.value.style.width = `${width}px`;
   printIFrame.value.style.height = `${height}px`;
-  console.log(`Iframe size changed: ${width}x${height}`);
 }
 
 //---------------------------------------------------------------------------
@@ -557,6 +680,20 @@ watch(
   }, 1000)
 );
 
+// When variables change, save the template and re-render the stamps.
+watch(
+  () => state.activeTemplate?.variables,
+  debounce(async () => {
+    if (!state.activeTemplate) {
+      return;
+    }
+
+    await onTemplateUpdated(state.activeTemplate);
+    await renderStamps();
+  }, 1000),
+  { deep: true }
+);
+
 // Whenever our Visible Stamp HTML changes, update the IFrame.
 watch(
   [visibleStamps, () => state.showCutLines],
@@ -571,7 +708,7 @@ watch(
       state.activeTemplate?.style || '',
       {
         ...compileGlobalVariables(),
-        ...state.themeData,
+        ...compileTemplateVariables(),
       }
     );
 

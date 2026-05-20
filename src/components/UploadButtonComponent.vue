@@ -1,6 +1,13 @@
 <template>
   <div>
-    <q-btn label="Import" color="secondary" @click="pickFile" />
+    <div
+      @click.capture.stop="pickFile"
+      class="inline-block"
+    >
+      <slot>
+        <q-btn label="Import" color="secondary" />
+      </slot>
+    </div>
     <q-file
       ref="fileInput"
       v-model="file"
@@ -11,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 
 const file = ref(null);
 const fileInput = ref(null);

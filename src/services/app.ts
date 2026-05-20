@@ -117,6 +117,8 @@ export class App {
     watch(
       this.templates,
       async () => {
+        console.log('saved templates', this.templates);
+
         // NOTE: Do a 'get' first and then merge our current state.
         //       This will help prevent problems when accessing across multiple tabs.
         // TODO: This will NOT work for items we delete! They will just get added back!

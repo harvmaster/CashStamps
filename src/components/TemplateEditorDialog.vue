@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="state.visible">
+  <q-dialog v-model="isVisible">
     <q-card style="max-width: 1024px; width: 100%">
       <q-card-section class="text-h6 text-center">
         {{ t('editTemplate') }}
@@ -253,6 +253,7 @@
                       v-model:value="state.activeTemplate.style"
                       lang="html"
                       :options="{}"
+                      @init="editorInit"
                     />
                   </div>
                 </div>
@@ -263,15 +264,20 @@
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
                     <v-ace-editor
-                      v-model:value="variablesJson"
+                      v-model:value="state.activeTemplate.variables"
                       lang="json"
                       :options="{}"
+                      @init="editorInit"
                     />
                   </div>
                 </div>
               </q-tab-panel>
             </q-tab-panels>
           </div>
+
+          <!-- Error -->
+          <div v-if="state.error" class="text-negative">{{ state.error }}</div>
+
           <div class="col-shrink q-gutter-x-md">
             <q-btn
               v-if="!props.activeTemplate.readonly"
@@ -299,7 +305,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { reactive } from 'vue';
 import { useQuasar, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
@@ -308,9 +314,11 @@ import type { Template } from 'src/types.js';
 import UploadButtonComponent from './UploadButtonComponent.vue';
 
 import { VAceEditor } from 'vue3-ace-editor';
-import ace from 'ace-builds';
+import ace, { type Ace } from 'ace-builds';
 import modeHtmlUrl from 'ace-builds/src-noconflict/mode-html?url';
 import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
+import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 
 // translations
@@ -318,6 +326,8 @@ import translation from './TemplateEditorDialog.i18n.json';
 
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
+ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
+ace.config.setModuleUrl('ace/mode/json_worker', workerJsonUrl);
 ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
 
 const $q = useQuasar();
@@ -333,6 +343,8 @@ export type UpdateTemplate = {
   newValue: Template;
 };
 
+const isVisible = defineModel({ type: Boolean })
+
 const emits = defineEmits([
   'template:created',
   'template:updated',
@@ -341,54 +353,66 @@ const emits = defineEmits([
 const props = defineProps<{ activeTemplate: Template }>();
 
 const state = reactive<{
-  visible: boolean;
   activeTemplate: Template;
-  activeTab: 'front' | 'back' | 'style';
+  activeTab: 'front' | 'back' | 'style' | 'variables';
+  error?: string;
 }>({
-  visible: false,
   activeTemplate: { ...props.activeTemplate, readonly: false },
   activeTab: 'front',
+  error: undefined,
 });
 
-const variablesJson = computed({
-  get() {
-    return JSON.stringify(state.activeTemplate.variables, null, 2)
-  },
-  set(newValue) {
-    try {
-      state.activeTemplate.variables = JSON.parse(newValue)
-    } catch {
-      // ignore invalid JSON while the user is still typing
-    }
-  }
-})
-
 const toggleVisible = () => {
-  state.visible = !state.visible;
+  isVisible.value = !isVisible.value;
 };
 
-function editorInit(editor: any) {
+function editorInit(editor: Ace.Editor) {
   editor.session.setTabSize(2);
 }
 
 function saveTemplate() {
-  emits('template:updated', state.activeTemplate, props.activeTemplate);
+  try {
+    // Attempt to parse the variables field to ensure it is valid JSON.
+    JSON.parse(state.activeTemplate.variables);
 
-  toggleVisible();
+    emits('template:updated', state.activeTemplate, props.activeTemplate);
+    toggleVisible();
+    state.error = undefined;
+  } catch(error) {
+    state.error = `${error}`;
+  }
 }
 
 function copyTemplate() {
-  emits('template:created', { ...state.activeTemplate, uuid: uid() });
+  try {
+    // Attempt to parse the variables field to ensure it is valid JSON.
+    JSON.parse(state.activeTemplate.variables);
 
-  toggleVisible();
+    emits('template:created', { ...state.activeTemplate, uuid: uid() });
+    toggleVisible();
+    state.error = undefined;
+  } catch(error) {
+    state.error = `${error}`;
+  }
 }
 
 function exportTemplate() {
-  const stringifiedTemplate = JSON.stringify(state.activeTemplate);
-  exportFile(
-    `CashStamps Template - ${state.activeTemplate.label}.json`,
-    stringifiedTemplate
-  );
+  try {
+    // Attempt to parse the variables field to ensure it is valid JSON.
+    if(state.activeTemplate.version === 2 && state.activeTemplate.variables) {
+      JSON.parse(state.activeTemplate.variables || '');
+    }
+
+    const stringifiedTemplate = JSON.stringify(state.activeTemplate);
+    exportFile(
+      `CashStamps Template - ${state.activeTemplate.label}.json`,
+      stringifiedTemplate
+    );
+
+    state.error = undefined;
+  } catch(error) {
+    state.error = `${error}`;
+  }
 }
 
 function importTemplate(content: string) {
@@ -413,7 +437,6 @@ function importTemplate(content: string) {
 
 function deleteTemplate() {
   emits('template:deleted', props.activeTemplate);
-
   toggleVisible();
 }
 

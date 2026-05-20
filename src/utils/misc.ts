@@ -2,7 +2,8 @@ import QRCode from 'easyqrcodejs';
 import { DateTime } from 'luxon';
 import { watch } from 'vue';
 import type { ComputedGetter, Ref, WatchStopHandle } from 'vue';
-import { sha256, utf8ToBin, binToHex } from '@bitauth/libauth';
+import { sha256, utf8ToBin } from '@bitauth/libauth';
+import { Dialog, QDialogOptions } from 'quasar';
 
 // Convert a date to a string in the format of "YYYY/MM/DD"
 export const dateToString = (date = new Date()) => {
@@ -256,3 +257,39 @@ export const waitFor = async function <T>(
     stopWatching();
   }
 };
+
+export function confirm(options: QDialogOptions): Promise<boolean> {
+  return new Promise((resolve) => {
+    Dialog.create({
+      cancel: true,
+      persistent: true,
+      ...options,
+    })
+      .onOk(() => resolve(true))
+      .onCancel(() => resolve(false))
+      .onDismiss(() => resolve(false)); // belt and suspenders
+  });
+}
+
+export async function pickFile(): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) {
+        resolve(null);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(file);
+    };
+
+    input.oncancel = () => resolve(null);
+
+    input.click();
+  });
+}

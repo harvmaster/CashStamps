@@ -5,6 +5,7 @@ export interface TemplateV1 {
   front: string;
   back: string;
   style: string;
+  variables: string;
   readonly: boolean;
 }
 
@@ -15,21 +16,25 @@ export interface TemplateV2 {
   front: string;
   back: string;
   style: string;
-  variables?: Record<
+  variables: string;
+  readonly: boolean;
+}
+
+export type Template = TemplateV1 | TemplateV2;
+
+export type TemplateVariables =
+Record<
     string,
     Record<
       string,
       {
         label: string;
         type: 'color' | 'image' | 'string' | 'text';
+        value: string;
         hint?: string;
       }
     >
   >;
-  readonly: boolean;
-}
-
-export type Template = TemplateV1 | TemplateV2;
 
 export type TemplateData = { [key: string]: string };
 
