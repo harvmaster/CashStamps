@@ -126,7 +126,18 @@ async function createFundingTx(): Promise<CashPayServer_Invoice> {
   }
 
   // Add addresses to transaction
-  for (const node of props.wallet.wallets.value) {
+  for (const [i, node] of props.wallet.wallets.value.entries()) {
+        // Try to compile list of stamps that should be ignored.
+    const ignoreStamps = props.stampCollection.filterStamps ? props.stampCollection.filterStamps.split(/\r?\n/).map((value) => Number(value)) : [];
+
+    const currentStampNumber = i + 1;
+
+    console.log(i, currentStampNumber);
+
+    if(ignoreStamps.includes(currentStampNumber)) {
+      continue;
+    }
+
     const address = node.getAddress();
     invoice.addAddress(
       address,

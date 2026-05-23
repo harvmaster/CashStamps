@@ -38,7 +38,7 @@ export class WalletHD extends HDPrivateNode {
   });
 
   public isFunded = computed(() => {
-    return this.wallets.value.every(
+    return this.wallets.value.some(
       (node) => node.transactions.value.length > 0
     );
   });
@@ -124,15 +124,15 @@ export class WalletHD extends HDPrivateNode {
     return wallets;
   }
 
-  async scan(startIndex = 0, addressGap = 20) {
+  async scan(startIndex = 0, addressGap = 100) {
     // Array to store active wallet nodes
     const nodes: Array<WalletP2PKH> = [];
 
     let currentIndex = startIndex;
-    let emptyAddressCount = 0;
+    let emptyNodes: Array<WalletP2PKH> = [];
 
     // Continue scanning until we find 'addressGap' consecutive empty addresses
-    while (emptyAddressCount < addressGap) {
+    while (emptyNodes.length < addressGap) {
       // Derive a number of wallets equivalent to our addressGap.
       const batch: Array<WalletP2PKH> = this.deriveWallets(
         addressGap,
@@ -146,19 +146,27 @@ export class WalletHD extends HDPrivateNode {
 
       // Process the results
       for (let i = 0; i < results.length; i++) {
+        // This address has transactions...
         if (results[i].length > 0) {
-          // This address has transactions, add it to nodes and reset empty address count
+          // And add any empty nodes inbetween to our list of nodes.
+          emptyNodes.forEach((emptyNode) => {
+            nodes.push(emptyNode);
+          });
+
+          // Add it to our list of nodes
           nodes.push(batch[i]);
-          emptyAddressCount = 0;
+
+          // Reset our list of of empty nodes.
+          emptyNodes = [];
         } else {
-          // This address is empty, increment the empty address count
-          emptyAddressCount++;
+          // This address is empty, add it to our list of empty nodes (as we may want to include it regardless).
+          emptyNodes.push(batch[i]);
         }
 
         currentIndex++;
 
         // If we've found 'addressGap' consecutive empty addresses, stop scanning
-        if (emptyAddressCount >= addressGap) {
+        if (emptyNodes.length >= addressGap) {
           break;
         }
       }

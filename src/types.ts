@@ -32,6 +32,8 @@ export type StampCollection = {
   expiry: string;
   templateUUID?: string;
   templateData?: TemplateData;
+  // A JS callback that can be used to filter stamps.
+  filterStamps?: string;
 };
 
 export type CashPayServer_Output = {
