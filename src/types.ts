@@ -28,7 +28,7 @@ export type TemplateVariables = Record<
     string,
     {
       label: string;
-      type: 'color' | 'image' | 'string' | 'text';
+      type: 'color' | 'hidden' | 'image' | 'string' | 'text';
       value: string;
       hint?: string;
     }

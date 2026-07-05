@@ -1,5 +1,7 @@
 export { default as PageTemplate } from './PageTemplate.html?raw';
 
+import HappyCoins from './happy_coins.json';
+
 // V2 Templates
 import BasicSingleQRRFront from './V2/Basic-SingleQR/Front.html?raw';
 import BasicSingleQRStyle from './V2/Basic-SingleQR/Style.html?raw';
@@ -37,7 +39,25 @@ import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 
 import { Template } from 'src/types.js';
 
+const templateList = [HappyCoins];
+
+export const builtInTemplates: { [uuid: string]: Template } =
+  Object.fromEntries(
+    templateList.map((template) => [
+      template.uuid,
+      {
+        ...template,
+        readonly: true,
+      } as Template, // 👈 Force TypeScript to evaluate it as a 'Template' right here
+    ])
+  );
+
+/*
 export const builtInTemplates: { [uuid: string]: Template } = {
+  '502ed91e-f688-4c91-8d0b-db74e606eb27': {
+    ...HappyCoins,
+    readonly: true,
+  },
   '5e24043e-47aa-4cc1-ab05-7a548a18a8fd': {
     version: 2,
     uuid: '5e24043e-47aa-4cc1-ab05-7a548a18a8fd',
@@ -74,6 +94,7 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     style: TrifoldMiniSatoshiStyle,
     readonly: true,
   },
+  /*
   'e652a61a-c6f5-45af-8f4e-fab344e823fc': {
     version: 1,
     uuid: 'e652a61a-c6f5-45af-8f4e-fab344e823fc',
@@ -183,3 +204,4 @@ export const builtInTemplates: { [uuid: string]: Template } = {
     readonly: true,
   },
 };
+*/

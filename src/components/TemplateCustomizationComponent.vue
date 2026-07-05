@@ -78,19 +78,29 @@
 
                   <!-- Image Input -->
                   <template v-else-if="props.type === 'image'">
-                    <q-img
-                      :src="variablesJson[sectionName][variableName].value"
-                      height="200px"
-                      width="auto"
-                      fit="contain"
-                      position="0 0"
-                      style="cursor: pointer"
+                    <div
+                      style="cursor: pointer; display: inline-block;"
                       @click="openFilePicker(sectionName, variableName)"
-                    />
+                    >
+                      <img
+                        :src="variablesJson[sectionName][variableName].value"
+                        style="max-height: 200px; max-width: 100%; display: block;"
+                        class="image-input"
+                      />
+                    </div>
 
                     <q-item-label caption class="q-pt-md">{{
                       props.hint
                     }}</q-item-label>
+                  </template>
+
+                  <!-- String Input -->
+                  <template v-else-if="props.type === 'string'">
+                    <q-input
+                      v-model="variablesJson[sectionName][variableName].value"
+                      :hint="props.hint"
+                      filled
+                    />
                   </template>
 
                   <!-- Text Area Input -->
@@ -98,15 +108,6 @@
                     <q-input
                       v-model="variablesJson[sectionName][variableName].value"
                       type="textarea"
-                      :hint="props.hint"
-                      filled
-                    />
-                  </template>
-
-                  <!-- Other (Show as generic input) -->
-                  <template v-else>
-                    <q-input
-                      v-model="variablesJson[sectionName][variableName].value"
                       :hint="props.hint"
                       filled
                     />
@@ -123,7 +124,7 @@
       v-if="template.readonly"
       class="absolute-full"
       style="cursor: pointer; z-index: 1"
-      @click="promptCreateCopy"
+      @click="props.onCopyTemplate()"
     />
 
     <!-- Global File Picker -->
@@ -173,6 +174,14 @@ const template = defineModel<TemplateV2>('template', {
   default: () => ({}),
 });
 
+const emits = defineEmits([
+  'template:updated',
+]);
+
+const props = defineProps<{
+  onCopyTemplate: () => Promise<void>
+}>();
+
 // NOTE: To simplify in IndexedDB, the Variables JSON is saved as a string.
 //       If we saved it as an object, it would end up with nested proxy objects (and Vue's toRaw is not recursive).
 //       The impact of this is that we would not be able to save `variables` to IndexedDB.
@@ -219,22 +228,6 @@ function onFileChange(
   reader.readAsDataURL(newFile);
 }
 
-function promptCreateCopy() {
-  $q.dialog({
-    title: 'Create a Copy',
-    message: 'Enter a name for your new customization:',
-    prompt: {
-      model: '',
-      type: 'text',
-      isValid: (val) => val.trim().length > 0,
-    },
-    cancel: true,
-    persistent: true,
-  }).onOk((name) => {
-    console.log('test');
-  });
-}
-
 //---------------------------------------------------------------------------
 // Watchers
 //---------------------------------------------------------------------------
@@ -243,6 +236,10 @@ watch(
   variablesJson,
   (newValue) => {
     try {
+      if (template.value.readonly) {
+        return;
+      }
+
       template.value.variables = JSON.stringify(newValue, null, 2);
     } catch {}
   },
@@ -256,9 +253,20 @@ watch(
 state.customizeTab = Object.keys(variablesJson.value)[0] || '';
 </script>
 
-<style>
+<style lang="scss">
 .field-label {
   max-width: 120px;
   min-width: 120px;
+}
+
+// Checkerboard background to show transparency.
+.image-input {
+  background-image:
+    linear-gradient(45deg, #ccc 25%, transparent 25%),
+    linear-gradient(-45deg, #ccc 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ccc 75%),
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, 10px 0;
 }
 </style>

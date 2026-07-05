@@ -28,7 +28,7 @@
 
         <div class="row">
           <!-- Controls for print/show mnemonic -->
-          <div class="col-md-7 col-12 q-gutter-x-sm">
+          <div class="col-md-6 col-12 q-gutter-x-sm">
             <q-btn-group>
               <!-- Print Stamps -->
               <q-btn
@@ -55,15 +55,17 @@
               </q-btn>
             </q-btn-group>
 
+            <!--
             <q-toggle
               v-model="state.showClaimedStamps"
               :label="t('showClaimedStamps')"
             />
             <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+            -->
           </div>
 
           <!-- Template selection -->
-          <div class="col-md-5 col-12">
+          <div class="col-md-6 col-12">
             <q-select
               :label="t('template')"
               :options="templates"
@@ -182,8 +184,10 @@
 
         <!-- Theme Customizer -->
         <TemplateCustomizationComponent
+          :key="state.activeTemplate?.uuid"
           v-if="state.activeTemplate?.version === 2"
           v-model:template="state.activeTemplate"
+          :onCopyTemplate="copyTemplate"
         />
       </div>
     </div>
@@ -462,6 +466,7 @@ async function copyTemplate() {
       ...state.activeTemplate,
       label: newLabel,
       uuid: uid(),
+      readonly: false,
     });
   });
 }
@@ -700,7 +705,7 @@ watch(
 watch(
   () => state.activeTemplate?.variables,
   debounce(async () => {
-    if (!state.activeTemplate) {
+    if (!state.activeTemplate || state.activeTemplate.readonly) {
       return;
     }
 
