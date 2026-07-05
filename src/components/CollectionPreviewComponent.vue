@@ -186,8 +186,9 @@
         <TemplateCustomizationComponent
           :key="state.activeTemplate?.uuid"
           v-if="state.activeTemplate?.version === 2"
-          v-model:template="state.activeTemplate"
+          :template="state.activeTemplate"
           :onCopyTemplate="copyTemplate"
+          @template:updated="onTemplateUpdated"
         />
       </div>
     </div>
@@ -699,20 +700,6 @@ watch(
   debounce(async () => {
     await renderStamps();
   }, 1000)
-);
-
-// When variables change, save the template and re-render the stamps.
-watch(
-  () => state.activeTemplate?.variables,
-  debounce(async () => {
-    if (!state.activeTemplate || state.activeTemplate.readonly) {
-      return;
-    }
-
-    await onTemplateUpdated(state.activeTemplate);
-    await renderStamps();
-  }, 1000),
-  { deep: true }
 );
 
 // Whenever our Visible Stamp HTML changes, update the IFrame.

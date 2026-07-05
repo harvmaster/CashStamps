@@ -17,7 +17,7 @@
           active-color="primary"
         >
           <q-tab
-            v-for="sectionName in Object.keys(variablesJson)"
+            v-for="sectionName in Object.keys(state.variables)"
             :key="sectionName"
             :name="sectionName"
             :label="sectionName"
@@ -27,7 +27,7 @@
         <!-- Section Bodies -->
         <q-tab-panels v-model="state.customizeTab" animated>
           <q-tab-panel
-            v-for="[sectionName, variables] in Object.entries(variablesJson)"
+            v-for="[sectionName, variables] in Object.entries(state.variables)"
             :key="sectionName"
             :name="sectionName"
           >
@@ -43,7 +43,7 @@
                   <!-- Color Input -->
                   <template v-if="props.type === 'color'">
                     <q-input
-                      v-model="variablesJson[sectionName][variableName].value"
+                      v-model="state.variables[sectionName][variableName].value"
                       :rules="[
                         (val) =>
                           testPattern.hexOrHexaColor(val) || 'Invalid color',
@@ -57,7 +57,7 @@
                           class="cursor-pointer"
                           :style="{
                             color:
-                              variablesJson[sectionName][variableName].value,
+                              state.variables[sectionName][variableName].value,
                           }"
                         >
                           <q-popup-proxy
@@ -67,7 +67,7 @@
                           >
                             <q-color
                               v-model="
-                                variablesJson[sectionName][variableName].value
+                                state.variables[sectionName][variableName].value
                               "
                             />
                           </q-popup-proxy>
@@ -83,7 +83,7 @@
                       @click="openFilePicker(sectionName, variableName)"
                     >
                       <img
-                        :src="variablesJson[sectionName][variableName].value"
+                        :src="state.variables[sectionName][variableName].value"
                         style="max-height: 200px; max-width: 100%; display: block;"
                         class="image-input"
                       />
@@ -97,7 +97,7 @@
                   <!-- String Input -->
                   <template v-else-if="props.type === 'string'">
                     <q-input
-                      v-model="variablesJson[sectionName][variableName].value"
+                      v-model="state.variables[sectionName][variableName].value"
                       :hint="props.hint"
                       filled
                     />
@@ -106,7 +106,7 @@
                   <!-- Text Area Input -->
                   <template v-else-if="props.type === 'text'">
                     <q-input
-                      v-model="variablesJson[sectionName][variableName].value"
+                      v-model="state.variables[sectionName][variableName].value"
                       type="textarea"
                       :hint="props.hint"
                       filled
@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, watch } from 'vue';
-import { useQuasar, patterns } from 'quasar';
+import { useQuasar, debounce, patterns } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
@@ -164,35 +164,27 @@ const { t } = useI18n({
   messages: translations.messages,
 });
 
-const state = reactive<{
-  customizeTab: string;
-}>({
-  customizeTab: '',
-});
-
+/*
 const template = defineModel<TemplateV2>('template', {
   default: () => ({}),
 });
+*/
 
 const emits = defineEmits([
   'template:updated',
 ]);
 
 const props = defineProps<{
+  template: TemplateV2,
   onCopyTemplate: () => Promise<void>
 }>();
 
-// NOTE: To simplify in IndexedDB, the Variables JSON is saved as a string.
-//       If we saved it as an object, it would end up with nested proxy objects (and Vue's toRaw is not recursive).
-//       The impact of this is that we would not be able to save `variables` to IndexedDB.
-//       So, we wrap in a computed here that casts to/from string to JSON.
-const variablesJson = computed((): TemplateVariables => {
-  try {
-    return reactive(JSON.parse(template.value.variables));
-  } catch {
-    console.error('Cannot parse template.variables');
-    return {};
-  }
+const state = reactive<{
+  customizeTab: string;
+  variables: TemplateVariables;
+}>({
+  customizeTab: '',
+  variables: JSON.parse(props.template.variables)
 });
 
 function openFilePicker(sectionName: string, variableName: string) {
@@ -222,26 +214,28 @@ function onFileChange(
   reader.onload = (e: ProgressEvent<FileReader>) => {
     const result = e.target?.result;
     if (typeof result === 'string') {
-      variablesJson.value[sectionName][variableName].value = result;
+      state.variables[sectionName][variableName].value = result;
     }
   };
   reader.readAsDataURL(newFile);
 }
+
+// Debounce because we don't want text inputs to trigger re-render.
+const debouncedTemplateUpdated = debounce((variables) => {
+  emits('template:updated', {
+    ...props.template,
+    variables: JSON.stringify(state.variables),
+  }, props.template);
+}, 500);
 
 //---------------------------------------------------------------------------
 // Watchers
 //---------------------------------------------------------------------------
 
 watch(
-  variablesJson,
-  (newValue) => {
-    try {
-      if (template.value.readonly) {
-        return;
-      }
-
-      template.value.variables = JSON.stringify(newValue, null, 2);
-    } catch {}
+  () => state.variables,
+  () => {
+    debouncedTemplateUpdated();
   },
   { deep: true }
 );
@@ -250,7 +244,7 @@ watch(
 // Initialization/Lifecycle Hooks
 //---------------------------------------------------------------------------
 
-state.customizeTab = Object.keys(variablesJson.value)[0] || '';
+state.customizeTab = Object.keys(state.variables)[0] || '';
 </script>
 
 <style lang="scss">
