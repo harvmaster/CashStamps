@@ -44,6 +44,8 @@
                   <template v-if="props.type === 'color'">
                     <q-input
                       v-model="state.variables[sectionName][variableName].value"
+                      @update:model-value="emitUpdate"
+                      debounce="500"
                       :rules="[
                         (val) =>
                           testPattern.hexOrHexaColor(val) || 'Invalid color',
@@ -69,6 +71,7 @@
                               v-model="
                                 state.variables[sectionName][variableName].value
                               "
+                              @change="emitUpdate"
                             />
                           </q-popup-proxy>
                         </q-icon>
@@ -98,6 +101,8 @@
                   <template v-else-if="props.type === 'string'">
                     <q-input
                       v-model="state.variables[sectionName][variableName].value"
+                      @update:model-value="emitUpdate"
+                      debounce="500"
                       :hint="props.hint"
                       filled
                     />
@@ -107,6 +112,7 @@
                   <template v-else-if="props.type === 'text'">
                     <q-input
                       v-model="state.variables[sectionName][variableName].value"
+                      @blur="emitUpdate"
                       type="textarea"
                       :hint="props.hint"
                       filled
@@ -139,8 +145,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue';
-import { useQuasar, debounce, patterns } from 'quasar';
+// NOTE: Be careful when adding new fields.
+//       To prevent accidentally looping watchers, we want to emitUpdate on explicit user-events instead.
+//       This means, for each new type we add, you must explicitly call emitUpdate when value changes.
+
+import { reactive, ref, watch } from 'vue';
+import { patterns } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
@@ -149,7 +159,6 @@ import { type TemplateV2, type TemplateVariables } from 'src/types.js';
 // Translations
 import translations from './CollectionPreviewComponent.i18n.json';
 
-const $q = useQuasar();
 const { testPattern } = patterns;
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -163,12 +172,6 @@ const { t } = useI18n({
   useScope: 'local',
   messages: translations.messages,
 });
-
-/*
-const template = defineModel<TemplateV2>('template', {
-  default: () => ({}),
-});
-*/
 
 const emits = defineEmits([
   'template:updated',
@@ -215,29 +218,33 @@ function onFileChange(
     const result = e.target?.result;
     if (typeof result === 'string') {
       state.variables[sectionName][variableName].value = result;
+      emitUpdate();
     }
   };
   reader.readAsDataURL(newFile);
 }
 
-// Debounce because we don't want text inputs to trigger re-render.
-const debouncedTemplateUpdated = debounce((variables) => {
+function emitUpdate() {
   emits('template:updated', {
     ...props.template,
-    variables: JSON.stringify(state.variables),
+    variables: JSON.stringify(state.variables, null, 2),
   }, props.template);
-}, 500);
+}
 
 //---------------------------------------------------------------------------
 // Watchers
 //---------------------------------------------------------------------------
 
 watch(
-  () => state.variables,
-  () => {
-    debouncedTemplateUpdated();
-  },
-  { deep: true }
+  () => props.template.variables,
+  (newVal) => {
+    state.variables = JSON.parse(newVal);
+
+    // Ensure we land on an active tab that still exists.
+    if (!(state.customizeTab in state.variables)) {
+      state.customizeTab = Object.keys(state.variables)[0] || '';
+    }
+  }
 );
 
 //---------------------------------------------------------------------------

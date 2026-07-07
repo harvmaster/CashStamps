@@ -7,9 +7,9 @@
       >
         <div class="text-center">{{ t('title') }}</div>
         <div class="q-gutter-md">
-          <img class="stamp-icon" src="/icon.svg" />
-          <img class="stamp-icon" src="/icon.svg" />
-          <img class="stamp-icon" src="/icon.svg" />
+          <img class="stamp-icon" src="/icon-outlined.svg" />
+          <img class="stamp-icon" src="/icon-outlined.svg" />
+          <img class="stamp-icon" src="/icon-outlined.svg" />
         </div>
       </div>
       <div
@@ -30,7 +30,7 @@
   display: flex;
   flex: 1;
   color: #fff;
-  font-size: clamp(15px, 10vw, 48px); /* Scalable font size */
+  font-size: clamp(15px, 10vw, 36px); /* Scalable font size */
   // font-size: 48px;
 }
 

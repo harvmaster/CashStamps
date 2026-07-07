@@ -99,45 +99,48 @@
                   <q-tooltip>{{ t('cloneTemplate') }}</q-tooltip>
                 </q-btn>
 
-                <!-- Export Template -->
-                <q-btn
-                  round
-                  dense
-                  flat
-                  icon="download"
-                  @click="exportTemplate()"
-                >
-                  <q-tooltip>{{ t('exportTemplate') }}</q-tooltip>
-                </q-btn>
-
                 <!-- Import Template -->
-                <q-btn round dense flat icon="upload" @click="importTemplate()">
+                <q-btn round dense flat icon="download" @click="importTemplate()">
                   <q-tooltip>{{ t('importTemplate') }}</q-tooltip>
                 </q-btn>
 
-                <!-- Delete Template -->
-                <q-btn
-                  v-if="!state.activeTemplate?.readonly"
-                  round
-                  dense
-                  flat
-                  icon="delete"
-                  color="negative"
-                  @click="deleteTemplate()"
-                >
-                  <q-tooltip>{{ t('deleteTemplate') }}</q-tooltip>
-                </q-btn>
+                <template v-if="!state.activeTemplate?.readonly">
+                  <q-separator class="q-ma-xs" vertical />
 
-                <!-- Advanced Template Editor -->
-                <q-btn
-                  round
-                  dense
-                  flat
-                  icon="edit"
-                  @click="showTemplateEditorDialog"
-                >
-                  <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
-                </q-btn>
+                  <!-- Export Template -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="upload"
+                    @click="exportTemplate()"
+                  >
+                    <q-tooltip>{{ t('exportTemplate') }}</q-tooltip>
+                  </q-btn>
+
+                  <!-- Delete Template -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="delete"
+                    color="negative"
+                    @click="deleteTemplate()"
+                  >
+                    <q-tooltip>{{ t('deleteTemplate') }}</q-tooltip>
+                  </q-btn>
+
+                  <!-- Advanced Template Editor -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="edit"
+                    @click="showTemplateEditorDialog"
+                  >
+                    <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+                  </q-btn>
+                </template>
               </template>
             </q-select>
           </div>
@@ -215,6 +218,7 @@
     <div>
       <div class="relative-position">
         <div class="flex justify-center">
+
           <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
           <iframe
             ref="printIFrame"
@@ -241,6 +245,15 @@
       </div>
     </div>
 
+    <!-- Display Options -->
+    <div class="flex justify-center q-mt-md">
+      <q-toggle
+        v-model="state.showClaimedStamps"
+        :label="t('showClaimedStamps')"
+      />
+      <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+    </div>
+
     <div class="row justify-center q-mt-xl q-mb-md">
       <q-btn
         label="Print Stamps"
@@ -248,16 +261,15 @@
         color="primary"
         :disable="!state.renderedStamps.length"
         @click="printStamps"
-        class="q-pl-xl q-pr-xl"
+        class="q-pl-xl q-pr-xl strong"
         rounded
       />
     </div>
 
     <!-- Model for editing template code -->
     <template-editor-dialog
-      v-if="state.activeTemplate"
+      v-if="state.activeTemplate && state.isEditorVisible"
       v-model="state.isEditorVisible"
-      :key="state.activeTemplate.uuid"
       ref="templateEditorDialog"
       :activeTemplate="state.activeTemplate"
       @template:created="onTemplateCreated"

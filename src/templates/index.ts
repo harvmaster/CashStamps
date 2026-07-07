@@ -1,6 +1,7 @@
 export { default as PageTemplate } from './PageTemplate.html?raw';
 
 import HappyCoins from './happy_coins.json';
+import Space from './space.json';
 
 // V2 Templates
 import BasicSingleQRRFront from './V2/Basic-SingleQR/Front.html?raw';
@@ -39,7 +40,7 @@ import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 
 import { Template } from 'src/types.js';
 
-const templateList = [HappyCoins];
+const templateList = [HappyCoins, Space];
 
 export const builtInTemplates: { [uuid: string]: Template } =
   Object.fromEntries(

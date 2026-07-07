@@ -32,7 +32,9 @@
               :label="t('fundStamps')"
               color="primary"
               @click="showFundingDialog"
-              class="full-width"
+              class="full-width strong"
+              unelevated
+              rounded
             />
           </div>
 
@@ -45,7 +47,9 @@
               :label="t('reclaimStamps')"
               color="secondary"
               @click="showReclaimDialog"
-              class="full-width"
+              class="full-width strong"
+              unelevated
+              rounded
             />
           </div>
 

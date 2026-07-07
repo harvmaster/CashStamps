@@ -7,8 +7,8 @@
         <div
           class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
-          <img src="icon.svg" class="q-ma-sm" style="height: 1em" />
-          <span class="strong">Stamps.Cash</span>
+          <img src="icon-outlined.svg" class="q-ma-md" style="height: 1.25em" />
+          <span class="strong">Stamps.<span class="text-primary">Cash</span></span>
         </div>
 
         <!-- Subtitle -->
