@@ -75,15 +75,17 @@
               filled
             >
               <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label
-                      :caption="scope.opt.version === 1 && scope.opt.readonly"
-                      >{{ scope.opt.label }}</q-item-label
-                    >
-                    <q-item-label v-if="!scope.opt.readonly" caption
-                      >Custom</q-item-label
-                    >
+                <q-item-label
+                  v-if="typeof scope.opt === 'string'"
+                  header
+                  class="text-weight-bold"
+                >
+                  {{ scope.opt }}
+                </q-item-label>
+
+                <q-item v-else v-bind="scope.itemProps">
+                  <q-item-section class="q-pl-md">
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </template>
@@ -148,7 +150,7 @@
 
         <!-- V2 Template Options -->
         <template
-          v-if="state.activeTemplate && state.activeTemplate.version === 2"
+          v-if="state.activeTemplate && state.activeTemplate.variables"
         >
           <div class="row q-col-gutter-md">
             <div class="col-md-4 col-6">
@@ -188,7 +190,7 @@
         <!-- Theme Customizer -->
         <TemplateCustomizationComponent
           :key="state.activeTemplate?.uuid"
-          v-if="state.activeTemplate?.version === 2"
+          v-if="state.activeTemplate?.variables"
           :template="state.activeTemplate"
           :onCopyTemplate="copyTemplate"
           @template:updated="onTemplateUpdated"
@@ -287,10 +289,12 @@ import { useI18n } from 'vue-i18n';
 // App / Service / Utils Imports
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
-import type {
-  StampCollection,
-  Template,
-  TemplateVariables,
+import {
+  type StampCollection,
+  type Template,
+  type TemplateVariables,
+  TemplateSchema,
+  TemplateVariablesSchema,
 } from 'src/types.js';
 import {
   compileTemplate,
@@ -418,9 +422,11 @@ const state = reactive<{
 });
 
 // Computeds.
-const templates = computed((): Array<Template> => {
+const templates = computed((): Array<Template | string> => {
   return [
+    'Built-In Templates',
     ...Object.values(builtInTemplates),
+    'Custom Templates',
     ...Object.values(props.app.templates),
   ];
 });
@@ -498,14 +504,19 @@ function exportTemplate() {
 
 async function importTemplate() {
   try {
-    const content = await pickFile();
+    const content = await pickFile({ accept: 'application/json' });
 
     if (!content) {
       return;
     }
 
-    // Parse the JSON data.
-    const parsedTemplate = JSON.parse(content);
+    // Verify the template schema.
+    const parsedTemplate = TemplateSchema.parse(JSON.parse(content));
+
+    // Validate variables (if there are any).
+    if(parsedTemplate.variables) {
+      TemplateVariablesSchema.parse(JSON.parse(parsedTemplate.variables));
+    }
 
     // NOTE: Make sure we don't allow over-writing the UUID.
     //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
@@ -576,12 +587,22 @@ function compileTemplateVariables(): Record<string, string> {
   const variables: TemplateVariables =
     JSON.parse(state.activeTemplate.variables || '{}') || {};
 
-  return Object.entries(variables).reduce((acc, [section, variables]) => {
-    for (const [key, field] of Object.entries(variables)) {
-      acc[`${section}.${key}`] = field.value;
+  const acc: Record<string, string> = {};
+
+  const walk = (section: Section, prefix: string) => {
+    for (const [key, entry] of Object.entries(section)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+      if ('type' in entry) {
+        acc[path] = entry.value; // it's a Field
+      } else {
+        walk(entry, path); // it's a nested Section
+      }
     }
-    return acc;
-  }, {} as Record<string, string>);
+  };
+
+  walk(variables, '');
+
+  return acc;
 }
 
 async function renderStamps() {
@@ -762,8 +783,13 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
+
+
+// Set the template to that specified by the Stamp Collection.
+// Otherwise, just get the first template from our list of templates.
+const isTemplate = (t) => typeof t !== 'string';
 state.activeTemplate =
   templates.value.find(
-    (template) => template.uuid === props.stampCollection.templateUUID
-  ) || templates.value[0];
+    (template) => isTemplate(template) && template.uuid === props.stampCollection.templateUUID
+  ) || templates.value.find(isTemplate);
 </script>

@@ -1,6 +1,7 @@
 export { default as PageTemplate } from './PageTemplate.html?raw';
 
-import HappyCoins from './happy_coins.json';
+// Bizcard Templates.
+import BizcardHappyCoins from './BizCard.Happy_Coins.json';
 import Space from './space.json';
 
 // V2 Templates
@@ -40,7 +41,7 @@ import HalloweenPaytacaStyle from './Special/HalloweenPaytaca_style.html?raw';
 
 import { Template } from 'src/types.js';
 
-const templateList = [HappyCoins, Space];
+const templateList = [BizcardHappyCoins, Space];
 
 export const builtInTemplates: { [uuid: string]: Template } =
   Object.fromEntries(

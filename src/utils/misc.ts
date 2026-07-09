@@ -271,10 +271,14 @@ export function confirm(options: QDialogOptions): Promise<boolean> {
   });
 }
 
-export async function pickFile(): Promise<string | null> {
+export async function pickFile(options?: {
+  accept?: string;
+  binary?: boolean;
+}): Promise<string | null> {
   return new Promise((resolve, reject) => {
     const input = document.createElement('input');
     input.type = 'file';
+    if (options?.accept) input.accept = options.accept;
 
     input.onchange = () => {
       const file = input.files?.[0];
@@ -285,7 +289,7 @@ export async function pickFile(): Promise<string | null> {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
       reader.onerror = () => reject(reader.error);
-      reader.readAsText(file);
+      options?.binary ? reader.readAsDataURL(file) : reader.readAsText(file);
     };
 
     input.oncancel = () => resolve(null);

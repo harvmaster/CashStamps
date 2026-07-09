@@ -307,6 +307,11 @@ import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 // translations
 import translation from './TemplateEditorDialog.i18n.json';
 
+export type UpdateTemplate = {
+  oldValue: Template;
+  newValue: Template;
+};
+
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
 ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
@@ -319,10 +324,9 @@ const { t } = useI18n({
   messages: translation.messages,
 });
 
-export type UpdateTemplate = {
-  oldValue: Template;
-  newValue: Template;
-};
+const defaultProperties = {
+  variables: '',
+}
 
 const isVisible = defineModel({ type: Boolean });
 
@@ -338,8 +342,13 @@ const state = reactive<{
   activeTab: 'meta' | 'front' | 'back' | 'style';
   error?: string;
 }>({
-  // NOTE: Make sure we do a deep copy - templates are a deeply nested structure.
-  activeTemplate: { ...JSON.parse(JSON.stringify(props.activeTemplate)), readonly: false },
+
+  activeTemplate: {
+    // Default variables to an empty object for backwards compatibility.
+    variables: '{}',
+    // NOTE: Make sure we do a deep copy - templates are a deeply nested structure.
+    ...JSON.parse(JSON.stringify(props.activeTemplate))
+  },
   activeTab: 'meta',
   error: undefined,
 });
