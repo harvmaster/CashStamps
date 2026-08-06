@@ -234,6 +234,12 @@ const walletOptions = computed(() => {
         'https://github.com/cashonize/cashonize-wallet/releases/latest',
       protohandler: 'bch-wif',
     },
+    e: {
+      name: 'Edge Wallet',
+      playStore: 'https://play.google.com/store/apps/details?id=co.edgesecure.app',
+      appStore: 'https://itunes.apple.com/us/app/edge-bitcoin-wallet/id1344400091',
+      protohandler: 'bch-wif',
+    },
     f: {
       name: 'Flowee Wallet',
       playStore: 'https://play.google.com/store/apps/details?id=org.flowee.pay',

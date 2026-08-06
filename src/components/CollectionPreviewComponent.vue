@@ -341,6 +341,11 @@ const wallets = {
     walletURL: 'https://stamps.cash/#/redeem?w=c&wif=',
     walletLogo: '/icons/cashonize.png',
   },
+  Edge: {
+    walletName: 'Edge Wallet',
+    walletURL: 'https://stamps.cash/#/redeem?w=e&wif=',
+    walletLogo: '/icons/edge.png',
+  },
   Flowee: {
     walletName: 'Flowee',
     walletURL: 'https://stamps.cash/#/redeem?w=f&wif=',

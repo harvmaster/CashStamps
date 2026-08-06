@@ -352,10 +352,12 @@ export class OracleClient extends EventEmitter {
     if (this.sseSocket) {
       // And the window is visible, then reconnect.
       if (globalThis.document.visibilityState === 'visible') {
+        console.log('subscribed');
         this.subscribeToMessages();
       }
       // Otherwise, if the window is invisible, disconnect.
       else if (document.visibilityState === 'hidden') {
+        console.log('closed');
         this.sseSocket.close();
       }
     }

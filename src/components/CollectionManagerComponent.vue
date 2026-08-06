@@ -10,11 +10,21 @@
             v-model="collection"
           />
 
-          <CollectionSummaryComponent
-            :oracles="app.oracles"
-            :stampCollection="collection"
-            :wallet="props.wallet"
-          />
+          <div class="row q-col-gutter-md">
+            <div class="col-8">
+              <CollectionSummaryComponent
+                :oracles="app.oracles"
+                :stampCollection="collection"
+                :wallet="props.wallet"
+              />
+            </div>
+            <div class="col-4">
+              <q-toggle v-model="value" label="Auto-Expire" :disabled="!props.wallet?.isFunded.value">
+                <q-tooltip v-if="!props.wallet?.isFunded.value">You must fund your Stamps before you can enable Auto-Expiry</q-tooltip>
+                <q-tooltip v-else>Enable to automatically reclaim stamps after Expiry Date passes</q-tooltip>
+              </q-toggle>
+            </div>
+          </div>
         </div>
       </div>
 

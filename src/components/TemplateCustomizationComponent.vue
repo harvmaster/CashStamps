@@ -49,28 +49,37 @@
                 >
                   <!-- Subsection: nested group, no 'type' of its own -->
                   <template v-if="!('type' in entryOrGroup)">
+                    <!--
                     <div class="q-pa-sm text-center strong">
                       <q-chip color="primary" text-color="white">
                         {{ capitalize(variableName) }}
                       </q-chip>
                     </div>
+                    -->
 
-                    <q-item
-                      v-for="[nestedName, entry] in Object.entries(entryOrGroup)"
-                      :key="nestedName"
+                    <q-expansion-item
+                      :label="capitalize(variableName)"
+                      icon="expand_circle_down"
+                      expand-separator
                     >
-                      <q-item-section class="field-label">
-                        <q-item-label>{{ entry.label }}</q-item-label>
-                      </q-item-section>
 
-                      <q-item-section>
-                        <TemplateCustomizationField
-                          :entry="entry"
-                          v-model:value="entry.value"
-                          @changed="emitUpdate"
-                        />
-                      </q-item-section>
-                    </q-item>
+                      <q-item
+                        v-for="[nestedName, entry] in Object.entries(entryOrGroup)"
+                        :key="nestedName"
+                      >
+                        <q-item-section class="field-label">
+                          <q-item-label>{{ entry.label }}</q-item-label>
+                        </q-item-section>
+
+                        <q-item-section>
+                          <TemplateCustomizationField
+                            :entry="entry"
+                            v-model:value="entry.value"
+                            @changed="emitUpdate"
+                          />
+                        </q-item-section>
+                      </q-item>
+                    </q-expansion-item>
                   </template>
 
                   <!-- Leaf entry -->

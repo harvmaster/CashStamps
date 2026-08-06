@@ -28,6 +28,18 @@
         <div class="flex justify-center">
           <div ref="qrElement" id="invoice-container" class="full-width" />
         </div>
+
+        <!-- Setup Auto-expiry -->
+        <div v-if="state.isBroadcasted" class="flex justify-center">
+          <q-btn
+            color="primary"
+            class="q-pl-xl q-pr-xl strong"
+            unelevated
+            rounded
+          >
+            Setup Auto-Expiry
+          </q-btn>
+        </div>
       </q-card-section>
 
       <!-- BIP70/JPP Wallets -->
@@ -77,8 +89,10 @@ const props = defineProps<{
 // Reactives.
 const state = reactive<{
   visible: boolean;
+  isBroadcasted: boolean;
 }>({
   visible: false,
+  isBroadcasted: false,
 });
 
 // Get the QR Code element.
@@ -169,6 +183,9 @@ async function generateQrCode() {
 
       // Hide the loading indicator.
       $q.loading.hide();
+
+      // Set the isBroadcasted state.
+      state.isBroadcasted = true;
 
       // Show the user a notification.
       $q.notify({

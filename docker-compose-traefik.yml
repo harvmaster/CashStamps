@@ -1,0 +1,40 @@
+version: "3.3"
+
+networks:
+  internal:
+    external: false
+
+services:
+
+  #----------------------------------------------------------------------------
+  # Install dependencies
+  #----------------------------------------------------------------------------
+  npm-install:
+    image: "node:24-alpine"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: "npm install"
+    # command: "echo 'skipped'"
+
+  #----------------------------------------------------------------------------
+  # Frontend
+  #----------------------------------------------------------------------------
+  cash-stamps:
+    image: "node:24-alpine"
+    depends_on:
+      npm-install:
+        condition: service_completed_successfully
+    working_dir: /home/node/app/
+    volumes:
+      - ./:/home/node/app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cash-stamps.service=cash-stamps"
+      - "traefik.http.routers.cash-stamps.rule=Host(`stamps.cash.localhost`)"
+      - "traefik.http.routers.cash-stamps.entrypoints=web"
+      - "traefik.http.services.cash-stamps.loadbalancer.server.port=9000"
+    environment:
+      # Use port 80 for Hot Module Reload as we are behind a reverse-proxy.
+      - HMR_PORT=80
+    command: "npm run dev"

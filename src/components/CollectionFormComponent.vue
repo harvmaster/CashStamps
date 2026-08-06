@@ -55,6 +55,9 @@
               <q-date v-model="expiryModel" />
             </q-popup-proxy>
           </q-icon>
+          <q-checkbox v-model="autoExpire">
+            <q-tooltip>Enable Auto-Expire</q-tooltip>
+          </q-checkbox>
         </template>
       </q-input>
     </div>
@@ -64,7 +67,7 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { StampCollection } from 'src/types.js';
@@ -83,6 +86,8 @@ const model = defineModel<Required<StampCollection>>({
 });
 
 const props = defineProps<{ oracles: OraclesService; wallet: WalletHD }>();
+
+const autoExpire = ref(false);
 
 // Set up i18n
 const { t } = useI18n({
