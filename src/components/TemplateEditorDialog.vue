@@ -204,9 +204,12 @@
                   </div>
                   <div class="col-12">
                     <q-banner class="bg-grey-4">
-                      Variables can be provided for easy customization of Templates.<br/>
-                      They can be injected into front/back/style using the form <span v-pre>{{ sectionName.variableName }}</span>.<br/>
-                      <br/>
+                      Variables can be provided for easy customization of
+                      Templates.<br />
+                      They can be injected into front/back/style using the form
+                      <span v-pre>{{ sectionName.variableName }}</span
+                      >.<br />
+                      <br />
                       Supported Types:
                       <ol>
                         <li>color</li>
@@ -278,11 +281,7 @@
           <div v-if="state.error" class="text-negative">{{ state.error }}</div>
 
           <div class="col-shrink q-gutter-x-md">
-            <q-btn
-              :label="t('save')"
-              color="primary"
-              @click="saveTemplate"
-            />
+            <q-btn :label="t('save')" color="primary" @click="saveTemplate" />
           </div>
         </div>
       </q-card-section>
@@ -326,7 +325,7 @@ const { t } = useI18n({
 
 const defaultProperties = {
   variables: '',
-}
+};
 
 const isVisible = defineModel({ type: Boolean });
 
@@ -342,12 +341,11 @@ const state = reactive<{
   activeTab: 'meta' | 'front' | 'back' | 'style';
   error?: string;
 }>({
-
   activeTemplate: {
     // Default variables to an empty object for backwards compatibility.
     variables: '{}',
     // NOTE: Make sure we do a deep copy - templates are a deeply nested structure.
-    ...JSON.parse(JSON.stringify(props.activeTemplate))
+    ...JSON.parse(JSON.stringify(props.activeTemplate)),
   },
   activeTab: 'meta',
   error: undefined,

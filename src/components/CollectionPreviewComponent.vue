@@ -102,7 +102,13 @@
                 </q-btn>
 
                 <!-- Import Template -->
-                <q-btn round dense flat icon="download" @click="importTemplate()">
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="download"
+                  @click="importTemplate()"
+                >
                   <q-tooltip>{{ t('importTemplate') }}</q-tooltip>
                 </q-btn>
 
@@ -149,9 +155,7 @@
         </div>
 
         <!-- V2 Template Options -->
-        <template
-          v-if="state.activeTemplate && state.activeTemplate.variables"
-        >
+        <template v-if="state.activeTemplate && state.activeTemplate.variables">
           <div class="row q-col-gutter-md">
             <div class="col-md-4 col-6">
               <q-select
@@ -220,7 +224,6 @@
     <div>
       <div class="relative-position">
         <div class="flex justify-center">
-
           <!-- NOTE: Credentialless is important as it disallows the IFrame from accessing IndexedDB and LocalStorage. -->
           <iframe
             ref="printIFrame"
@@ -519,7 +522,7 @@ async function importTemplate() {
     const parsedTemplate = TemplateSchema.parse(JSON.parse(content));
 
     // Validate variables (if there are any).
-    if(parsedTemplate.variables) {
+    if (parsedTemplate.variables) {
       TemplateVariablesSchema.parse(JSON.parse(parsedTemplate.variables));
     }
 
@@ -788,13 +791,13 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
-
-
 // Set the template to that specified by the Stamp Collection.
 // Otherwise, just get the first template from our list of templates.
 const isTemplate = (t) => typeof t !== 'string';
 state.activeTemplate =
   templates.value.find(
-    (template) => isTemplate(template) && template.uuid === props.stampCollection.templateUUID
+    (template) =>
+      isTemplate(template) &&
+      template.uuid === props.stampCollection.templateUUID
   ) || templates.value.find(isTemplate);
 </script>

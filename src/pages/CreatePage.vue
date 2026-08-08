@@ -8,7 +8,9 @@
           class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
           <img src="icon-outlined.svg" class="q-ma-md" style="height: 1.25em" />
-          <span class="strong">Stamps.<span class="text-primary">Cash</span></span>
+          <span class="strong"
+            >Stamps.<span class="text-primary">Cash</span></span
+          >
         </div>
 
         <!-- Subtitle -->
@@ -175,6 +177,13 @@ async function initWallet() {
 
   // Set the new active wallet.
   activeWallet.value = wallet;
+
+  // Start the Auto Expire service.
+  // NOTE: Run async to speed things up.
+  app.autoExpire.start({
+    stampCollection: activeCollection.value,
+    wallet: activeWallet.value,
+  });
 }
 
 //---------------------------------------------------------------------------
@@ -200,6 +209,9 @@ onUnmounted(async () => {
   if (activeWallet.value) {
     await activeWallet.value.stopMonitoring();
   }
+
+  // Run async to speed things up.
+  app.autoExpire.stop();
 });
 
 await initWallet();

@@ -19,10 +19,13 @@
               />
             </div>
             <div class="col-4">
-              <q-toggle v-model="value" label="Auto-Expire" :disabled="!props.wallet?.isFunded.value">
-                <q-tooltip v-if="!props.wallet?.isFunded.value">You must fund your Stamps before you can enable Auto-Expiry</q-tooltip>
-                <q-tooltip v-else>Enable to automatically reclaim stamps after Expiry Date passes</q-tooltip>
-              </q-toggle>
+              <AutoExpireComponent
+                ref="autoExpireComponent"
+                :app="app"
+                :stampCollection="collection"
+                :electrum="app.electrum"
+                :wallet="props.wallet"
+              />
             </div>
           </div>
         </div>
@@ -90,6 +93,7 @@
     <!-- Modal for showing Funding TX Qr Code -->
     <FundingDialog
       ref="fundingQrCode"
+      :app="app"
       :oracles="app.oracles"
       :stampCollection="collection"
       :wallet="props.wallet"
@@ -116,6 +120,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 // Components
 import CollectionFormComponent from './CollectionFormComponent.vue';
 import CollectionSummaryComponent from './CollectionSummaryComponent.vue';
+import AutoExpireComponent from './AutoExpireComponent.vue';
 import FundingDialog from './FundingDialog.vue';
 import ReclaimDialog from './ReclaimDialog.vue';
 

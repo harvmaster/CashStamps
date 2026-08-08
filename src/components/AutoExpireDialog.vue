@@ -1,15 +1,14 @@
 <template>
   <q-dialog v-model="state.visible">
     <q-card style="max-width: 500px; width: 100%">
-      <q-card-section class="text-h6 text-center">
-        {{ t('reclaimStamps') }}
-      </q-card-section>
+      <q-card-section class="text-h6 text-center"> Auto-Expire </q-card-section>
 
       <q-card-section class="column q-gutter-md">
         <div class="text-body1">
-          {{ t('enterPayoutAddress') }}
+          Enter the Bitcoin Cash Address that the remaining balances should be
+          sent to on the expiry date ({{ props.stampCollection.expiry }}).
         </div>
-        <q-form @submit="submitToSettlementService" class="">
+        <q-form @submit="submitToSettlementService">
           <q-input
             :label="t('payoutAddress')"
             v-model="state.payoutAddress"
@@ -18,33 +17,42 @@
           />
           <q-btn
             color="primary"
-            :label="t('reclaim')"
+            label="Enable Auto-Expire"
             type="submit"
             class="full-width"
           />
         </q-form>
+        <!--
         <div>
           <small>{{ t('bip39Info') }}</small>
         </div>
+        -->
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
+import { type App } from 'src/services/app.js';
+import { type StampCollection } from 'src/types.js';
 import { ElectrumService } from 'src/services/electrum.js';
-import type { TransactionBroadcast } from 'src/services/electrum-types';
 import { Address } from 'src/utils/address.js';
-import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
-import { binToHex } from '@bitauth/libauth';
+import {
+  binToHex,
+  sha256,
+  generateTransaction,
+  getMinimumFee,
+  encodeTransaction,
+} from '@bitauth/libauth';
+import { SettlementServiceClient } from '@infracash/settlement-service';
 
-import translations from './ReclaimDialog.i18n.json';
+import translations from './AutoExpireDialog.i18n.json';
 
 const $q = useQuasar();
 const { t } = useI18n({
@@ -57,13 +65,13 @@ const { t } = useI18n({
 // State
 //---------------------------------------------------------------------------
 
-// Props.
 const props = defineProps<{
+  app: App;
+  stampCollection: StampCollection;
   electrum: ElectrumService;
   wallet: WalletHD;
 }>();
 
-// Reactives.
 const state = reactive<{
   visible: boolean;
   payoutAddress: string;
@@ -72,7 +80,6 @@ const state = reactive<{
   payoutAddress: '',
 });
 
-// Expose.
 defineExpose({
   toggleVisible,
 });
@@ -91,23 +98,14 @@ async function submitToSettlementService() {
 
     const address = Address.fromCashAddrOrLegacy(state.payoutAddress);
 
-    const transaction = await props.wallet.sweep(address.toLockscriptBytes());
+    await props.app.autoExpire.enable({
+      payoutBytecode: address.toLockscriptBytes(),
+    });
 
-    await props.electrum.request<TransactionBroadcast>(
-      'blockchain.transaction.broadcast',
-      binToHex(transaction)
-    );
-
-    // Wait for our collection to be marked as claimed.
-    await waitFor(props.wallet.isClaimed, true);
-
-    // Hide the dialog
     toggleVisible();
 
-    // Hide the loading indicator.
     $q.loading.hide();
 
-    // Create a notification to notify user stamps were reclaimed.
     $q.notify({
       color: 'primary',
       message: t('stampsReclaimed'),

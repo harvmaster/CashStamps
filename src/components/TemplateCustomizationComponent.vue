@@ -10,13 +10,23 @@
         expand-icon-class="text-white"
         dense
       >
-        <q-banner v-if="template.readonly" class="bg-secondary text-white" inline-actions dense>
+        <q-banner
+          v-if="template.readonly"
+          class="bg-secondary text-white"
+          inline-actions
+          dense
+        >
           <template v-slot:avatar>
             <q-icon name="warning" color="white" />
           </template>
           This template is read-only.
           <template v-slot:action>
-            <q-btn flat dense label="Clone Template" @click="props.onCopyTemplate()" />
+            <q-btn
+              flat
+              dense
+              label="Clone Template"
+              @click="props.onCopyTemplate()"
+            />
           </template>
         </q-banner>
 
@@ -44,7 +54,9 @@
             <div style="position: relative">
               <q-list bordered>
                 <template
-                  v-for="[variableName, entryOrGroup] in Object.entries(variables)"
+                  v-for="[variableName, entryOrGroup] in Object.entries(
+                    variables
+                  )"
                   :key="variableName"
                 >
                   <!-- Subsection: nested group, no 'type' of its own -->
@@ -62,9 +74,10 @@
                       icon="expand_circle_down"
                       expand-separator
                     >
-
                       <q-item
-                        v-for="[nestedName, entry] in Object.entries(entryOrGroup)"
+                        v-for="[nestedName, entry] in Object.entries(
+                          entryOrGroup
+                        )"
                         :key="nestedName"
                       >
                         <q-item-section class="field-label">
@@ -103,7 +116,7 @@
               <div
                 v-if="template.readonly"
                 class="absolute-full flex flex-center strong cursor-not-allowed text-white"
-                style="background: rgba(0,0,0, 0.1)"
+                style="background: rgba(0, 0, 0, 0.1)"
               >
                 <!--
                 <q-badge v-if="template.readonly" color="secondary" floating class="q-pa-sm">
@@ -159,13 +172,11 @@ const { capitalize } = format;
 // State
 //---------------------------------------------------------------------------
 
-const emits = defineEmits([
-  'template:updated',
-]);
+const emits = defineEmits(['template:updated']);
 
 const props = defineProps<{
-  template: TemplateV2,
-  onCopyTemplate: () => Promise<void>
+  template: TemplateV2;
+  onCopyTemplate: () => Promise<void>;
 }>();
 
 const state = reactive<{
@@ -173,14 +184,18 @@ const state = reactive<{
   variables: TemplateVariables;
 }>({
   customizeTab: '',
-  variables: JSON.parse(props.template.variables)
+  variables: JSON.parse(props.template.variables),
 });
 
 function emitUpdate() {
-  emits('template:updated', {
-    ...props.template,
-    variables: JSON.stringify(state.variables, null, 2),
-  }, props.template);
+  emits(
+    'template:updated',
+    {
+      ...props.template,
+      variables: JSON.stringify(state.variables, null, 2),
+    },
+    props.template
+  );
 }
 
 //---------------------------------------------------------------------------

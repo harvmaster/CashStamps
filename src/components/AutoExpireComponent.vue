@@ -1,89 +1,36 @@
 <template>
-  <div class="row q-col-gutter-md">
-    <div class="col-8">
-      <div class="row q-col-gutter-md">
-    <!-- If Wallet is NOT Funded... -->
-    <template v-if="!props.wallet?.isFunded.value">
-      <!-- Total value of the TX in Fiat -->
-      <div class="col-auto">
-        <div class="text-body2">{{ t('totalDue') }}</div>
-        <div class="text-h6">
-          {{ fundingDue }}
-          <small>{{ currencyName }}</small>
-        </div>
-      </div>
-
-      <!-- Total value of the TX in BCH -->
-      <div class="col-auto">
-        <div class="text-body2">{{ t('totalDue') }}</div>
-        <div class="text-h6">
-          {{ fundingDueBCH }}
-          <small>BCH</small>
-        </div>
-      </div>
-    </template>
-
-    <!-- If Wallet IS Funded... -->
-    <template v-else>
-      <!-- Number of Claimed Stamps/Total Stamps -->
-      <div class="col-auto">
-        <div class="text-body2">{{ t('claimed') }}</div>
-        <div class="text-h6">
-          {{ props.wallet.claimedStamps.value }} /
-          {{ props.wallet.wallets.value.length }}
-        </div>
-      </div>
-
-      <!-- Balance Fiat -->
-      <!--
-      <div class="col-auto">
-        <div class="text-body2">{{ t('currentStampValue') }}</div>
-        <div class="text-h6">
-          {{ convertToFiat(props.stampCollection.currency, currentStampValue) }}
-          <small>{{ currencyName }}</small>
-        </div>
-      </div>
-      -->
-
-      <!-- Balance Fiat -->
-      <div class="col-auto">
-        <div class="text-body2">{{ t('totalRemaining') }}</div>
-        <div class="text-h6">
-          {{
-            convertToFiat(
-              props.stampCollection.currency,
-              props.wallet?.balance.value
-            )
-          }}
-          <small>{{ currencyName }}</small>
-        </div>
-      </div>
-
-      <!-- Balance BCH -->
-      <div class="col-auto">
-        <div class="text-body2">{{ t('totalRemaining') }}</div>
-        <div class="text-h6">
-          {{ Satoshis.fromSats(props.wallet?.balance.value || 0).toBCH() }}
-          <small>BCH</small>
-        </div>
-      </div>
-    </template>
-    </div>
-    </div>
-    <div class="col-4">
-      <!-- Auto-Expiry -->
-      <q-toggle v-model="value" label="Auto-Expire" :disabled="!props.wallet?.isFunded.value">
-        <q-tooltip v-if="!props.wallet?.isFunded.value">You must fund your Stamps before you can enable Auto-Expiry</q-tooltip>
-        <q-tooltip v-else>Automatically reclaim stamps after Expiry Date passes</q-tooltip>
-      </q-toggle>
-    </div>
+  <!-- Auto-Expiry -->
+  <div>
+    <q-toggle
+      v-if="app.autoExpire.isServiceAvailable.value"
+      :model-value="app.autoExpire.isAutoExpireEnabled.value"
+      @update:model-value="onAutoExpireToggled"
+      label="Auto-Expire"
+      :disable="!props.wallet?.isFunded.value || props.wallet.isClaimed.value"
+    >
+      <q-tooltip v-if="!props.wallet?.isFunded.value"
+        >You must fund your Stamps before you can enable Auto-Expiry</q-tooltip
+      >
+      <q-tooltip v-else
+        >Automatically reclaim stamps after Expiry Date passes</q-tooltip
+      >
+    </q-toggle>
   </div>
+
+  <!-- Modal for collecting Payout Address for Auto-Expiry -->
+  <AutoExpireDialog
+    ref="autoExpireDialog"
+    :app="app"
+    :stampCollection="props.stampCollection"
+    :wallet="props.wallet"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { type App } from 'src/services/app.js';
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { Satoshis } from 'src/utils/satoshis.js';
@@ -91,6 +38,12 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Translations
 import translations from './CollectionSummaryComponent.i18n.json';
+
+// Components
+import AutoExpireDialog from './AutoExpireDialog.vue';
+
+import { SettlementServiceClient } from '@infracash/settlement-service';
+import { binToHex, sha256 } from '@bitauth/libauth';
 
 const { t } = useI18n({
   inheritLocale: true,
@@ -103,59 +56,32 @@ const { t } = useI18n({
 //---------------------------------------------------------------------------
 
 const props = defineProps<{
+  app: App;
   stampCollection: StampCollection;
   oracles: OraclesService;
   wallet: WalletHD;
 }>();
 
-const currencyName = computed(() => {
-  return props.oracles.getOracleUnitCode(props.stampCollection.currency);
-});
-
-const fundingDue = computed(() => {
-  const decimalPlaces = props.oracles.getOracleDecimalPlaces(
-    props.stampCollection.currency
-  );
-  return (
-    props.stampCollection.quantity * props.stampCollection.amount || 0
-  ).toFixed(decimalPlaces);
-});
-
-const fundingDueBCH = computed(() => {
-  const fundingBch =
-    Number(fundingDue.value) /
-    props.oracles.getOraclePriceCommonUnits(props.stampCollection.currency);
-  return fundingBch.toFixed(8);
-});
-
-const totalStamps = computed(() => {
-  return props.wallet.wallets.value.length;
-});
-
-const fundingSats = computed(() => {
-  const sats = props.wallet.wallets.value.reduce(
-    (sats, wallet) =>
-      (sats +=
-        wallet.transactions.value[0]?.getOutputs()[0]?.valueSatoshis || 0n),
-    0n
-  );
-
-  return sats;
-});
-
-const _currentStampValue = computed(() => {
-  // Calculate the current value of each stamp in BCH.
-  const eachStampBch = Number(fundingSats.value) / totalStamps.value;
-
-  return eachStampBch;
-});
+// Elements
+const autoExpireDialog = ref<typeof AutoExpireDialog | null>(null);
 
 //---------------------------------------------------------------------------
 // Methods
 //---------------------------------------------------------------------------
 
-function convertToFiat(oraclePublicKey: string, sats: number) {
-  const commonUnits = props.oracles.convertFromSats(oraclePublicKey, sats);
-  return props.oracles.formatCommonUnits(oraclePublicKey, commonUnits);
+async function onAutoExpireToggled(newValue: boolean) {
+  // If auto-expiry is being enabled...
+  if (newValue) {
+    showAutoExpireDialog();
+  }
+
+  // If it is being disabled...
+  else {
+    await props.app.autoExpire.disable();
+  }
+}
+
+async function showAutoExpireDialog() {
+  autoExpireDialog.value?.toggleVisible();
 }
 </script>

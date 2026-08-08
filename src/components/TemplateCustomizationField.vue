@@ -76,8 +76,7 @@ async function pickImage() {
 <style lang="scss">
 // Checkerboard background to show transparency.
 .image-input {
-  background-image:
-    linear-gradient(45deg, #ccc 25%, transparent 25%),
+  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
     linear-gradient(-45deg, #ccc 25%, transparent 25%),
     linear-gradient(45deg, transparent 75%, #ccc 75%),
     linear-gradient(-45deg, transparent 75%, #ccc 75%);

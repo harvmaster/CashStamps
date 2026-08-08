@@ -55,9 +55,6 @@
               <q-date v-model="expiryModel" />
             </q-popup-proxy>
           </q-icon>
-          <q-checkbox v-model="autoExpire">
-            <q-tooltip>Enable Auto-Expire</q-tooltip>
-          </q-checkbox>
         </template>
       </q-input>
     </div>
@@ -86,8 +83,6 @@ const model = defineModel<Required<StampCollection>>({
 });
 
 const props = defineProps<{ oracles: OraclesService; wallet: WalletHD }>();
-
-const autoExpire = ref(false);
 
 // Set up i18n
 const { t } = useI18n({

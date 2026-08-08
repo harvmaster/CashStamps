@@ -30,10 +30,17 @@
         </div>
 
         <!-- Setup Auto-expiry -->
-        <div v-if="state.isBroadcasted" class="flex justify-center">
+        <div
+          v-if="
+            state.isBroadcasted &&
+            !props.app.autoExpire.isAutoExpireEnabled.value
+          "
+          class="flex justify-center"
+        >
           <q-btn
             color="primary"
-            class="q-pl-xl q-pr-xl strong"
+            class="q-pl-xl q-pr-xl strong animated infinite pulse"
+            @click="showAutoExpireDialog"
             unelevated
             rounded
           >
@@ -51,6 +58,13 @@
       </q-card-section>
     </q-card>
   </q-dialog>
+
+  <AutoExpireDialog
+    ref="autoExpireDialog"
+    :app="app"
+    :stampCollection="props.stampCollection"
+    :wallet="props.wallet"
+  />
 </template>
 
 <script setup lang="ts">
@@ -58,10 +72,14 @@ import { nextTick, ref, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
+import { type App } from 'src/services/app.js';
 import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
+
+// Components
+import AutoExpireDialog from './AutoExpireDialog.vue';
 
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
@@ -75,12 +93,16 @@ const { t } = useI18n({
   messages: translations.messages,
 });
 
+// Elements
+const autoExpireDialog = ref<typeof AutoExpireDialog | null>(null);
+
 //---------------------------------------------------------------------------
 // State
 //---------------------------------------------------------------------------
 
 // Props.
 const props = defineProps<{
+  app: App;
   stampCollection: StampCollection;
   wallet: WalletHD;
   oracles: OraclesService;
@@ -202,6 +224,10 @@ async function generateQrCode() {
   } catch (error) {
     console.warn(`Failed to apply Paytaca Hack: ${error}`);
   }
+}
+
+async function showAutoExpireDialog() {
+  autoExpireDialog.value?.toggleVisible();
 }
 
 // HACK: As of 2024-10-20, Paytaca tracks addresses via its watchtower.

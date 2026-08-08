@@ -7,6 +7,7 @@ import {
 
 // Import services the app may require.
 import type { StampCollection, Template } from 'src/types.js';
+import { AutoExpireService } from './auto-expire.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
@@ -26,6 +27,7 @@ import { reactive, ref, watch, toRaw } from 'vue';
 
 export class App {
   // Services.
+  autoExpire: AutoExpireService;
   electrum: ElectrumService;
   oracles: OraclesService;
 
@@ -41,6 +43,9 @@ export class App {
   //---------------------------------------------------------------------------
 
   constructor() {
+    // Create the auto-expire service.
+    this.autoExpire = new AutoExpireService();
+
     // Create the Oracles Service instance.
     this.oracles = new OraclesService(ORACLE_RELAY, ORACLE_PUBLIC_KEYS);
 
