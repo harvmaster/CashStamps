@@ -11,8 +11,23 @@
   >
     <template v-slot:prepend>
       <q-icon name="square" class="cursor-pointer" :style="{ color: value }">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-          <q-color v-model="value" @change="emit('changed')" />
+        <!--
+          NOTE: q-color's own @change fires continuously while the user drags
+          around the hue/saturation slider - not once at the end. `value` is
+          still bound live via v-model (so the swatch preview updates in real
+          time while dragging), but the 'changed' emit that feeds the undo
+          history is debounced the same way the hex text input and string
+          field already are, so a drag becomes one commit per pause rather
+          than one per frame. @hide flushes any pending debounce immediately,
+          so closing the popup mid-drag doesn't drop the final color.
+        -->
+        <q-popup-proxy
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+          @hide="flushColorChange"
+        >
+          <q-color v-model="value" @change="onColorChange" />
         </q-popup-proxy>
       </q-icon>
     </template>
@@ -52,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount } from 'vue';
 import { patterns } from 'quasar';
 import { type TemplateVariableEntry } from 'src/types.js';
 import { pickFile } from 'src/utils/misc.js'; // adjust path as needed
@@ -71,6 +87,37 @@ async function pickImage() {
     emit('changed');
   }
 }
+
+//---------------------------------------------------------------------------
+// Color picker: debounce the 'changed' commit (matches the 500ms debounce
+// used by the hex input and string field), independent of the live preview.
+//---------------------------------------------------------------------------
+
+const COLOR_DEBOUNCE_MS = 500;
+let colorChangeTimer: ReturnType<typeof setTimeout> | undefined;
+
+function onColorChange() {
+  if (colorChangeTimer) clearTimeout(colorChangeTimer);
+  colorChangeTimer = setTimeout(() => {
+    colorChangeTimer = undefined;
+    emit('changed');
+  }, COLOR_DEBOUNCE_MS);
+}
+
+// Called when the color popup closes. If a debounced commit is still
+// pending (user dragged, then closed the popup before the timer fired),
+// fire it immediately rather than losing the final color.
+function flushColorChange() {
+  if (colorChangeTimer) {
+    clearTimeout(colorChangeTimer);
+    colorChangeTimer = undefined;
+    emit('changed');
+  }
+}
+
+onBeforeUnmount(() => {
+  if (colorChangeTimer) clearTimeout(colorChangeTimer);
+});
 </script>
 
 <style lang="scss">

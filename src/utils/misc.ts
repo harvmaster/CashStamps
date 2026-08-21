@@ -78,7 +78,7 @@ export const renderQrCode = async (
     colorDark: '#000000',
     colorLight: '#ffffff',
     logo,
-    correctLevel: QRCode.CorrectLevel.H,
+    correctLevel: QRCode.CorrectLevel.L,
   });
 
   // Get the canvas element so that we can draw a logo into it.
