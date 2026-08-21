@@ -306,11 +306,13 @@ import {
   generateBatchID,
   pickFile,
 } from 'src/utils/misc.js';
+import { showAsyncDialog } from 'src/utils/ui.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
 import TemplateCustomizationComponent from 'src/components/TemplateCustomizationComponent.vue';
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
+import AutoExpireDialog from 'src/components/AutoExpireDialog.vue';
 
 // Pre-built Templates
 import { PageTemplate, builtInTemplates } from 'src/templates/index.js';
@@ -685,7 +687,36 @@ async function renderStamps() {
   }
 }
 
-function printStamps() {
+async function printStamps() {
+  // If auto-expiry is not enabled, prompt user to enable it.
+  if (
+    props.app.autoExpire.isServiceAvailable.value &&
+    !props.app.autoExpire.isAutoExpireEnabled.value
+  ) {
+    const wantsAutoExpire = await confirm({
+      title: 'Enable Auto-Expire',
+      message: `Would you like to enable auto-expiry so that your Stamps are automatically reclaimed on ${props.stampCollection.expiry}?`,
+      ok: {
+        label: 'Yes',
+        color: 'primary',
+        flat: true,
+      },
+      cancel: {
+        label: 'No',
+        color: undefined,
+        flat: true,
+      },
+    });
+
+    if (wantsAutoExpire) {
+      await showAsyncDialog(AutoExpireDialog, {
+        app: props.app,
+        stampCollection: props.stampCollection,
+        wallet: props.wallet,
+      });
+    }
+  }
+
   // Print the contents of the IFrame.
   printIFrame.value?.contentWindow?.print();
 }
@@ -739,6 +770,16 @@ watch(
     () => state.activeTemplate,
   ],
   debounce(async () => {
+    // NOTE: If Auto-Expire fails for whatever reason, just ignore it.
+    try {
+      // If auto-expire is enabled, refresh it.
+      if (props.app.autoExpire.isAutoExpireEnabled.value) {
+        await props.app.autoExpire.refresh();
+      }
+    } catch (error) {
+      console.warn(`AutoExpire: refresh() failed: ${error}`);
+    }
+
     await renderStamps();
   }, 1000)
 );
@@ -760,9 +801,11 @@ watch(
 
     // Compile the stamp HTML.
     const stampsHtml = visibleStamps.value
-      .map((stamp) => {
-        return `<div class="stamp-container ${
-          stamp.claimed ? 'claimed' : ''
+      .map((stamp, i) => {
+        const wasAutoExpired = props.app.autoExpire.wasAutoExpired(i);
+
+        return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''} ${
+          wasAutoExpired ? 'auto-expired' : ''
         }">${stamp.html}</div>`;
       })
       .join('');

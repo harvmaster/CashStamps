@@ -28,25 +28,6 @@
         <div class="flex justify-center">
           <div ref="qrElement" id="invoice-container" class="full-width" />
         </div>
-
-        <!-- Setup Auto-expiry -->
-        <div
-          v-if="
-            state.isBroadcasted &&
-            !props.app.autoExpire.isAutoExpireEnabled.value
-          "
-          class="flex justify-center"
-        >
-          <q-btn
-            color="primary"
-            class="q-pl-xl q-pr-xl strong animated infinite pulse"
-            @click="showAutoExpireDialog"
-            unelevated
-            rounded
-          >
-            Setup Auto-Expiry
-          </q-btn>
-        </div>
       </q-card-section>
 
       <!-- BIP70/JPP Wallets -->
@@ -58,13 +39,6 @@
       </q-card-section>
     </q-card>
   </q-dialog>
-
-  <AutoExpireDialog
-    ref="autoExpireDialog"
-    :app="app"
-    :stampCollection="props.stampCollection"
-    :wallet="props.wallet"
-  />
 </template>
 
 <script setup lang="ts">
@@ -78,9 +52,6 @@ import { OraclesService } from 'src/services/oracles.js';
 import { waitFor } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
-// Components
-import AutoExpireDialog from './AutoExpireDialog.vue';
-
 import CashPayServer from '@developers.cash/cash-pay-server-js';
 
 // translations
@@ -92,9 +63,6 @@ const { t } = useI18n({
   useScope: 'local',
   messages: translations.messages,
 });
-
-// Elements
-const autoExpireDialog = ref<typeof AutoExpireDialog | null>(null);
 
 //---------------------------------------------------------------------------
 // State
@@ -111,10 +79,8 @@ const props = defineProps<{
 // Reactives.
 const state = reactive<{
   visible: boolean;
-  isBroadcasted: boolean;
 }>({
   visible: false,
-  isBroadcasted: false,
 });
 
 // Get the QR Code element.
@@ -206,9 +172,6 @@ async function generateQrCode() {
       // Hide the loading indicator.
       $q.loading.hide();
 
-      // Set the isBroadcasted state.
-      state.isBroadcasted = true;
-
       // Show the user a notification.
       $q.notify({
         message: t('stampsFundedSuccessfully'),
@@ -224,10 +187,6 @@ async function generateQrCode() {
   } catch (error) {
     console.warn(`Failed to apply Paytaca Hack: ${error}`);
   }
-}
-
-async function showAutoExpireDialog() {
-  autoExpireDialog.value?.toggleVisible();
 }
 
 // HACK: As of 2024-10-20, Paytaca tracks addresses via its watchtower.

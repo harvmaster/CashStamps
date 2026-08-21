@@ -1,4 +1,7 @@
-import { SettlementServiceClient } from '@infracash/settlement-service';
+import {
+  type SettlementItem,
+  SettlementServiceClient,
+} from '@infracash/settlement-service';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 import { type StampCollection } from 'src/types.js';
 
@@ -10,7 +13,7 @@ import {
   encodeTransaction,
   binToHex,
 } from '@bitauth/libauth';
-import { ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 
 export type AutoExpireServiceOpts = {
   stampCollection: StampCollection;
@@ -23,7 +26,20 @@ export class AutoExpireService {
   settlementServiceClient?: SettlementServiceClient;
 
   isServiceAvailable = ref(false);
-  isAutoExpireEnabled = ref(false);
+
+  isAutoExpireEnabled = computed(() =>
+    this.items.value.length ? true : false
+  );
+
+  autoExpiredStampCount = computed(() => {
+    const broadcastedStamps = this.items.value.filter(
+      (stamp) => stamp.broadcasted
+    );
+
+    return broadcastedStamps.length;
+  });
+
+  items = shallowRef<Array<SettlementItem>>([]);
 
   async start(opts: AutoExpireServiceOpts): Promise<void> {
     this.opts = opts;
@@ -42,6 +58,8 @@ export class AutoExpireService {
 
   async stop() {
     delete this.settlementServiceClient;
+    this.opts = undefined;
+    this.items.value = [];
   }
 
   async enable(opts: { payoutBytecode: Uint8Array }) {
@@ -52,23 +70,26 @@ export class AutoExpireService {
     const transactions = await this.buildRefundTransactions(
       opts.payoutBytecode
     );
-    const transactionsHex = transactions.map((transactionBytes: Uint8Array) =>
-      binToHex(transactionBytes)
-    );
 
-    // Hand each per-input refund transaction to the settlement service to
-    // hold and auto-broadcast on the agreed refund (X) date.
-    await this.settlementServiceClient.create({
-      id: 'stamps.cash',
-      trigger: {
-        time: {
-          $gte: new Date(this.opts.stampCollection.expiry).toISOString(),
-        },
-      },
-      transactions: transactionsHex,
-    });
+    const settlementItems = transactions
+      .map((transaction, i) => {
+        if (!transaction || !this.opts) return null;
 
-    this.isAutoExpireEnabled.value = true;
+        return {
+          id: `${i}`, // Guaranteed to correspond to stamp index `i`
+          trigger: {
+            time: {
+              $gte: new Date(this.opts.stampCollection.expiry).toISOString(),
+            },
+          },
+          transactions: [binToHex(transaction)],
+          retain: true,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    await this.settlementServiceClient.create({ items: settlementItems });
+    await this.refresh();
   }
 
   async disable() {
@@ -76,8 +97,8 @@ export class AutoExpireService {
       return;
     }
 
-    await this.settlementServiceClient.delete({ id: 'stamps.cash' });
-    this.isAutoExpireEnabled.value = false;
+    await this.settlementServiceClient.delete({});
+    await this.refresh();
   }
 
   async refresh() {
@@ -95,81 +116,76 @@ export class AutoExpireService {
 
     // Check if there are active auto-expiry items for this collection.
     try {
-      await this.settlementServiceClient.get({ id: 'stamps.cash' });
-      this.isAutoExpireEnabled.value = true;
+      const result = await this.settlementServiceClient.list();
+      this.items.value = result.items;
     } catch (error) {
-      this.isAutoExpireEnabled.value = false;
+      this.items.value = [];
     }
+  }
+
+  public wasAutoExpired(stampNumber: number): boolean {
+    const item = this.items.value.find((item) => item.id === `${stampNumber}`);
+    return item?.broadcasted ? true : false;
   }
 
   private async buildRefundTransactions(
     payoutBytecode: Uint8Array
-  ): Promise<Uint8Array[]> {
+  ): Promise<Array<Uint8Array | null>> {
     if (!this.settlementServiceClient || !this.opts) {
       throw new Error('Settlement Service not started');
     }
 
-    // Get a list of inputs belonging to each wallet.
-    const inputs = await Promise.all(
-      this.opts.wallet.wallets.value.map((wallet) =>
-        wallet.getUnspentDirectives()
-      )
-    );
+    return Promise.all(
+      this.opts.wallet.wallets.value.map(async (wallet) => {
+        const inputs = await wallet.getUnspentDirectives();
 
-    // Flatten the inputs.
-    const inputsFlattened = inputs.flat();
+        // If no inputs available for this stamp/wallet, return null to preserve the index
+        if (inputs.length === 0) {
+          return null;
+        }
 
-    const encodedTransactions: Array<Uint8Array> = [];
+        const input = inputs[0];
+        const inputValue = input.unlockingBytecode.valueSatoshis;
 
-    // Build one transaction per input.
-    for (const input of inputsFlattened) {
-      const inputValue = input.unlockingBytecode.valueSatoshis;
+        let encodedTransaction = new Uint8Array();
 
-      // We need to calculate the number of bytes so that we can calculate the fee.
-      // So we loop twice and store the final transaction here each time.
-      // 1st time will have zero fee. 2nd time will accommodate the fee.
-      let encodedTransaction = new Uint8Array();
+        for (let i = 0; i < 2; i++) {
+          const feeSats = getMinimumFee(
+            BigInt(encodedTransaction.length),
+            1000n
+          );
+          const outputValue = inputValue - feeSats;
 
-      for (let i = 0; i < 2; i++) {
-        // Get the fee using 1000 sats/KB.
-        const feeSats = getMinimumFee(BigInt(encodedTransaction.length), 1000n);
+          if (outputValue <= 0n) {
+            throw new Error(
+              `Input value ${inputValue} insufficient to cover fee ${feeSats}`
+            );
+          }
 
-        const outputValue = inputValue - feeSats;
+          const generatedTransaction = generateTransaction({
+            version: 2,
+            locktime: 0,
+            inputs: [input],
+            outputs: [
+              {
+                lockingBytecode: payoutBytecode,
+                valueSatoshis: outputValue,
+              },
+            ],
+          });
 
-        // Guard against dust / negative outputs for tiny inputs.
-        if (outputValue <= 0n) {
-          throw new Error(
-            `Input value ${inputValue} insufficient to cover fee ${feeSats}`
+          if (!generatedTransaction.success) {
+            console.error(generatedTransaction.errors);
+            throw new Error('Failed to generate transaction');
+          }
+
+          encodedTransaction = encodeTransaction(
+            generatedTransaction.transaction
           );
         }
 
-        // Attempt to generate the transaction.
-        const generatedTransaction = generateTransaction({
-          version: 2,
-          locktime: 0,
-          inputs: [input],
-          outputs: [
-            {
-              lockingBytecode: payoutBytecode,
-              valueSatoshis: outputValue,
-            },
-          ],
-        });
-
-        if (!generatedTransaction.success) {
-          console.error(generatedTransaction.errors);
-          throw new Error('Failed to generate transaction');
-        }
-
-        // Encode the transaction for broadcasting (and fee estimation).
-        encodedTransaction = encodeTransaction(
-          generatedTransaction.transaction
-        );
-      }
-
-      encodedTransactions.push(encodedTransaction);
-    }
-
-    return encodedTransactions;
+        return encodedTransaction;
+      })
+    );
   }
 }

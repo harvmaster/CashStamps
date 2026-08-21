@@ -14,17 +14,6 @@
       />
     </div>
 
-    <!-- Amount Input -->
-    <div class="col-md-4 col-12">
-      <q-input
-        v-model.number="model.amount"
-        :label="`${t('targetAmount')} (${currencyName})`"
-        type="number"
-        :min="0"
-        filled
-      />
-    </div>
-
     <!-- Currency Selection -->
     <div class="col-md-2 col-12">
       <q-select
@@ -35,6 +24,17 @@
         map-options
         emit-value
         :label="t('currency')"
+        filled
+      />
+    </div>
+
+    <!-- Amount Input -->
+    <div class="col-md-4 col-12">
+      <q-input
+        v-model.number="model.amount"
+        :label="`${t('targetAmount')} (${currencyName})`"
+        type="number"
+        :min="0"
         filled
       />
     </div>

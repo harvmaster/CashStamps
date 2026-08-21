@@ -20,7 +20,7 @@
     "@electrum-cash/network": "^3.3.0",
     "@generalprotocols/price-oracle": "3.0.0-development.7704357227",
     "@guolao/vue-monaco-editor": "1.4.0",
-    "@infracash/settlement-service": "^0.0.2",
+    "@infracash/settlement-service": "0.0.7",
     "@quasar/extras": "^1.16.4",
     "@sanity/eventsource": "^5.0.2",
     "easyqrcodejs": "^4.6.1",

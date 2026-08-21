@@ -21,18 +21,32 @@
         </div>
 
         <!-- Description & Instructions -->
-        <div class="flex justify-center">
-          <div class="text-body1 paragraph">
-            <p>
-              {{ t('description') }}
-            </p>
-            <strong>{{ t('instructions.title') }}</strong>
-            <ol>
-              <li v-for="step in tm('instructions.steps')" :key="step">
-                {{ step }}
-              </li>
-            </ol>
+        <q-slide-transition>
+          <div v-show="state.showInstructions" class="flex justify-center">
+            <div class="text-body1 paragraph">
+              <p>
+                {{ t('description') }}
+              </p>
+              <strong>{{ t('instructions.title') }}</strong>
+              <ol>
+                <li v-for="step in tm('instructions.steps')" :key="step">
+                  {{ step }}
+                </li>
+              </ol>
+            </div>
           </div>
+        </q-slide-transition>
+
+        <div class="text-center">
+          <q-icon
+            :name="
+              state.showInstructions ? 'arrow_circle_up' : 'arrow_circle_down'
+            "
+            class="cursor-pointer"
+            size="md"
+            @click="toggleInstructions()"
+            style="opacity: 0.5"
+          />
         </div>
       </div>
     </div>
@@ -128,8 +142,11 @@ await app.start();
 // Reactives.
 const state = reactive<{
   activeCollection: string;
+  showInstructions: boolean;
 }>({
   activeCollection: Object.keys(app.stampCollections)[0],
+  showInstructions:
+    window.localStorage.getItem('showInstructions') === 'false' ? false : true,
 });
 
 const activeWallet = shallowRef<WalletHD | undefined>(undefined);
@@ -152,6 +169,9 @@ async function initWallet() {
 
   // Set the current wallet to undefined.
   activeWallet.value = undefined;
+
+  // Stop the auto-expire service.
+  await app.autoExpire.stop();
 
   // Initialize the Stamp Collection.
   const wallet = await WalletHD.fromMnemonic(
@@ -184,6 +204,12 @@ async function initWallet() {
     stampCollection: activeCollection.value,
     wallet: activeWallet.value,
   });
+}
+
+function toggleInstructions() {
+  state.showInstructions = !state.showInstructions;
+
+  window.localStorage.setItem('showInstructions', state.showInstructions);
 }
 
 //---------------------------------------------------------------------------

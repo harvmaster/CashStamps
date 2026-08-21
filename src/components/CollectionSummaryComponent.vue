@@ -27,7 +27,23 @@
       <div class="col-auto">
         <div class="text-body2">{{ t('claimed') }}</div>
         <div class="text-h6">
-          {{ props.wallet.claimedStamps.value }} /
+          {{
+            props.wallet.claimedStamps.value -
+            props.app.autoExpire.autoExpiredStampCount.value
+          }}
+          /
+          {{ props.wallet.wallets.value.length }}
+        </div>
+      </div>
+
+      <!-- Number of Claimed Stamps/Total Stamps -->
+      <div
+        v-if="props.app.autoExpire.autoExpiredStampCount.value"
+        class="col-auto"
+      >
+        <div class="text-body2">Auto-Expired</div>
+        <div class="text-h6">
+          {{ props.app.autoExpire.autoExpiredStampCount.value }} /
           {{ props.wallet.wallets.value.length }}
         </div>
       </div>
@@ -73,6 +89,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { type App } from 'src/services/app.js';
 import { StampCollection } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { Satoshis } from 'src/utils/satoshis.js';
@@ -92,6 +109,7 @@ const { t } = useI18n({
 //---------------------------------------------------------------------------
 
 const props = defineProps<{
+  app: App;
   stampCollection: StampCollection;
   oracles: OraclesService;
   wallet: WalletHD;

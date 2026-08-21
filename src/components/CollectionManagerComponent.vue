@@ -13,6 +13,7 @@
           <div class="row q-col-gutter-md">
             <div class="col-8">
               <CollectionSummaryComponent
+                :app="app"
                 :oracles="app.oracles"
                 :stampCollection="collection"
                 :wallet="props.wallet"
