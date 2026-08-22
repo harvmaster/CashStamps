@@ -691,6 +691,7 @@ async function printStamps() {
   // If auto-expiry is not enabled, prompt user to enable it.
   if (
     props.app.autoExpire.isServiceAvailable.value &&
+    props.props.wallet.isFunded.value &&
     !props.app.autoExpire.isAutoExpireEnabled.value
   ) {
     const wantsAutoExpire = await confirm({

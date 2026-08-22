@@ -11,16 +11,6 @@
   >
     <template v-slot:prepend>
       <q-icon name="square" class="cursor-pointer" :style="{ color: value }">
-        <!--
-          NOTE: q-color's own @change fires continuously while the user drags
-          around the hue/saturation slider - not once at the end. `value` is
-          still bound live via v-model (so the swatch preview updates in real
-          time while dragging), but the 'changed' emit that feeds the undo
-          history is debounced the same way the hex text input and string
-          field already are, so a drag becomes one commit per pause rather
-          than one per frame. @hide flushes any pending debounce immediately,
-          so closing the popup mid-drag doesn't drop the final color.
-        -->
         <q-popup-proxy
           cover
           transition-show="scale"

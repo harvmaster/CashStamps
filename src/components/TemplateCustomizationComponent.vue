@@ -39,7 +39,7 @@
         >
         <div
           v-if="!template.readonly"
-          class="row items-center q-px-sm q-py-xs undo-toolbar"
+          class="row items-center q-px-sm undo-toolbar"
         >
           <q-btn
             flat

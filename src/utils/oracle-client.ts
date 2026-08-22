@@ -277,7 +277,11 @@ export class OracleClient extends EventEmitter {
       console.error('OracleClient', error);
 
       // Attempt to reconnect.
-      this.subscribeToMessages();
+      /*
+      if (globalThis.document.visibilityState === 'visible') {
+        this.subscribeToMessages();
+      }
+      */
     });
   }
 

@@ -144,7 +144,7 @@ const state = reactive<{
   activeCollection: string;
   showInstructions: boolean;
 }>({
-  activeCollection: Object.keys(app.stampCollections)[0],
+  activeCollection: Object.keys(app.stampCollections).at(-1),
   showInstructions:
     window.localStorage.getItem('showInstructions') === 'false' ? false : true,
 });
