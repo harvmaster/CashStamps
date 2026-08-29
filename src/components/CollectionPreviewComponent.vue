@@ -155,7 +155,7 @@
         </div>
 
         <!-- V2 Template Options -->
-        <template v-if="state.activeTemplate && state.activeTemplate.variables">
+        <template v-if="state.activeTemplate">
           <div class="row q-col-gutter-md">
             <div class="col-md-4 col-6">
               <q-select
@@ -691,7 +691,7 @@ async function printStamps() {
   // If auto-expiry is not enabled, prompt user to enable it.
   if (
     props.app.autoExpire.isServiceAvailable.value &&
-    props.props.wallet.isFunded.value &&
+    props.wallet.isFunded.value &&
     !props.app.autoExpire.isAutoExpireEnabled.value
   ) {
     const wantsAutoExpire = await confirm({

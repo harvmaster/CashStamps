@@ -323,10 +323,6 @@ const { t } = useI18n({
   messages: translation.messages,
 });
 
-const defaultProperties = {
-  variables: '',
-};
-
 const isVisible = defineModel({ type: Boolean });
 
 const emits = defineEmits([

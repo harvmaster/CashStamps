@@ -64,7 +64,7 @@
 <style lang="scss" scoped></style>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import { StampCollection } from 'src/types.js';

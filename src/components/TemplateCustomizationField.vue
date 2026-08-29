@@ -5,8 +5,10 @@
     v-model="value"
     @update:model-value="emit('changed')"
     debounce="500"
-    :rules="[(val) => testPattern.hexOrHexaColor(val) || 'Invalid color']"
+    :rules="rules"
     :hint="entry.hint"
+    :clearable="entry.optional"
+    @clear="emit('changed')"
     filled
   >
     <template v-slot:prepend>
@@ -17,23 +19,51 @@
           transition-hide="scale"
           @hide="flushColorChange"
         >
-          <q-color v-model="value" @change="onColorChange" />
+          <q-color v-model="value" @change="onColorChange" format-model="hexa" />
         </q-popup-proxy>
       </q-icon>
     </template>
   </q-input>
 
   <!-- Image Input -->
-  <template v-else-if="entry.type === 'image'">
-    <div style="cursor: pointer; display: inline-block" @click="pickImage">
-      <img
-        :src="value"
-        style="height: 200px; width: auto; display: block"
-        class="image-input"
+  <q-field
+    v-else-if="entry.type === 'image'"
+    v-model="value"
+    :rules="rules"
+    :hint="entry.hint"
+    borderless
+  >
+    <template v-slot:control>
+      <div style="cursor: pointer; display: inline-block" @click="pickImage">
+        <img
+          :src="value"
+          style="max-height: 200px; min-height: 64px; width: auto; max-width: 100%; display: block"
+          class="image-input"
+        />
+      </div>
+    </template>
+    <template v-if="entry.optional && value" v-slot:append>
+      <q-icon
+        name="cancel"
+        class="cursor-pointer"
+        @click.stop="clearImage"
       />
-    </div>
-    <q-item-label caption class="q-pt-md">{{ entry.hint }}</q-item-label>
-  </template>
+    </template>
+  </q-field>
+
+  <!-- Number Input -->
+  <q-input
+    v-else-if="entry.type === 'number'"
+    v-model="value"
+    type="number"
+    @update:model-value="emit('changed')"
+    debounce="500"
+    :rules="rules"
+    :hint="entry.hint"
+    :clearable="entry.optional"
+    @clear="emit('changed')"
+    filled
+  />
 
   <!-- String Input -->
   <q-input
@@ -41,7 +71,10 @@
     v-model="value"
     @update:model-value="emit('changed')"
     debounce="500"
+    :rules="rules"
     :hint="entry.hint"
+    :clearable="entry.optional"
+    @clear="emit('changed')"
     filled
   />
 
@@ -51,24 +84,57 @@
     v-model="value"
     @blur="emit('changed')"
     type="textarea"
+    :rules="rules"
     :hint="entry.hint"
+    :clearable="entry.optional"
+    @clear="emit('changed')"
     filled
   />
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount } from 'vue';
+import { computed, onBeforeUnmount } from 'vue';
 import { patterns } from 'quasar';
 import { type TemplateVariableEntry } from 'src/types.js';
-import { pickFile } from 'src/utils/misc.js'; // adjust path as needed
+import { pickFile } from 'src/utils/misc.js';
 
-const { testPattern } = patterns;
+const { isHexColor, isNumber } = patterns;
 
-defineProps<{ entry: TemplateVariableEntry }>();
+const props = defineProps<{ entry: TemplateVariableEntry }>();
 const emit = defineEmits<{ changed: [] }>();
+const value = defineModel<string | number>('value', { required: true });
 
-const value = defineModel<string>('value', { required: true });
+//---------------------------------------------------------------------------
+// Validation Rules
+//---------------------------------------------------------------------------
+const isRequired = (val: unknown) =>
+  (val !== null && val !== undefined && val !== '') || 'This field is required';
 
+const isValidColor = (val: string) =>
+  !val || isHexColor(val) || 'Invalid color';
+
+const isValidNumber = (val: unknown) =>
+  val === null || val === undefined || val === '' || isNumber(String(val)) || 'Invalid number';
+
+const rules = computed(() => {
+  const ruleList = [];
+
+  if (!props.entry.optional) {
+    ruleList.push(isRequired);
+  }
+
+  if (props.entry.type === 'color') {
+    ruleList.push(isValidColor);
+  } else if (props.entry.type === 'number') {
+    ruleList.push(isValidNumber);
+  }
+
+  return ruleList;
+});
+
+//---------------------------------------------------------------------------
+// Image picker logic
+//---------------------------------------------------------------------------
 async function pickImage() {
   const result = await pickFile({ accept: 'image/*', binary: true });
 
@@ -78,11 +144,14 @@ async function pickImage() {
   }
 }
 
-//---------------------------------------------------------------------------
-// Color picker: debounce the 'changed' commit (matches the 500ms debounce
-// used by the hex input and string field), independent of the live preview.
-//---------------------------------------------------------------------------
+function clearImage() {
+  value.value = '';
+  emit('changed');
+}
 
+//---------------------------------------------------------------------------
+// Color picker logic
+//---------------------------------------------------------------------------
 const COLOR_DEBOUNCE_MS = 500;
 let colorChangeTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -94,9 +163,6 @@ function onColorChange() {
   }, COLOR_DEBOUNCE_MS);
 }
 
-// Called when the color popup closes. If a debounced commit is still
-// pending (user dragged, then closed the popup before the timer fired),
-// fire it immediately rather than losing the final color.
 function flushColorChange() {
   if (colorChangeTimer) {
     clearTimeout(colorChangeTimer);
@@ -109,15 +175,3 @@ onBeforeUnmount(() => {
   if (colorChangeTimer) clearTimeout(colorChangeTimer);
 });
 </script>
-
-<style lang="scss">
-// Checkerboard background to show transparency.
-.image-input {
-  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
-    linear-gradient(-45deg, #ccc 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #ccc 75%),
-    linear-gradient(-45deg, transparent 75%, #ccc 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, 10px 0;
-}
-</style>

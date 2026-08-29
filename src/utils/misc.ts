@@ -335,3 +335,22 @@ export async function pickFile(options?: {
     input.click();
   });
 }
+
+/**
+ * Converts a YYYY-MM-DD date string into an ISO string representing
+ * the end of that day (23:59:59.999) in the user's local timezone.
+ */
+export function getLocalEndOfDayISO(dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+
+  // JavaScript months are 0-indexed (0 = January)
+  const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+  return endOfDay.toISOString();
+}
+
+export function getFutureExpiryDateByMonths(monthsAhead = 1): string {
+  const targetDate = new Date();
+  targetDate.setMonth(targetDate.getMonth() + monthsAhead);
+  return targetDate.toISOString().slice(0, 10);
+}

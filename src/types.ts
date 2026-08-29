@@ -36,6 +36,7 @@ const TemplateVariableEntrySchema = z.object({
   type: z.enum(['color', 'hidden', 'image', 'string', 'text']),
   value: z.string(),
   hint: z.string().optional(),
+  optional: z.boolean().optional().default(true),
 });
 
 export const TemplateVariablesSchema = z.record(

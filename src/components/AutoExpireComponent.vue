@@ -12,7 +12,7 @@
         >You must fund your Stamps before you can enable Auto-Expiry</q-tooltip
       >
       <q-tooltip v-else-if="app.autoExpire.isAutoExpireEnabled.value">
-        Stamps are set to auto-expire on
+        Stamps are set to auto-expire on {{ app.autoExpire.expiryDate.value }}
       </q-tooltip>
       <q-tooltip v-else
         >Automatically reclaim stamps after Expiry Date passes</q-tooltip

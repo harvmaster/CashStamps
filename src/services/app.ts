@@ -11,6 +11,8 @@ import { AutoExpireService } from './auto-expire.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
 
+import { getFutureExpiryDateByMonths } from 'src/utils/misc.js';
+
 // Database Migrations
 import {
   migrateCollection_v2_to_v3,
@@ -156,7 +158,8 @@ export class App {
       amount: opts.amount || 0,
       currency: opts.currency || 'BCH',
       quantity: 1,
-      expiry: new Date().toISOString().slice(0, 10),
+      // Default Expiry Date one month into the future.
+      expiry: getFutureExpiryDateByMonths(1),
     };
 
     return mnemonic;

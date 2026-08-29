@@ -2,6 +2,7 @@ import {
   type SettlementItem,
   SettlementServiceClient,
 } from '@infracash/settlement-service';
+import { getLocalEndOfDayISO } from 'src/utils/misc.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 import { type StampCollection } from 'src/types.js';
 
@@ -37,6 +38,10 @@ export class AutoExpireService {
     );
 
     return broadcastedStamps.length;
+  });
+
+  expiryDate = computed(() => {
+    return this.items.value[0]?.meta || undefined;
   });
 
   items = shallowRef<Array<SettlementItem>>([]);
@@ -79,10 +84,11 @@ export class AutoExpireService {
           id: `${i}`, // Guaranteed to correspond to stamp index `i`
           trigger: {
             time: {
-              $gte: new Date(this.opts.stampCollection.expiry).toISOString(),
+              $gte: getLocalEndOfDayISO(this.opts.stampCollection.expiry),
             },
           },
           transactions: [binToHex(transaction)],
+          meta: getLocalEndOfDayISO(this.opts.stampCollection.expiry),
           retain: true,
         };
       })
