@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="state.visible">
+  <q-dialog v-model="isVisible">
     <q-card style="max-width: 1024px; width: 100%">
       <q-card-section class="text-h6 text-center">
         {{ t('editTemplate') }}
@@ -7,36 +7,7 @@
       <q-card-section class="column">
         <div class="q-gutter-y-md">
           <div class="col-grow q-gutter-y-md">
-            <!-- Name Input -->
-            <div class="row q-col-gutter-sm">
-              <div class="col">
-                <q-input
-                  v-model="state.activeTemplate.label"
-                  :label="t('name')"
-                  filled
-                />
-              </div>
-              <div>
-                <q-btn
-                  label="Export"
-                  color="secondary"
-                  @click="exportTemplate"
-                />
-              </div>
-              <div>
-                <UploadButtonComponent
-                  @file-content="(content) => importTemplate(content)"
-                ></UploadButtonComponent>
-              </div>
-            </div>
-
-            <!-- Warning Banner -->
-            <q-banner class="bg-negative text-white">
-              <strong>{{ t('doNot') }}</strong> {{ t('pasteCodeWarning') }}
-              <strong>{{ t('doNot') }}</strong> {{ t('useExternalGenerators') }}
-              {{ t('contactSupport') }}
-            </q-banner>
-
+            <!-- Instructions -->
             <q-expansion-item
               :label="t('instructions')"
               header-class="bg-primary text-white"
@@ -192,7 +163,11 @@
                       </tr>
                       <tr>
                         <td>batchId</td>
-                        <td>A two character identifier for this collection (generated deterministically from the mnemonic phrase).</td>
+                        <td>
+                          A two character identifier for this collection
+                          (generated deterministically from the mnemonic
+                          phrase).
+                        </td>
                       </tr>
                       <tr>
                         <td>stampNumber</td>
@@ -204,19 +179,62 @@
               </q-card>
             </q-expansion-item>
 
+            <!-- Tab Selector -->
             <q-tabs
               v-model="state.activeTab"
               align="justify"
               active-color="primary"
             >
+              <q-tab name="meta" label="Meta" />
               <q-tab name="front" :label="t('front')" />
               <q-tab name="back" :label="t('back')" />
               <q-tab name="style" :label="t('style')" />
             </q-tabs>
 
             <q-tab-panels v-model="state.activeTab" animated>
+              <!-- Meta Tab -->
+              <q-tab-panel name="meta">
+                <div class="row q-col-gutter-md">
+                  <div class="col-12">
+                    <q-input
+                      v-model="state.activeTemplate.label"
+                      :label="t('name')"
+                      filled
+                    />
+                  </div>
+                  <div class="col-12">
+                    <q-banner class="bg-grey-4">
+                      Variables can be provided for easy customization of
+                      Templates.<br />
+                      They can be injected into front/back/style using the form
+                      <span v-pre>{{ sectionName.variableName }}</span
+                      >.<br />
+                      <br />
+                      Supported Types:
+                      <ol>
+                        <li>color</li>
+                        <li>image</li>
+                        <li>string</li>
+                        <li>text</li>
+                      </ol>
+                    </q-banner>
+
+                    <!-- Text Editor -->
+                    <div class="scroll" style="height: 800px">
+                      <div class="editor-container">
+                        <v-ace-editor
+                          v-model:value="state.activeTemplate.variables"
+                          lang="json"
+                          @init="editorInit"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </q-tab-panel>
+
+              <!-- Front Tab -->
               <q-tab-panel name="front">
-                <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
                     <v-ace-editor
@@ -228,11 +246,11 @@
                 </div>
               </q-tab-panel>
 
+              <!-- Back Tab -->
               <q-tab-panel name="back">
                 <q-banner class="bg-warning text-white">
                   Leave this empty if the template should be one-sided.
                 </q-banner>
-                <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
                     <v-ace-editor
@@ -244,39 +262,26 @@
                 </div>
               </q-tab-panel>
 
+              <!-- Style Tab -->
               <q-tab-panel name="style">
-                <!-- Text Editor -->
                 <div class="scroll" style="height: 800px">
                   <div class="editor-container">
                     <v-ace-editor
                       v-model:value="state.activeTemplate.style"
                       lang="html"
-                      :options="{}"
+                      @init="editorInit"
                     />
                   </div>
                 </div>
               </q-tab-panel>
             </q-tab-panels>
           </div>
+
+          <!-- Error -->
+          <div v-if="state.error" class="text-negative">{{ state.error }}</div>
+
           <div class="col-shrink q-gutter-x-md">
-            <q-btn
-              v-if="!props.activeTemplate.readonly"
-              :label="t('save')"
-              color="primary"
-              @click="saveTemplate"
-            />
-            <q-btn
-              :label="t('saveAsNew')"
-              color="secondary"
-              @click="copyTemplate"
-            />
-            <q-btn
-              v-if="!props.activeTemplate.readonly"
-              :label="t('delete')"
-              color="negative"
-              @click="deleteTemplate"
-              :disabled="props.activeTemplate.readonly"
-            />
+            <q-btn :label="t('save')" color="primary" @click="saveTemplate" />
           </div>
         </div>
       </q-card-section>
@@ -286,27 +291,31 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { useQuasar, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 import type { Template } from 'src/types.js';
 
-import UploadButtonComponent from './UploadButtonComponent.vue';
-
 import { VAceEditor } from 'vue3-ace-editor';
-import ace from 'ace-builds';
+import ace, { type Ace } from 'ace-builds';
 import modeHtmlUrl from 'ace-builds/src-noconflict/mode-html?url';
 import workerHtmlUrl from 'ace-builds/src-noconflict/worker-html?url';
+import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 
 // translations
 import translation from './TemplateEditorDialog.i18n.json';
 
+export type UpdateTemplate = {
+  oldValue: Template;
+  newValue: Template;
+};
+
 ace.config.setModuleUrl('ace/mode/html', modeHtmlUrl);
 ace.config.setModuleUrl('ace/mode/html_worker', workerHtmlUrl);
+ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
+ace.config.setModuleUrl('ace/mode/json_worker', workerJsonUrl);
 ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
-
-const $q = useQuasar();
 
 const { t } = useI18n({
   inheritLocale: true,
@@ -314,10 +323,7 @@ const { t } = useI18n({
   messages: translation.messages,
 });
 
-export type UpdateTemplate = {
-  oldValue: Template;
-  newValue: Template;
-};
+const isVisible = defineModel({ type: Boolean });
 
 const emits = defineEmits([
   'template:created',
@@ -327,67 +333,43 @@ const emits = defineEmits([
 const props = defineProps<{ activeTemplate: Template }>();
 
 const state = reactive<{
-  visible: boolean;
   activeTemplate: Template;
-  activeTab: 'front' | 'back' | 'style';
+  activeTab: 'meta' | 'front' | 'back' | 'style';
+  error?: string;
 }>({
-  visible: false,
-  activeTemplate: { ...props.activeTemplate, readonly: false },
-  activeTab: 'front',
+  activeTemplate: {
+    // Default variables to an empty object for backwards compatibility.
+    variables: '{}',
+    // NOTE: Make sure we do a deep copy - templates are a deeply nested structure.
+    ...JSON.parse(JSON.stringify(props.activeTemplate)),
+  },
+  activeTab: 'meta',
+  error: undefined,
 });
 
 const toggleVisible = () => {
-  state.visible = !state.visible;
+  isVisible.value = !isVisible.value;
 };
 
-function editorInit(editor: any) {
+function editorInit(editor: Ace.Editor) {
   editor.session.setTabSize(2);
+  editor.setOptions({ useWorker: true });
 }
 
 function saveTemplate() {
-  emits('template:updated', state.activeTemplate, props.activeTemplate);
-
-  toggleVisible();
-}
-
-function copyTemplate() {
-  emits('template:created', { ...state.activeTemplate, uuid: uid() });
-
-  toggleVisible();
-}
-
-function exportTemplate() {
-  const stringifiedTemplate = JSON.stringify(state.activeTemplate);
-  exportFile(
-    `CashStamps Template - ${state.activeTemplate.label}.json`,
-    stringifiedTemplate
-  );
-}
-
-function importTemplate(content: string) {
   try {
-    // Parse the JSON data.
-    const parsedTemplate = JSON.parse(content);
+    // Attempt to parse the variables field to ensure it is valid JSON.
+    JSON.parse(state.activeTemplate.variables);
 
-    // NOTE: Make sure we don't allow over-writing the UUID.
-    //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
-    state.activeTemplate = {
-      ...parsedTemplate,
-      uuid: state.activeTemplate.uuid,
-    };
+    // Emit the updated template.
+    emits('template:updated', state.activeTemplate, props.activeTemplate);
+
+    // Toggle dialog visibility.
+    toggleVisible();
+    state.error = undefined;
   } catch (error) {
-    console.error(error);
-    $q.dialog({
-      title: 'Error importing template',
-      message: `${error}`,
-    });
+    state.error = `${error}`;
   }
-}
-
-function deleteTemplate() {
-  emits('template:deleted', props.activeTemplate);
-
-  toggleVisible();
 }
 
 defineExpose({

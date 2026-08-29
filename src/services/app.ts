@@ -7,8 +7,11 @@ import {
 
 // Import services the app may require.
 import type { StampCollection, Template } from 'src/types.js';
+import { AutoExpireService } from './auto-expire.js';
 import { ElectrumService } from './electrum.js';
 import { OraclesService } from './oracles.js';
+
+import { getFutureExpiryDateByMonths } from 'src/utils/misc.js';
 
 // Database Migrations
 import {
@@ -26,6 +29,7 @@ import { reactive, ref, watch, toRaw } from 'vue';
 
 export class App {
   // Services.
+  autoExpire: AutoExpireService;
   electrum: ElectrumService;
   oracles: OraclesService;
 
@@ -41,6 +45,9 @@ export class App {
   //---------------------------------------------------------------------------
 
   constructor() {
+    // Create the auto-expire service.
+    this.autoExpire = new AutoExpireService();
+
     // Create the Oracles Service instance.
     this.oracles = new OraclesService(ORACLE_RELAY, ORACLE_PUBLIC_KEYS);
 
@@ -117,6 +124,8 @@ export class App {
     watch(
       this.templates,
       async () => {
+        console.log('saved templates', this.templates);
+
         // NOTE: Do a 'get' first and then merge our current state.
         //       This will help prevent problems when accessing across multiple tabs.
         // TODO: This will NOT work for items we delete! They will just get added back!
@@ -149,7 +158,8 @@ export class App {
       amount: opts.amount || 0,
       currency: opts.currency || 'BCH',
       quantity: 1,
-      expiry: new Date().toISOString().slice(0, 10),
+      // Default Expiry Date one month into the future.
+      expiry: getFutureExpiryDateByMonths(1),
     };
 
     return mnemonic;

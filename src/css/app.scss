@@ -1,6 +1,23 @@
 // Font imports.
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
+//-----------------------------------------------------------------------------
+// Fonts
+//-----------------------------------------------------------------------------
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./fonts/Poppins-Black.woff2') format('woff2'),
+    url('./fonts/Poppins-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+//-----------------------------------------------------------------------------
+// Layout
+//-----------------------------------------------------------------------------
+
 .header-outer {
   width: 100%;
 }
@@ -38,7 +55,7 @@
 }
 
 .strong {
-  font-family: 'Anton', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -71,6 +88,10 @@ h5 {
 }
 h6 {
   font-size: 1.25rem;
+}
+
+.text-h2 {
+  font-size: 3em;
 }
 
 .square {
@@ -110,6 +131,10 @@ h6 {
 .editor-container > div {
   flex: 1;
 }
+
+//-----------------------------------------------------------------------------
+// Branding
+//-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Component Over-rides

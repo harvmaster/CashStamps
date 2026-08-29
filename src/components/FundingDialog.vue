@@ -46,6 +46,7 @@ import { nextTick, ref, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
+import { type App } from 'src/services/app.js';
 import { StampCollection, CashPayServer_Invoice } from 'src/types.js';
 import { OraclesService } from 'src/services/oracles.js';
 import { waitFor } from 'src/utils/misc.js';
@@ -69,6 +70,7 @@ const { t } = useI18n({
 
 // Props.
 const props = defineProps<{
+  app: App;
   stampCollection: StampCollection;
   wallet: WalletHD;
   oracles: OraclesService;

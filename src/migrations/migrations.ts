@@ -1,4 +1,4 @@
-import type { StampCollection } from 'src/types.js';
+import type { StampCollection, Template } from 'src/types.js';
 
 import { get, set } from 'idb-keyval';
 
@@ -119,6 +119,53 @@ export const migration202504021400 = async () => {
 
     // Print the migration.
     console.log('Migration 202504021400: Ran');
+    console.table(updatedTemplates);
+  }
+};
+
+export const migration202607071400 = async () => {
+  const templates = (await get('templates')) as { [uuid: string]: any };
+
+  if (typeof templates === 'undefined') {
+    return;
+  }
+
+  const updatedTemplates: { [uuid: string]: any } = {};
+  let isUpdated = false;
+
+  for (const [uuid, templateData] of Object.entries(templates)) {
+    // If this template needs updating...
+    if (templateData.template) {
+      // Set the front and back data for this template.
+      const updatedDataForTemplate = {
+        ...templateData,
+        variables: '{}',
+      };
+
+      // Add it to the updatedTemplates data.
+      updatedTemplates[uuid] = updatedDataForTemplate;
+
+      console.log('Updating', templateData);
+
+      // Set isUpdated to true since migrations took place.
+      isUpdated = true;
+    }
+    // Otherwise, this template is already updated.
+    else {
+      updatedTemplates[uuid] = templateData;
+    }
+  }
+
+  // If migrations took place, update storage.
+  if (isUpdated) {
+    // Backup the old templates as a precaution.
+    await set('templates202607071400', templates);
+
+    // Update templates to new format.
+    await set('templates', updatedTemplates);
+
+    // Print the migration.
+    console.log('Migration 202607071400: Ran');
     console.table(updatedTemplates);
   }
 };

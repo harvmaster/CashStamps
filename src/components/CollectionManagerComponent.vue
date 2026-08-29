@@ -10,11 +10,25 @@
             v-model="collection"
           />
 
-          <CollectionSummaryComponent
-            :oracles="app.oracles"
-            :stampCollection="collection"
-            :wallet="props.wallet"
-          />
+          <div class="row q-col-gutter-md">
+            <div class="col-8">
+              <CollectionSummaryComponent
+                :app="app"
+                :oracles="app.oracles"
+                :stampCollection="collection"
+                :wallet="props.wallet"
+              />
+            </div>
+            <div class="col-4">
+              <AutoExpireComponent
+                ref="autoExpireComponent"
+                :app="app"
+                :stampCollection="collection"
+                :electrum="app.electrum"
+                :wallet="props.wallet"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -32,7 +46,9 @@
               :label="t('fundStamps')"
               color="primary"
               @click="showFundingDialog"
-              class="full-width"
+              class="full-width strong"
+              unelevated
+              rounded
             />
           </div>
 
@@ -45,7 +61,9 @@
               :label="t('reclaimStamps')"
               color="secondary"
               @click="showReclaimDialog"
-              class="full-width"
+              class="full-width strong"
+              unelevated
+              rounded
             />
           </div>
 
@@ -76,6 +94,7 @@
     <!-- Modal for showing Funding TX Qr Code -->
     <FundingDialog
       ref="fundingQrCode"
+      :app="app"
       :oracles="app.oracles"
       :stampCollection="collection"
       :wallet="props.wallet"
@@ -102,6 +121,7 @@ import { WalletHD } from 'src/utils/wallet-hd.js';
 // Components
 import CollectionFormComponent from './CollectionFormComponent.vue';
 import CollectionSummaryComponent from './CollectionSummaryComponent.vue';
+import AutoExpireComponent from './AutoExpireComponent.vue';
 import FundingDialog from './FundingDialog.vue';
 import ReclaimDialog from './ReclaimDialog.vue';
 

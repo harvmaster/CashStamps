@@ -7,8 +7,10 @@
         <div
           class="flex text-h2 text-weight-bold text-white justify-center items-center"
         >
-          <img src="icon.svg" class="q-ma-sm" style="height: 1em" />
-          <span class="strong">Stamps.Cash</span>
+          <img src="icon-outlined.svg" class="q-ma-md" style="height: 1.25em" />
+          <span class="strong"
+            >Stamps.<span class="text-primary">Cash</span></span
+          >
         </div>
 
         <!-- Subtitle -->
@@ -19,18 +21,32 @@
         </div>
 
         <!-- Description & Instructions -->
-        <div class="flex justify-center">
-          <div class="text-body1 paragraph">
-            <p>
-              {{ t('description') }}
-            </p>
-            <strong>{{ t('instructions.title') }}</strong>
-            <ol>
-              <li v-for="step in tm('instructions.steps')" :key="step">
-                {{ step }}
-              </li>
-            </ol>
+        <q-slide-transition>
+          <div v-show="state.showInstructions" class="flex justify-center">
+            <div class="text-body1 paragraph">
+              <p>
+                {{ t('description') }}
+              </p>
+              <strong>{{ t('instructions.title') }}</strong>
+              <ol>
+                <li v-for="step in tm('instructions.steps')" :key="step">
+                  {{ step }}
+                </li>
+              </ol>
+            </div>
           </div>
+        </q-slide-transition>
+
+        <div class="text-center">
+          <q-icon
+            :name="
+              state.showInstructions ? 'arrow_circle_up' : 'arrow_circle_down'
+            "
+            class="cursor-pointer"
+            size="md"
+            @click="toggleInstructions()"
+            style="opacity: 0.5"
+          />
         </div>
       </div>
     </div>
@@ -126,8 +142,11 @@ await app.start();
 // Reactives.
 const state = reactive<{
   activeCollection: string;
+  showInstructions: boolean;
 }>({
-  activeCollection: Object.keys(app.stampCollections)[0],
+  activeCollection: Object.keys(app.stampCollections).at(-1),
+  showInstructions:
+    window.localStorage.getItem('showInstructions') === 'false' ? false : true,
 });
 
 const activeWallet = shallowRef<WalletHD | undefined>(undefined);
@@ -150,6 +169,9 @@ async function initWallet() {
 
   // Set the current wallet to undefined.
   activeWallet.value = undefined;
+
+  // Stop the auto-expire service.
+  await app.autoExpire.stop();
 
   // Initialize the Stamp Collection.
   const wallet = await WalletHD.fromMnemonic(
@@ -175,6 +197,19 @@ async function initWallet() {
 
   // Set the new active wallet.
   activeWallet.value = wallet;
+
+  // Start the Auto Expire service.
+  // NOTE: Run async to speed things up.
+  app.autoExpire.start({
+    stampCollection: activeCollection.value,
+    wallet: activeWallet.value,
+  });
+}
+
+function toggleInstructions() {
+  state.showInstructions = !state.showInstructions;
+
+  window.localStorage.setItem('showInstructions', state.showInstructions);
 }
 
 //---------------------------------------------------------------------------
@@ -200,6 +235,9 @@ onUnmounted(async () => {
   if (activeWallet.value) {
     await activeWallet.value.stopMonitoring();
   }
+
+  // Run async to speed things up.
+  app.autoExpire.stop();
 });
 
 await initWallet();

@@ -4,8 +4,8 @@
       <q-toolbar class="row">
         <q-toolbar-title class="col-shrink">
           <span @click="$router.push('/')" class="cursor-pointer">
-            <q-avatar square>
-              <img src="/icon.svg" />
+            <q-avatar class="q-mr-xs" square>
+              <img src="/icon-outlined.svg" />
             </q-avatar>
             Stamps.<span class="text-primary">Cash</span>
           </span>
@@ -83,13 +83,18 @@
 <style lang="scss">
 .q-header {
   color: #fff;
-  font-family: 'Anton', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .q-toolbar .q-toolbar__title {
-  font-size: 26px;
+  font-size: 20px;
+}
+
+.q-toolbar .q-avatar img {
+  width: 30px !important;
+  height: 30px !important;
 }
 
 .q-toolbar a img {

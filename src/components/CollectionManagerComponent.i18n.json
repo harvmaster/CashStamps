@@ -3,7 +3,7 @@
     "en": {
       "fundStamps": "Fund Stamps",
       "reclaimStamps": "Reclaim Stamps",
-      "allClaimed": "All claimed",
+      "allClaimed": "All claimed/expired",
       "funded": "Funded",
       "notFunded": "Not Funded"
     },

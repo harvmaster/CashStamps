@@ -2,7 +2,7 @@
   <div>
     <!-- Collection Preview -->
     <div class="inner-page">
-      <div class="q-col-gutter-y-md q-mb-xl">
+      <div class="q-col-gutter-y-md q-mb-lg">
         <div class="row">
           <div class="col-12">
             <q-banner
@@ -28,7 +28,7 @@
 
         <div class="row">
           <!-- Controls for print/show mnemonic -->
-          <div class="col-md-8 col-12 q-gutter-x-sm">
+          <div class="col-md-6 col-12 q-gutter-x-sm">
             <q-btn-group>
               <!-- Print Stamps -->
               <q-btn
@@ -55,15 +55,17 @@
               </q-btn>
             </q-btn-group>
 
+            <!--
             <q-toggle
               v-model="state.showClaimedStamps"
               :label="t('showClaimedStamps')"
             />
             <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+            -->
           </div>
 
           <!-- Template selection -->
-          <div class="col-md-4 col-12">
+          <div class="col-md-6 col-12">
             <q-select
               :label="t('template')"
               :options="templates"
@@ -73,36 +75,89 @@
               filled
             >
               <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label
-                      :caption="scope.opt.version === 1 && scope.opt.readonly"
-                      >{{ scope.opt.label }}</q-item-label
-                    >
-                    <q-item-label v-if="!scope.opt.readonly" caption
-                      >Custom</q-item-label
-                    >
+                <q-item-label
+                  v-if="typeof scope.opt === 'string'"
+                  header
+                  class="text-weight-bold"
+                >
+                  {{ scope.opt }}
+                </q-item-label>
+
+                <q-item v-else v-bind="scope.itemProps">
+                  <q-item-section class="q-pl-md">
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </template>
               <template v-slot:after>
+                <!-- Copy Template -->
                 <q-btn
                   round
                   dense
                   flat
-                  icon="edit"
-                  @click="showTemplateEditorDialog"
+                  icon="file_copy"
+                  @click="copyTemplate()"
                 >
-                  <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+                  <q-tooltip>{{ t('cloneTemplate') }}</q-tooltip>
                 </q-btn>
+
+                <!-- Import Template -->
+                <q-btn
+                  round
+                  dense
+                  flat
+                  icon="download"
+                  @click="importTemplate()"
+                >
+                  <q-tooltip>{{ t('importTemplate') }}</q-tooltip>
+                </q-btn>
+
+                <template v-if="!state.activeTemplate?.readonly">
+                  <q-separator class="q-ma-xs" vertical />
+
+                  <!-- Export Template -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="upload"
+                    @click="exportTemplate()"
+                  >
+                    <q-tooltip>{{ t('exportTemplate') }}</q-tooltip>
+                  </q-btn>
+
+                  <!-- Delete Template -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="delete"
+                    color="negative"
+                    @click="deleteTemplate()"
+                  >
+                    <q-tooltip>{{ t('deleteTemplate') }}</q-tooltip>
+                  </q-btn>
+
+                  <!-- Advanced Template Editor -->
+                  <q-btn
+                    round
+                    dense
+                    flat
+                    icon="edit"
+                    @click="showTemplateEditorDialog"
+                  >
+                    <q-tooltip>{{ t('editTemplate') }}</q-tooltip>
+                  </q-btn>
+                </template>
               </template>
             </q-select>
           </div>
         </div>
 
-        <template v-if="state.activeTemplate.version === 2">
+        <!-- V2 Template Options -->
+        <template v-if="state.activeTemplate">
           <div class="row q-col-gutter-md">
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('paperSize')"
                 :options="Object.keys(paperSizes)"
@@ -112,7 +167,7 @@
                 filled
               />
             </div>
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('wallet')"
                 :options="Object.keys(wallets)"
@@ -122,18 +177,7 @@
                 filled
               />
             </div>
-            <div class="col-md-3 col-6">
-              <q-select
-                :label="t('theme')"
-                :options="['Default']"
-                v-model="state.tempTheme"
-                disable
-                @update:model-value="renderStamps"
-                dense
-                filled
-              />
-            </div>
-            <div class="col-md-3 col-6">
+            <div class="col-md-4 col-6">
               <q-select
                 :label="t('language')"
                 :options="['English', 'Spanish']"
@@ -146,12 +190,21 @@
             </div>
           </div>
         </template>
+
+        <!-- Theme Customizer -->
+        <TemplateCustomizationComponent
+          :key="state.activeTemplate?.uuid"
+          v-if="state.activeTemplate?.variables"
+          :template="state.activeTemplate"
+          :onCopyTemplate="copyTemplate"
+          @template:updated="onTemplateUpdated"
+        />
       </div>
     </div>
 
     <!-- Show Front/Back Toggle -->
-    <template v-if="state.activeTemplate.back">
-      <div class="row justify-center q-mb-md">
+    <template v-if="state.activeTemplate?.back">
+      <div class="row justify-center q-mb-lg">
         <q-btn-toggle
           v-model="state.showingSide"
           :options="[
@@ -184,6 +237,7 @@
             scrolling="no"
             class="shadow-20 animate fadeIn"
             sandbox="allow-same-origin allow-scripts allow-modals"
+            csp="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';"
             credentialless="true"
           ></iframe>
 
@@ -196,9 +250,31 @@
       </div>
     </div>
 
+    <!-- Display Options -->
+    <div class="flex justify-center q-mt-md">
+      <q-toggle
+        v-model="state.showClaimedStamps"
+        :label="t('showClaimedStamps')"
+      />
+      <q-toggle v-model="state.showCutLines" :label="t('showCutLines')" />
+    </div>
+
+    <div class="row justify-center q-mt-xl q-mb-md">
+      <q-btn
+        label="Print Stamps"
+        icon="print"
+        color="primary"
+        :disable="!state.renderedStamps.length"
+        @click="printStamps"
+        class="q-pl-xl q-pr-xl strong"
+        rounded
+      />
+    </div>
+
     <!-- Model for editing template code -->
     <template-editor-dialog
-      :key="state.activeTemplate"
+      v-if="state.activeTemplate && state.isEditorVisible"
+      v-model="state.isEditorVisible"
       ref="templateEditorDialog"
       :activeTemplate="state.activeTemplate"
       @template:created="onTemplateCreated"
@@ -210,18 +286,33 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref, computed, watch } from 'vue';
-import { useQuasar, debounce, exportFile } from 'quasar';
+import { useQuasar, debounce, exportFile, uid } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 // App / Service / Utils Imports
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
-import type { StampCollection, Template } from 'src/types.js';
-import { compileTemplate, formatStampValue, generateBatchID } from 'src/utils/misc.js';
+import {
+  type StampCollection,
+  type Template,
+  type TemplateVariables,
+  TemplateSchema,
+  TemplateVariablesSchema,
+} from 'src/types.js';
+import {
+  compileTemplate,
+  confirm,
+  formatStampValue,
+  generateBatchID,
+  pickFile,
+} from 'src/utils/misc.js';
+import { showAsyncDialog } from 'src/utils/ui.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Components.
+import TemplateCustomizationComponent from 'src/components/TemplateCustomizationComponent.vue';
 import TemplateEditorDialog from 'src/components/TemplateEditorDialog.vue';
+import AutoExpireDialog from 'src/components/AutoExpireDialog.vue';
 
 // Pre-built Templates
 import { PageTemplate, builtInTemplates } from 'src/templates/index.js';
@@ -254,6 +345,11 @@ const wallets = {
     walletName: 'Cashonize',
     walletURL: 'https://stamps.cash/#/redeem?w=c&wif=',
     walletLogo: '/icons/cashonize.png',
+  },
+  Edge: {
+    walletName: 'Edge Wallet',
+    walletURL: 'https://stamps.cash/#/redeem?w=e&wif=',
+    walletLogo: '/icons/edge.png',
   },
   Flowee: {
     walletName: 'Flowee',
@@ -313,6 +409,7 @@ const state = reactive<{
   showCutLines: boolean;
   showingSide: 'front' | 'back';
   templateData: TemplateData;
+  isEditorVisible: boolean;
   // TODO: Remove me.
   tempTheme: undefined;
   tempLanguage: undefined;
@@ -328,15 +425,18 @@ const state = reactive<{
     wallet: 'Selene',
     ...props.stampCollection.templateData,
   },
+  isEditorVisible: false,
   // TODO: Remove me.
   tempTheme: undefined,
   tempLanguage: undefined,
 });
 
 // Computeds.
-const templates = computed((): Array<Template> => {
+const templates = computed((): Array<Template | string> => {
   return [
+    'Built-In Templates',
     ...Object.values(builtInTemplates),
+    'Custom Templates',
     ...Object.values(props.app.templates),
   ];
 });
@@ -356,28 +456,110 @@ const templateEditorDialog = ref<typeof TemplateEditorDialog | null>(null);
 //---------------------------------------------------------------------------
 
 async function showTemplateEditorDialog() {
-  templateEditorDialog.value?.toggleVisible();
+  state.isEditorVisible = true;
 }
 
 async function onTemplateUpdated(
   newTemplate: Template,
-  _oldTemplate: Template
+  _oldTemplate?: Template
 ) {
   props.app.setTemplate(newTemplate);
-
   state.activeTemplate = newTemplate;
 }
 
 async function onTemplateCreated(template: Template) {
   props.app.setTemplate(template);
-
   state.activeTemplate = template;
 }
 
 async function onTemplateDeleted(templateToDelete: Template) {
   props.app.deleteTemplate(templateToDelete);
-
   state.activeTemplate = templates.value[0];
+}
+
+async function copyTemplate() {
+  $q.dialog({
+    title: 'Copy Template',
+    message: 'Enter a new name for this template',
+    prompt: {
+      model: '',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk(async (newLabel: string) => {
+    if (!state.activeTemplate) {
+      return;
+    }
+
+    await onTemplateCreated({
+      ...state.activeTemplate,
+      label: newLabel,
+      uuid: uid(),
+      readonly: false,
+    });
+  });
+}
+
+function exportTemplate() {
+  if (!state.activeTemplate) {
+    return;
+  }
+
+  const stringifiedTemplate = JSON.stringify(state.activeTemplate);
+  exportFile(
+    `CashStamps Template - ${state.activeTemplate.label}.json`,
+    stringifiedTemplate
+  );
+}
+
+async function importTemplate() {
+  try {
+    const content = await pickFile({ accept: 'application/json' });
+
+    if (!content) {
+      return;
+    }
+
+    // Verify the template schema.
+    const parsedTemplate = TemplateSchema.parse(JSON.parse(content));
+
+    // Validate variables (if there are any).
+    if (parsedTemplate.variables) {
+      TemplateVariablesSchema.parse(JSON.parse(parsedTemplate.variables));
+    }
+
+    // NOTE: Make sure we don't allow over-writing the UUID.
+    //       Otherwise, this could lead to social attacks whereby a default template is over-ridden.
+    await onTemplateCreated({
+      ...parsedTemplate,
+      uuid: uid(),
+    });
+  } catch (error) {
+    console.error(error);
+    $q.dialog({
+      title: 'Error importing template',
+      message: `${error}`,
+    });
+  }
+}
+
+async function deleteTemplate() {
+  if (
+    !(await confirm({
+      title: 'Delete Template',
+      message: 'Are you sure you want to delete this template?',
+      cancel: true,
+      persistent: true,
+    }))
+  ) {
+    return;
+  }
+
+  if (!state.activeTemplate) {
+    return;
+  }
+
+  await onTemplateDeleted(state.activeTemplate);
 }
 
 //---------------------------------------------------------------------------
@@ -403,6 +585,34 @@ function compileGlobalVariables() {
   };
 
   return globalVariables;
+}
+
+function compileTemplateVariables(): Record<string, string> {
+  // If this is not a V2 template with variables, return empty.
+  if (!state.activeTemplate || state.activeTemplate.version !== 2) {
+    return {};
+  }
+
+  // Decode variables to a JS Object (note: It is technically a string).
+  const variables: TemplateVariables =
+    JSON.parse(state.activeTemplate.variables || '{}') || {};
+
+  const acc: Record<string, string> = {};
+
+  const walk = (section: Section, prefix: string) => {
+    for (const [key, entry] of Object.entries(section)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+      if ('type' in entry) {
+        acc[path] = entry.value; // it's a Field
+      } else {
+        walk(entry, path); // it's a nested Section
+      }
+    }
+  };
+
+  walk(variables, '');
+
+  return acc;
 }
 
 async function renderStamps() {
@@ -431,6 +641,7 @@ async function renderStamps() {
 
     // Get our global variables.
     const globalVariables = compileGlobalVariables();
+    const templateVariables = compileTemplateVariables();
 
     // If this wallet has not been funded, manually set a quantity.
     if (!props.wallet.isFunded.value) {
@@ -456,6 +667,7 @@ async function renderStamps() {
         address: wallet.getAddress(),
         stampNumber: Number(index + 1).toString(),
         ...globalVariables,
+        ...templateVariables,
       });
 
       // Add the compiled template to our list of visible stamps.
@@ -475,7 +687,37 @@ async function renderStamps() {
   }
 }
 
-function printStamps() {
+async function printStamps() {
+  // If auto-expiry is not enabled, prompt user to enable it.
+  if (
+    props.app.autoExpire.isServiceAvailable.value &&
+    props.wallet.isFunded.value &&
+    !props.app.autoExpire.isAutoExpireEnabled.value
+  ) {
+    const wantsAutoExpire = await confirm({
+      title: 'Enable Auto-Expire',
+      message: `Would you like to enable auto-expiry so that your Stamps are automatically reclaimed on ${props.stampCollection.expiry}?`,
+      ok: {
+        label: 'Yes',
+        color: 'primary',
+        flat: true,
+      },
+      cancel: {
+        label: 'No',
+        color: undefined,
+        flat: true,
+      },
+    });
+
+    if (wantsAutoExpire) {
+      await showAsyncDialog(AutoExpireDialog, {
+        app: props.app,
+        stampCollection: props.stampCollection,
+        wallet: props.wallet,
+      });
+    }
+  }
+
   // Print the contents of the IFrame.
   printIFrame.value?.contentWindow?.print();
 }
@@ -510,7 +752,6 @@ function onIframeResized(event: MessageEvent) {
 
   printIFrame.value.style.width = `${width}px`;
   printIFrame.value.style.height = `${height}px`;
-  console.log(`Iframe size changed: ${width}x${height}`);
 }
 
 //---------------------------------------------------------------------------
@@ -530,6 +771,16 @@ watch(
     () => state.activeTemplate,
   ],
   debounce(async () => {
+    // NOTE: If Auto-Expire fails for whatever reason, just ignore it.
+    try {
+      // If auto-expire is enabled, refresh it.
+      if (props.app.autoExpire.isAutoExpireEnabled.value) {
+        await props.app.autoExpire.refresh();
+      }
+    } catch (error) {
+      console.warn(`AutoExpire: refresh() failed: ${error}`);
+    }
+
     await renderStamps();
   }, 1000)
 );
@@ -544,16 +795,18 @@ watch(
     }
 
     // Compile the stamp CSS.
-    const stampsCSS = await compileTemplate(
-      state.activeTemplate?.style || '',
-      compileGlobalVariables()
-    );
+    const stampsCSS = await compileTemplate(state.activeTemplate?.style || '', {
+      ...compileGlobalVariables(),
+      ...compileTemplateVariables(),
+    });
 
     // Compile the stamp HTML.
     const stampsHtml = visibleStamps.value
-      .map((stamp) => {
-        return `<div class="stamp-container ${
-          stamp.claimed ? 'claimed' : ''
+      .map((stamp, i) => {
+        const wasAutoExpired = props.app.autoExpire.wasAutoExpired(i);
+
+        return `<div class="stamp-container ${stamp.claimed ? 'claimed' : ''} ${
+          wasAutoExpired ? 'auto-expired' : ''
         }">${stamp.html}</div>`;
       })
       .join('');
@@ -582,8 +835,13 @@ onUnmounted(() => {
   window.removeEventListener('message', onIframeResized);
 });
 
+// Set the template to that specified by the Stamp Collection.
+// Otherwise, just get the first template from our list of templates.
+const isTemplate = (t) => typeof t !== 'string';
 state.activeTemplate =
   templates.value.find(
-    (template) => template.uuid === props.stampCollection.templateUUID
-  ) || templates.value[0];
+    (template) =>
+      isTemplate(template) &&
+      template.uuid === props.stampCollection.templateUUID
+  ) || templates.value.find(isTemplate);
 </script>
