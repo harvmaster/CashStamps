@@ -307,16 +307,12 @@ export class OraclesService {
   }
 
   handleMetadataMessage(metadataEvent: OracleClientMetadataEvent): void {
-    console.log('metadataMessage', metadataEvent);
-
     // Save the metadata to our store.
     this.oracleMetadataStore[metadataEvent.oraclePublicKey] =
       metadataEvent.metadata;
   }
 
   handlePriceMessage(priceMessageEvent: OracleClientPriceMessageEvent): void {
-    console.log('priceMessage', priceMessageEvent);
-
     // Save the price message to our store.
     this.oraclePriceStore[priceMessageEvent.oraclePublicKey] =
       priceMessageEvent;
