@@ -19,7 +19,11 @@
           transition-hide="scale"
           @hide="flushColorChange"
         >
-          <q-color v-model="value" @change="onColorChange" format-model="hexa" />
+          <q-color
+            v-model="value"
+            @change="onColorChange"
+            format-model="hexa"
+          />
         </q-popup-proxy>
       </q-icon>
     </template>
@@ -37,17 +41,19 @@
       <div style="cursor: pointer; display: inline-block" @click="pickImage">
         <img
           :src="value"
-          style="max-height: 200px; min-height: 64px; width: auto; max-width: 100%; display: block"
+          style="
+            max-height: 200px;
+            min-height: 64px;
+            width: auto;
+            max-width: 100%;
+            display: block;
+          "
           class="image-input"
         />
       </div>
     </template>
     <template v-if="entry.optional && value" v-slot:append>
-      <q-icon
-        name="cancel"
-        class="cursor-pointer"
-        @click.stop="clearImage"
-      />
+      <q-icon name="cancel" class="cursor-pointer" @click.stop="clearImage" />
     </template>
   </q-field>
 
@@ -114,7 +120,11 @@ const isValidColor = (val: string) =>
   !val || isHexColor(val) || 'Invalid color';
 
 const isValidNumber = (val: unknown) =>
-  val === null || val === undefined || val === '' || isNumber(String(val)) || 'Invalid number';
+  val === null ||
+  val === undefined ||
+  val === '' ||
+  isNumber(String(val)) ||
+  'Invalid number';
 
 const rules = computed(() => {
   const ruleList = [];

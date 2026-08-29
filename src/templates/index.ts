@@ -11,7 +11,15 @@ import TrifoldMinisatoshi from './Trifold.Minisatoshi.json';
 
 import { Template } from 'src/types.js';
 
-const templateList = [BizcardHappyCoins, BizcardMoon, BizcardCryingFed, BizcardSeethingDollar, BizcardSpace, BizcardOriginalBlack, TrifoldMinisatoshi];
+const templateList = [
+  BizcardHappyCoins,
+  BizcardMoon,
+  BizcardCryingFed,
+  BizcardSeethingDollar,
+  BizcardSpace,
+  BizcardOriginalBlack,
+  TrifoldMinisatoshi,
+];
 
 export const builtInTemplates: { [uuid: string]: Template } =
   Object.fromEntries(

@@ -37,31 +37,31 @@
           inline-actions
           dense
         >
-        <div
-          v-if="!template.readonly"
-          class="row items-center q-px-sm undo-toolbar"
-        >
-          <q-btn
-            flat
-            dense
-            round
-            icon="undo"
-            :disable="history.undo.length === 0"
-            @click="undo"
+          <div
+            v-if="!template.readonly"
+            class="row items-center q-px-sm undo-toolbar"
           >
-            <q-tooltip>Undo</q-tooltip>
-          </q-btn>
-          <q-btn
-            flat
-            dense
-            round
-            icon="redo"
-            :disable="history.redo.length === 0"
-            @click="redo"
-          >
-            <q-tooltip>Redo</q-tooltip>
-          </q-btn>
-        </div>
+            <q-btn
+              flat
+              dense
+              round
+              icon="undo"
+              :disable="history.undo.length === 0"
+              @click="undo"
+            >
+              <q-tooltip>Undo</q-tooltip>
+            </q-btn>
+            <q-btn
+              flat
+              dense
+              round
+              icon="redo"
+              :disable="history.redo.length === 0"
+              @click="redo"
+            >
+              <q-tooltip>Redo</q-tooltip>
+            </q-btn>
+          </div>
         </q-banner>
 
         <!-- Section Tab Headers -->
@@ -123,7 +123,11 @@
                             :entry="entry"
                             v-model:value="entry.value"
                             @changed="
-                              emitUpdate([sectionName, variableName, nestedName])
+                              emitUpdate([
+                                sectionName,
+                                variableName,
+                                nestedName,
+                              ])
                             "
                           />
                         </q-item-section>
@@ -355,7 +359,9 @@ function emitUpdate(path: string[]) {
 
   const key = path.join('.');
   const newValue = entry.value;
-  const prevValue = lastValues.has(key) ? (lastValues.get(key) as string) : newValue;
+  const prevValue = lastValues.has(key)
+    ? (lastValues.get(key) as string)
+    : newValue;
 
   if (prevValue !== newValue) {
     history.undo.push({ path, prevValue, newValue });
