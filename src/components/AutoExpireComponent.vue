@@ -15,7 +15,7 @@
         Stamps are set to auto-expire on {{ app.autoExpire.expiryDate.value }}
       </q-tooltip>
       <q-tooltip v-else
-        >Automatically reclaim stamps after Expiry Date passes</q-tooltip
+        >Automatically reclaim stamps after Expiry Date passes<br/><strong>NOTE: This feature is currently experimental.</strong></q-tooltip
       >
     </q-toggle>
   </div>
