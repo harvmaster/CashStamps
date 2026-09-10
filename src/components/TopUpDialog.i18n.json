@@ -1,0 +1,22 @@
+{
+  "messages": {
+    "en": {
+      "allStampsFunded": "All stamps are already fully funded — nothing to top up!",
+      "topUpSummary": "{count} of {total} stamps need topping up.",
+      "topUpAmountNeeded": "Total needed: {amount} BCH",
+      "scanToTopUp": "Scan to restore stamps to their target value",
+      "stampsToppedUpSuccessfully": "Stamps topped up successfully!",
+      "paymentProtocolNotice": "NOTE: Funding requires a BIP70/JSONPaymentProtocol compatible Wallet.",
+      "knownWallets": "Known Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "es": {
+      "allStampsFunded": "¡Todos los sellos ya están completamente financiados, no hay nada que rellenar!",
+      "topUpSummary": "{count} de {total} sellos necesitan ser rellenados.",
+      "topUpAmountNeeded": "Total necesario: {amount} BCH",
+      "scanToTopUp": "Escanea para restaurar los sellos a su valor objetivo",
+      "stampsToppedUpSuccessfully": "¡Sellos rellenados con éxito!",
+      "paymentProtocolNotice": "NOTA: La financiación requiere una billetera compatible con BIP70/JSONPaymentProtocol.",
+      "knownWallets": "Billeteras conocidas: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    }
+  }
+}

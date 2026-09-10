@@ -208,7 +208,9 @@ export class WalletHD extends HDPrivateNode {
 
     // Separate token-bearing inputs from pure-BCH inputs. Only used to know
     // which inputs need token accounting below — all inputs still get spent.
-    const tokenInputs = inputsFlattened.filter((input) => input.unlockingBytecode.token);
+    const tokenInputs = inputsFlattened.filter(
+      (input) => input.unlockingBytecode.token
+    );
 
     // Fungible token amounts only need to balance per-category across the
     // whole transaction, so they get merged into one output per category.

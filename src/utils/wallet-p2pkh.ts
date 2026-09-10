@@ -61,7 +61,9 @@ export class WalletP2PKH extends PrivateKey {
   }
 
   getTokenAddress() {
-    return this.derivePublicKey().deriveAddress().toCashAddr('bitcoincash', true);
+    return this.derivePublicKey()
+      .deriveAddress()
+      .toCashAddr('bitcoincash', true);
   }
 
   async getHistory() {

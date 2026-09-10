@@ -39,6 +39,7 @@ export class App {
 
   // Flags.
   debug = ref(false);
+  experimental = ref(false);
 
   //---------------------------------------------------------------------------
   // Initialization
@@ -56,6 +57,13 @@ export class App {
   }
 
   async start(): Promise<void> {
+    // Check if this is a tester.
+    if (
+      new URLSearchParams(window.location.search).get('experimental') === 'true'
+    ) {
+      this.experimental.value = true;
+    }
+
     // Check that the user's browser is compatible and perform any initialization.
     await this.initializeBrowser();
 

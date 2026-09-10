@@ -2,6 +2,7 @@
   "messages": {
     "en": {
       "fundStamps": "Fund Stamps",
+      "topUpStamps": "Top Up",
       "reclaimStamps": "Reclaim Stamps",
       "allClaimed": "All claimed/expired",
       "funded": "Funded",
@@ -9,6 +10,7 @@
     },
     "es": {
       "fundStamps": "Financiar Sellos",
+      "topUpStamps": "Top Up",
       "reclaimStamps": "Reclamar Sellos",
       "allClaimed": "Todo reclamado",
       "funded": "Financiado",

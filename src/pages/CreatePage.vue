@@ -188,7 +188,10 @@ async function initWallet() {
   //}
 
   // Determine the number of stamps.
-  const stampsCount = Math.max(wallet.wallets.value.length, activeCollection.value.quantity);
+  const stampsCount = Math.max(
+    wallet.wallets.value.length,
+    activeCollection.value.quantity
+  );
 
   // Set the quantity.
   wallet.setQuantity(stampsCount);
