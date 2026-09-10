@@ -52,6 +52,20 @@
             />
           </div>
 
+          <div
+            v-if="props.app.experimental.value && props.wallet.isFunded.value"
+          >
+            <q-btn
+              :disabled="props.wallet.isClaimed.value"
+              :label="t('topUpStamps')"
+              color="primary"
+              @click="showTopUpDialog"
+              class="full-width strong"
+              unelevated
+              rounded
+            />
+          </div>
+
           <!-- Reclaim Stamps -->
           <div>
             <q-btn
@@ -100,6 +114,14 @@
       :wallet="props.wallet"
     />
 
+    <TopUpDialog
+      ref="topUpDialog"
+      :app="app"
+      :oracles="app.oracles"
+      :stampCollection="collection"
+      :wallet="props.wallet"
+    />
+
     <!-- Modal to display instructions for Redeeming unclaimed wallets -->
     <ReclaimDialog
       ref="reclaimDialog"
@@ -123,6 +145,7 @@ import CollectionFormComponent from './CollectionFormComponent.vue';
 import CollectionSummaryComponent from './CollectionSummaryComponent.vue';
 import AutoExpireComponent from './AutoExpireComponent.vue';
 import FundingDialog from './FundingDialog.vue';
+import TopUpDialog from './TopUpDialog.vue';
 import ReclaimDialog from './ReclaimDialog.vue';
 
 // Translations
@@ -149,6 +172,7 @@ const { t } = useI18n({
 
 // Elements
 const fundingQrCode = ref<typeof FundingDialog | null>(null);
+const topUpDialog = ref<typeof TopUpDialog | null>(null);
 const reclaimDialog = ref<typeof ReclaimDialog | null>(null);
 
 //---------------------------------------------------------------------------
@@ -157,6 +181,10 @@ const reclaimDialog = ref<typeof ReclaimDialog | null>(null);
 
 async function showFundingDialog() {
   fundingQrCode.value?.toggleVisible();
+}
+
+async function showTopUpDialog() {
+  topUpDialog.value?.toggleVisible();
 }
 
 async function showReclaimDialog() {

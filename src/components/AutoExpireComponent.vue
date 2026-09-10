@@ -51,7 +51,6 @@ const { t } = useI18n({
 const props = defineProps<{
   app: App;
   stampCollection: StampCollection;
-  oracles: OraclesService;
   wallet: WalletHD;
 }>();
 
