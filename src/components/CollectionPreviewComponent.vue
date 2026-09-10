@@ -292,6 +292,7 @@ import { useI18n } from 'vue-i18n';
 // App / Service / Utils Imports
 import { TemplateData } from 'src/types.js';
 import { App } from 'src/services/app.js';
+import { OraclesService } from 'src/services/oracles.js';
 import {
   type StampCollection,
   type Template,
@@ -391,6 +392,7 @@ const emits = defineEmits(['templateSelected', 'templateDataUpdated']);
 
 const props = defineProps<{
   app: App;
+  oracles: OraclesService;
   stampCollection: StampCollection;
   wallet: WalletHD;
 }>();
@@ -659,6 +661,7 @@ async function renderStamps() {
       // Compile this stamp.
       const compiledStamp = await compileTemplate(templateSide, {
         valueBch: formatStampValue(wallet.balance.value, 'BCH'),
+        valueFiat: convertToFiat(currency, wallet.balance.value),
         value: formatStampValue(amount, currency),
         tokenBalance: wallet.balanceTokens.value.toString(),
         symbol: props.app.oracles.getOracleSymbol(currency),
@@ -754,6 +757,11 @@ function onIframeResized(event: MessageEvent) {
 
   printIFrame.value.style.width = `${width}px`;
   printIFrame.value.style.height = `${height}px`;
+}
+
+function convertToFiat(oraclePublicKey: string, sats: number) {
+  const commonUnits = props.oracles.convertFromSats(oraclePublicKey, sats);
+  return props.oracles.formatCommonUnits(oraclePublicKey, commonUnits);
 }
 
 //---------------------------------------------------------------------------

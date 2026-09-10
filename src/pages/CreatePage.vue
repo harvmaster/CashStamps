@@ -92,6 +92,7 @@
       <div class="col-12">
         <CollectionPreviewComponent
           :app="app"
+          :oracles="app.oracles"
           :stampCollection="activeCollection"
           :wallet="activeWallet"
           @templateSelected="(uuid: string) => (activeCollection.templateUUID = uuid)"
