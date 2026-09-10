@@ -183,14 +183,18 @@ async function initWallet() {
   await wallet.scan();
 
   // If this is a fresh wallet, set the quantity to whatever the collection specified.
-  if (!wallet.wallets.value.length) {
-    wallet.setQuantity(activeCollection.value.quantity);
-  }
+  // if (!wallet.wallets.value.length) {
+  //  wallet.setQuantity(activeCollection.value.quantity);
+  //}
+
+  // Determine the number of stamps.
+  const stampsCount = Math.max(wallet.wallets.value.length, activeCollection.value.quantity);
+
+  // Set the quantity.
+  wallet.setQuantity(stampsCount);
 
   // Otherwise, refresh the balances of the child nodes.
-  else {
-    await wallet.refreshChildNodes();
-  }
+  await wallet.refreshChildNodes();
 
   // Start monitoring the wallet for transactions.
   await wallet.startMonitoring();

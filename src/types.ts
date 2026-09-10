@@ -33,8 +33,8 @@ export type Template = z.infer<typeof TemplateSchema>;
 
 const TemplateVariableEntrySchema = z.object({
   label: z.string(),
-  type: z.enum(['color', 'hidden', 'image', 'string', 'text']),
-  value: z.string(),
+  type: z.enum(['color', 'hidden', 'image', 'number', 'string', 'text']),
+  value: z.string().nullable().default(''),
   hint: z.string().optional(),
   optional: z.boolean().optional().default(true),
 });
@@ -44,8 +44,8 @@ export const TemplateVariablesSchema = z.record(
   z.record(
     z.string(),
     z.union([
-      TemplateVariableEntrySchema,
       z.record(z.string(), TemplateVariableEntrySchema),
+      TemplateVariableEntrySchema,
     ])
   )
 );

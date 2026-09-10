@@ -660,11 +660,13 @@ async function renderStamps() {
       const compiledStamp = await compileTemplate(templateSide, {
         valueBch: formatStampValue(wallet.balance.value, 'BCH'),
         value: formatStampValue(amount, currency),
+        tokenBalance: wallet.balanceTokens.value.toString(),
         symbol: props.app.oracles.getOracleSymbol(currency),
         currency: props.app.oracles.getOracleUnitCode(currency),
         expiry,
         wif: wallet.toWif(),
         address: wallet.getAddress(),
+        tokenAddress: wallet.getTokenAddress(),
         stampNumber: Number(index + 1).toString(),
         ...globalVariables,
         ...templateVariables,
@@ -768,6 +770,8 @@ watch(
     () => props.stampCollection.quantity,
     () => props.wallet,
     () => props.wallet.claimedStamps.value,
+    () => props.wallet.balance.value,
+    () => props.wallet.balanceTokens.value,
     () => state.activeTemplate,
   ],
   debounce(async () => {

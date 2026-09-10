@@ -30,6 +30,13 @@ export class WalletP2PKH extends PrivateKey {
     );
   });
 
+  public balanceTokens = computed(() => {
+    return this.unspents.value.reduce(
+      (total, unspent) => total + Number(unspent.token_data?.amount || 0),
+      0
+    );
+  });
+
   constructor(privateKeyBytes: Uint8Array, electrum: ElectrumService) {
     super(privateKeyBytes);
     this.electrum = electrum;
@@ -51,6 +58,10 @@ export class WalletP2PKH extends PrivateKey {
 
   getAddress() {
     return this.derivePublicKey().deriveAddress().toCashAddr();
+  }
+
+  getTokenAddress() {
+    return this.derivePublicKey().deriveAddress().toCashAddr('bitcoincash', true);
   }
 
   async getHistory() {
