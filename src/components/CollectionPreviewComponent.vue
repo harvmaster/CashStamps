@@ -10,8 +10,7 @@
               class="bg-negative text-white"
               inline-actions
             >
-              Your browser is unsupported and may not render/print correctly.
-              For best results, please use a Chrome-based browser.
+              {{ t('browserUnsupported') }}
               <template v-slot:action>
                 <q-btn
                   flat
@@ -19,7 +18,7 @@
                   href="https://brave.com"
                   target="_blank"
                   color="white"
-                  label="Brave Browser"
+                  :label="t('braveBrowser')"
                 />
               </template>
             </q-banner>
@@ -208,8 +207,8 @@
         <q-btn-toggle
           v-model="state.showingSide"
           :options="[
-            { label: 'Front', value: 'front' },
-            { label: 'Back', value: 'back' },
+            { label: t('front'), value: 'front' },
+            { label: t('back'), value: 'back' },
           ]"
           toggle-color="primary"
           style="width: 375px"
@@ -261,7 +260,7 @@
 
     <div class="row justify-center q-mt-xl q-mb-md">
       <q-btn
-        label="Print Stamps"
+        :label="t('printStamps')"
         icon="print"
         color="primary"
         :disable="!state.renderedStamps.length"
@@ -481,8 +480,8 @@ async function onTemplateDeleted(templateToDelete: Template) {
 
 async function copyTemplate() {
   $q.dialog({
-    title: 'Copy Template',
-    message: 'Enter a new name for this template',
+    title: t('copyTemplateTitle'),
+    message: t('copyTemplateMessage'),
     prompt: {
       model: '',
     },
@@ -539,7 +538,7 @@ async function importTemplate() {
   } catch (error) {
     console.error(error);
     $q.dialog({
-      title: 'Error importing template',
+      title: t('errorImportingTemplate'),
       message: `${error}`,
     });
   }
@@ -548,8 +547,8 @@ async function importTemplate() {
 async function deleteTemplate() {
   if (
     !(await confirm({
-      title: 'Delete Template',
-      message: 'Are you sure you want to delete this template?',
+      title: t('deleteTemplate'),
+      message: t('deleteTemplateConfirm'),
       cancel: true,
       persistent: true,
     }))
@@ -700,15 +699,17 @@ async function printStamps() {
     !props.app.autoExpire.isAutoExpireEnabled.value
   ) {
     const wantsAutoExpire = await confirm({
-      title: 'Enable Auto-Expire',
-      message: `Would you like to enable auto-expiry so that your Stamps are automatically reclaimed on ${props.stampCollection.expiry}?`,
+      title: t('enableAutoExpireTitle'),
+      message: t('enableAutoExpireMessage', {
+        expiry: props.stampCollection.expiry,
+      }),
       ok: {
-        label: 'Yes',
+        label: t('yes'),
         color: 'primary',
         flat: true,
       },
       cancel: {
-        label: 'No',
+        label: t('no'),
         color: undefined,
         flat: true,
       },

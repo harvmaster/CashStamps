@@ -1,0 +1,53 @@
+{
+  "messages": {
+    "en": {
+      "autoExpire": "Auto Expire",
+      "mustFundFirst": "You must fund your Stamps before you can enable Auto-Expiry",
+      "autoExpireOn": "Stamps are set to auto-expire on {date}",
+      "autoReclaimInfo": "Automatically reclaim stamps after Expiry Date passes",
+      "experimentalNote": "NOTE: This feature is currently experimental."
+    },
+    "es": {
+      "autoExpire": "Vencimiento automático",
+      "mustFundFirst": "Debes financiar tus Sellos antes de poder activar el Vencimiento Automático",
+      "autoExpireOn": "Los Sellos están configurados para vencer automáticamente el {date}",
+      "autoReclaimInfo": "Reclamar Sellos automáticamente después de que pase la Fecha de Vencimiento",
+      "experimentalNote": "NOTA: Esta función es actualmente experimental."
+    },
+    "de": {
+      "autoExpire": "Automatisches Ablaufen",
+      "mustFundFirst": "Du musst deine Stamps erst finanzieren, bevor du das automatische Ablaufen aktivieren kannst",
+      "autoExpireOn": "Stamps laufen am {date} automatisch ab",
+      "autoReclaimInfo": "Stamps nach Ablauf des Ablaufdatums automatisch zurückfordern",
+      "experimentalNote": "HINWEIS: Diese Funktion ist derzeit experimentell."
+    },
+    "tl": {
+      "autoExpire": "Awtomatikong Pag-expire",
+      "mustFundFirst": "Kailangan mong pondohan muna ang iyong Stamps bago mo ma-enable ang Auto-Expiry",
+      "autoExpireOn": "Ang Stamps ay nakatakdang mag-auto-expire sa {date}",
+      "autoReclaimInfo": "Awtomatikong bawiin ang stamps pagkatapos lumipas ang Expiry Date",
+      "experimentalNote": "PAALALA: Ang feature na ito ay experimental pa."
+    },
+    "zh": {
+      "autoExpire": "自动过期",
+      "mustFundFirst": "您必须先为邮票充值，才能启用自动过期功能",
+      "autoExpireOn": "邮票已设置为在 {date} 自动过期",
+      "autoReclaimInfo": "过期日期过后自动回收邮票",
+      "experimentalNote": "注意：此功能目前为实验性功能。"
+    },
+    "da": {
+      "autoExpire": "Automatisk udløb",
+      "mustFundFirst": "Du skal finansiere dine Stamps, før du kan aktivere automatisk udløb",
+      "autoExpireOn": "Stamps er indstillet til automatisk at udløbe den {date}",
+      "autoReclaimInfo": "Reclaim automatisk stamps efter udløbsdatoen er passeret",
+      "experimentalNote": "BEMÆRK: Denne funktion er i øjeblikket eksperimentel."
+    },
+    "nl": {
+      "autoExpire": "Automatisch verlopen",
+      "mustFundFirst": "Je moet je Stamps eerst financieren voordat je Auto-Expire kunt inschakelen",
+      "autoExpireOn": "Stamps verlopen automatisch op {date}",
+      "autoReclaimInfo": "Stamps automatisch terugvorderen nadat de vervaldatum is verstreken",
+      "experimentalNote": "OPMERKING: Deze functie is momenteel experimenteel."
+    }
+  }
+}

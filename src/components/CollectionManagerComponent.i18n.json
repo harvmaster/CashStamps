@@ -10,11 +10,51 @@
     },
     "es": {
       "fundStamps": "Financiar Sellos",
-      "topUpStamps": "Top Up",
+      "topUpStamps": "Recargar",
       "reclaimStamps": "Reclamar Sellos",
       "allClaimed": "Todo reclamado",
       "funded": "Financiado",
       "notFunded": "No Financiado"
+    },
+    "de": {
+      "fundStamps": "Stamps aufladen",
+      "topUpStamps": "Nachladen",
+      "reclaimStamps": "Stamps zurückfordern",
+      "allClaimed": "Alle eingelöst/abgelaufen",
+      "funded": "Finanziert",
+      "notFunded": "Nicht finanziert"
+    },
+    "tl": {
+      "fundStamps": "Pondohan ang Stamps",
+      "topUpStamps": "Top Up",
+      "reclaimStamps": "Bawiin ang Stamps",
+      "allClaimed": "Lahat na-claim/nag-expire",
+      "funded": "Pinondohan",
+      "notFunded": "Hindi Pinondohan"
+    },
+    "zh": {
+      "fundStamps": "为邮票充值",
+      "topUpStamps": "补足",
+      "reclaimStamps": "回收邮票",
+      "allClaimed": "全部已领取/已过期",
+      "funded": "已充值",
+      "notFunded": "未充值"
+    },
+    "da": {
+      "fundStamps": "Finansier Stamps",
+      "topUpStamps": "Fyld op",
+      "reclaimStamps": "Reclaim Stamps",
+      "allClaimed": "Alle claimed/udløbet",
+      "funded": "Finansieret",
+      "notFunded": "Ikke finansieret"
+    },
+    "nl": {
+      "fundStamps": "Stamps financieren",
+      "topUpStamps": "Opwaarderen",
+      "reclaimStamps": "Stamps terugvorderen",
+      "allClaimed": "Alle geclaimd/verlopen",
+      "funded": "Gefinancierd",
+      "notFunded": "Niet gefinancierd"
     }
   }
 }

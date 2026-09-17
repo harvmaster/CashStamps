@@ -4,6 +4,17 @@
       <!-- If the language is NOT set to Spanish, use English -->
       <template v-if="language !== 'es'">
         <h1 class="text-center strong">FAQ</h1>
+        <q-banner class="bg-negative text-white q-mb-lg" rounded>
+          <strong>Disclaimer:</strong> The CashStamps creation tool is an
+          open-source tool. Any/all templates, settings and mnemonics
+          ('seedphrases') live in your browser's cache. If you clear your
+          browser's cache and HAVE NOT saved any of the above elsewhere, there
+          is no way to save, re-enable, re-establish, recover or "fix"
+          anything...you'll just have to start over again. It's one thing to
+          lose templates or settings, it's another to lose BCH, so BE SURE TO
+          SAVE THE MNEMONIC OF ANY/ALL CASHSTAMP CAMPAIGNS THAT YOU HAVE
+          FUNDED!
+        </q-banner>
         <div>
           <section class="faq-section">
             <h2>What are CashStamps?</h2>
@@ -158,9 +169,19 @@
                 (iOS &amp; Android)
               </li>
               <li>
-                <a href="https://flowee.org/products/pay/#dl" target="_blank"
-                  >Flowee Pay Wallet</a
-                >
+                <a href="https://about.cashonize.com/" target="_blank">Cashonize</a>
+                (Desktop and Web)
+              </li>
+              <li>
+                <a href="https://edge.app/" target="_blank">Edge Wallet</a>
+                (iOS &amp; Android)
+              </li>
+              <li>
+                <a href="https://www.optnlabs.com/wallet" target="_blank">OPTN</a>
+                (Web)
+              </li>
+              <li>
+                <a href="https://flowee.org/products/pay/#dl" target="_blank">Flowee Pay Wallet</a>
                 (Android Only)
               </li>
               <li>
@@ -195,20 +216,32 @@
           </section>
 
           <section class="faq-section">
-            <h2>Can the text on the stamps be customized or edited?</h2>
+            <h2>Customized Templates and Advanced Editing.</h2>
 
             <p>
-              Yes, somewhat. Click on the edit button next to the [drop-down]
-              template of your choice and feel free to edit the HTML code and
-              'Save' the template there for printing to a .pdf file or directly
-              to your printer of choice. We hope to make this an easier
-              'editable field' process in the future, but for now, the HTML
-              editor works for basic changes to text. Pay close attention to the
-              highlighted warning in red at the top of the HTML editor before
-              proceeding. You can also export a .JSON file if you want to be
-              able to custom edit in Adobe Illustrator or other editing
-              programs. There will be a route to get the list of WIFs,
-              addresses, etc via the JSON file.
+              The CashStamps creation tool now has an easy-to-use, fully
+              customizable interface. Click around and edit nearly every aspect
+              of your CashStamp(s) how you see fit before going to print. To
+              customize, start with any of the default "Built-In" templates
+              &gt; Click the green "Customize Template" bar &gt; Click where
+              it says "Clone Template" on the blue bar and then save your
+              newly "Cloned Template" as a new name. It will now show up
+              under your "Custom Templates" in the "Template" drop-down
+              menu above and you'll have full customizability of the CashStamp
+              template.
+            </p>
+
+            <p>
+              For more advanced editing, there is an "Advanced Template
+              Editor" that will show after you have cloned/saved your
+              new/custom template, so feel free to get as creative with it as
+              you'd like. You can also export any template (Built-In or
+              Custom) to a .JSON file if you want to save your templates
+              elsewhere and/or be able to custom edit your templates in Adobe
+              Illustrator or other editing programs. You can also use the
+              import function as well if you need to import something you've
+              created elsewhere. There will be a route to get the list of
+              WIFs, addresses, etc via the JSON file.
             </p>
 
             <div class="flex row justify-center">
@@ -220,35 +253,42 @@
           </section>
 
           <section class="faq-section">
-            <h2>Do I have to enter an expiration date on my CashStamps?</h2>
+            <h2>How Expiration Dates work.</h2>
 
             <p>
-              Technically, no, but you'll need to remove the “Valid Until” line
-              in the Template HTML editor, after you've created the CashStamps,
-              if you don't want an expiration date or the “Valid Until” text to
-              show on the CashStamp.
+              CashStamps have an "Auto Expire" function that can be left OFF
+              or toggled ON AFTER you have funded your collection of
+              CashStamps. If "Auto Expire" is chosen/toggled-ON, any
+              unredeemed CashStamps will be automatically reclaimed to a wallet
+              of your choice at day's-end of the expiration date you have
+              chosen.
             </p>
 
             <p>
-              We believe it’s a good idea to include an expiration date on
-              any/all printed/funded CashStamps as it promotes a sense of
-              urgency for the receiver to use/redeem the CashStamp, sooner than
-              later.
+              (Example: A 12/31/2026 Expiration date will automatically reclaim
+              any unredeemed CashStamps to the wallet address of your choice at
+              12:00AM Midnight on 01/01/2027 if the "Auto Expire" option is
+              toggled ON.)
             </p>
 
             <p>
-              Technically, as the issuer/creator of the CashStamp(s), you can
-              reclaim any unredeemed CashStamp(s) at any time as the “Reclaim
-              Stamps” button/process on the tool is manual and NOT automatic.
-              Just don’t be greedy and reclaim your disbursed CashStamp(s)
-              before their listed expiration dates as that would create a poor,
-              first-impression to BitcoinCash for someone that might not redeem
-              their CashStamp immediately after you give it to them. Once the
-              expiration date has arrived/passed, feel free to load your
-              specific CashStamps collection in the tool - if it’s already
-              cached there or simply load the collection’s mnemonic ‘Seedphrase’
-              - and click the “Reclaim Stamps” button for full reclaiming of any
-              unused/unredeemed CashStamps by their printed expiration date.
+              As the issuer/creator of the CashStamp(s), you do NOT have to
+              utilize the "Auto Expire" function, and therefore can reclaim
+              any unredeemed CashStamp(s) at any time if you leave the "Auto
+              Expire" option toggled OFF. Once the expiration date has
+              arrived/passed, feel free to pull-up your specific CashStamp
+              collection in the tool - if it's already cached there - or simply
+              load the collection's mnemonic 'seedphrase' into the tool and
+              click the "Reclaim Stamps" button for full, manual reclaiming
+              of any unused/unredeemed CashStamp(s) on or after the printed
+              expiration date you have chosen.
+            </p>
+
+            <p>
+              Please don't be greedy and reclaim your disbursed CashStamp(s)
+              before their printed expiration date as that would create a poor,
+              first-impression of BitcoinCash for someone that might not redeem
+              their CashStamp immediately after you give it to them.
             </p>
           </section>
 
@@ -436,6 +476,18 @@
       <!-- NOTE: Copy and paste the section you modify into ChatGPT or something to have it translate to Spanish and then copy over the relevant section below. -->
       <template v-else>
         <h1 class="text-center strong">Preguntas Frecuentes</h1>
+        <q-banner class="bg-negative text-white q-mb-lg" rounded>
+          <strong>Descargo de responsabilidad:</strong> La herramienta de
+          creación de CashStamps es una herramienta de código abierto.
+          Todas las plantillas, configuraciones y mnemónicos ('frases semilla')
+          viven en la caché de tu navegador. Si borras la caché de tu navegador
+          y NO has guardado nada de lo anterior en otro lugar, no hay forma de
+          guardar, reactivar, restablecer, recuperar o "arreglar" nada...
+          simplemente tendrás que empezar de nuevo. Una cosa es perder
+          plantillas o configuraciones, otra es perder BCH, así que ASEGÚRATE
+          DE GUARDAR EL MNEMÓNICO DE TODAS LAS CAMPAÑAS DE CASHSTAMP QUE HAYAS
+          FINANCIADO!
+        </q-banner>
         <div>
           <section class="faq-section">
             <h2>¿Qué son los CashStamps?</h2>
@@ -597,9 +649,19 @@
                 (iOS y Android)
               </li>
               <li>
-                <a href="https://flowee.org/products/pay/#dl" target="_blank"
-                  >Flowee Pay Wallet</a
-                >
+                <a href="https://about.cashonize.com/" target="_blank">Cashonize</a>
+                (Escritorio y Web)
+              </li>
+              <li>
+                <a href="https://edge.app/" target="_blank">Edge Wallet</a>
+                (iOS y Android)
+              </li>
+              <li>
+                <a href="https://www.optnlabs.com/wallet" target="_blank">OPTN</a>
+                (Web)
+              </li>
+              <li>
+                <a href="https://flowee.org/products/pay/#dl" target="_blank">Flowee Pay Wallet</a>
                 (Solo Android)
               </li>
               <li>
@@ -636,21 +698,34 @@
           </section>
 
           <section class="faq-section">
-            <h2>¿Se puede personalizar o editar el texto en los sellos?</h2>
+            <h2>Plantillas Personalizadas y Edición Avanzada.</h2>
 
             <p>
-              Sí, de alguna manera. Haz clic en el botón editar junto a la
-              plantilla [desplegable] de tu elección y siéntete libre de editar
-              el código HTML y 'Guardar' la plantilla allí para imprimir a un
-              archivo .pdf o directamente a tu impresora de elección. Esperamos
-              hacer esto un proceso de 'campo editable' más fácil en el futuro,
-              pero por ahora, el editor HTML funciona para cambios básicos de
-              texto. Presta mucha atención a la advertencia resaltada en rojo en
-              la parte superior del editor HTML antes de proceder. También
-              puedes exportar un archivo .JSON si quieres poder editar
-              personalizadamente en Adobe Illustrator u otros programas de
-              edición. Habrá una ruta para obtener la lista de WIFs,
-              direcciones, etc. a través del archivo JSON.
+              La herramienta de creación de CashStamps ahora tiene una interfaz
+              fácil de usar y totalmente personalizable. Haz clic y edita casi
+              todos los aspectos de tus CashStamp(s) como prefieras antes de
+              imprimir. Para personalizar, comienza con cualquiera de las
+              plantillas predeterminadas "Incorporadas" &gt; Haz clic en la
+              barra verde "Personalizar Plantilla" &gt; Haz clic donde dice
+              "Clonar Plantilla" en la barra azul y luego guarda tu
+              "Plantilla Clonada" con un nuevo nombre. Ahora aparecerá en tus
+              "Plantillas Personalizadas" en el menú desplegable "Plantilla"
+              de arriba y tendrás total personalización de la plantilla de
+              CashStamp.
+            </p>
+
+            <p>
+              Para una edición más avanzada, hay un "Editor de Plantillas
+              Avanzado" que aparecerá después de que hayas clonado/guardado tu
+              plantilla nueva/personalizada, así que siéntete libre de ser tan
+              creativo como quieras. También puedes exportar cualquier plantilla
+              (Incorporada o Personalizada) a un archivo .JSON si quieres
+              guardar tus plantillas en otro lugar y/o poder editar tus
+              plantillas de forma personalizada en Adobe Illustrator u otros
+              programas de edición. También puedes usar la función de importar
+              si necesitas importar algo que hayas creado en otro lugar. Habrá
+              una forma de obtener la lista de WIFs, direcciones, etc. a través
+              del archivo JSON.
             </p>
 
             <div class="flex row justify-center">
@@ -662,39 +737,44 @@
           </section>
 
           <section class="faq-section">
-            <h2>
-              ¿Tengo que ingresar una fecha de expiración en mis CashStamps?
-            </h2>
+            <h2>Cómo funcionan las Fechas de Vencimiento.</h2>
 
             <p>
-              Técnicamente, no, pero necesitarás eliminar la línea "Válido
-              Hasta" en el editor HTML de Plantilla, después de que hayas creado
-              los CashStamps, si no quieres una fecha de expiración o que el
-              texto "Válido Hasta" aparezca en el CashStamp.
+              Los CashStamps tienen una función de "Vencimiento Automático"
+              que puede dejarse APAGADA o activarse DESPUÉS de haber financiado
+              tu colección de CashStamps. Si se elige/activa el "Vencimiento
+              Automático", cualquier CashStamp no canjeado será reclamado
+              automáticamente a una billetera de tu elección al final del día de
+              la fecha de vencimiento que hayas elegido.
             </p>
 
             <p>
-              Creemos que es una buena idea incluir una fecha de expiración en
-              cualquier/todos los CashStamps impresos/financiados ya que
-              promueve un sentido de urgencia para que el receptor use/canjee el
-              CashStamp, más temprano que tarde.
+              (Ejemplo: Una fecha de Vencimiento del 31/12/2026 reclamará
+              automáticamente cualquier CashStamp no canjeado a la dirección de
+              billetera de tu elección a las 12:00AM del 01/01/2027 si la opción
+              de "Vencimiento Automático" está activada.)
             </p>
 
             <p>
-              Técnicamente, como emisor/creador del(los) CashStamp(s), puedes
-              reclamar cualquier CashStamp(s) no canjeado(s) en cualquier
-              momento ya que el botón/proceso "Reclamar Sellos" en la
-              herramienta es manual y NO automático. Solo no seas codicioso y
-              reclames tus CashStamp(s) distribuidos antes de sus fechas de
-              expiración listadas ya que eso crearía una mala primera impresión
-              de BitcoinCash para alguien que podría no canjear su CashStamp
-              inmediatamente después de que se lo des. Una vez que la fecha de
-              expiración haya llegado/pasado, siéntete libre de cargar tu
-              colección específica de CashStamps en la herramienta - si ya está
-              en caché allí o simplemente carga la 'Frase Semilla' mnemónica de
-              la colección - y haz clic en el botón "Reclamar Sellos" para la
-              reclamación completa de cualquier CashStamp no usado/no canjeado
-              por su fecha de expiración impresa.
+              Como emisor/creador de los CashStamp(s), NO tienes que utilizar la
+              función de "Vencimiento Automático", y por lo tanto puedes
+              reclamar cualquier CashStamp(s) no canjeado(s) en cualquier momento
+              si dejas la opción de "Vencimiento Automático" APAGADA. Una vez
+              que la fecha de vencimiento haya llegado/pasado, siéntete libre de
+              abrir tu colección específica de CashStamps en la herramienta - si
+              ya está en caché allí - o simplemente carga la 'frase semilla'
+              mnemónica de la colección en la herramienta y haz clic en el botón
+              "Reclamar Sellos" para la reclamación completa y manual de
+              cualquier CashStamp(s) no usado(s)/no canjeado(s) en o después de
+              la fecha de vencimiento impresa que hayas elegido.
+            </p>
+
+            <p>
+              Por favor no seas codicioso y reclames tus CashStamp(s)
+              distribuidos antes de su fecha de vencimiento impresa, ya que eso
+              crearía una mala primera impresión de BitcoinCash para alguien que
+              podría no canjear su CashStamp inmediatamente después de que se lo
+              des.
             </p>
           </section>
 

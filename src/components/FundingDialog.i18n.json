@@ -15,6 +15,46 @@
       "stampsFundedSuccessfully": "¡Sellos financiados con éxito!",
       "paymentProtocolNotice": "NOTA: La financiación requiere una billetera compatible con BIP70/JSONPaymentProtocol.",
       "knownWallets": "Billeteras conocidas: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "de": {
+      "backupWarning": "Deine Mnemonics und Stamps werden lokal gespeichert und gehen verloren, wenn du den Browser-Speicher löschst.",
+      "saveMnemonicWarning": "Speichere deine Mnemonic an einem sicheren Ort, bevor du fortfährst!",
+      "scanToFund": "Scannen, um die Stamps mit BCH aufzuladen",
+      "stampsFundedSuccessfully": "Stamps erfolgreich aufgeladen!",
+      "paymentProtocolNotice": "HINWEIS: Das Aufladen erfordert eine BIP70/JSONPaymentProtocol-kompatible Wallet.",
+      "knownWallets": "Bekannte Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "tl": {
+      "backupWarning": "Ang iyong mnemonics at stamps ay lokal na naka-store at mawawala kung i-clear mo ang storage ng iyong browser.",
+      "saveMnemonicWarning": "I-save ang iyong mnemonic sa ligtas na lugar bago magpatuloy!",
+      "scanToFund": "I-scan upang lagyan ng BCH ang stamps",
+      "stampsFundedSuccessfully": "Matagumpay na napondohan ang Stamps!",
+      "paymentProtocolNotice": "PAALALA: Ang pagpondo ay nangangailangan ng BIP70/JSONPaymentProtocol compatible Wallet.",
+      "knownWallets": "Kilalang Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "zh": {
+      "backupWarning": "您的助记词和邮票存储在本地，如果清除浏览器存储将会丢失。",
+      "saveMnemonicWarning": "在继续之前，请将助记词保存在安全的地方！",
+      "scanToFund": "扫描以用 BCH 为邮票充值",
+      "stampsFundedSuccessfully": "邮票充值成功！",
+      "paymentProtocolNotice": "注意：充值需要兼容 BIP70/JSONPaymentProtocol 的钱包。",
+      "knownWallets": "已知钱包：Electron Cash、Bitcoin.com Wallet、Paytaca、Flowee。"
+    },
+    "da": {
+      "backupWarning": "Dine mnemonics og stamps gemmes lokalt og går tabt, hvis du rydder din browsers lager.",
+      "saveMnemonicWarning": "Gem din mnemonic et sikkert sted, før du fortsætter!",
+      "scanToFund": "Scan for at fylde stamps med BCH",
+      "stampsFundedSuccessfully": "Stamps finansieret succesfuldt!",
+      "paymentProtocolNotice": "BEMÆRK: Finansiering kræver en BIP70/JSONPaymentProtocol-kompatibel Wallet.",
+      "knownWallets": "Kendte Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "nl": {
+      "backupWarning": "Je mnemonics en stamps worden lokaal opgeslagen en gaan verloren als je de browseropslag wist.",
+      "saveMnemonicWarning": "Bewaar je mnemonic op een veilige plek voordat je verdergaat!",
+      "scanToFund": "Scan om de stamps met BCH te vullen",
+      "stampsFundedSuccessfully": "Stamps succesvol gefinancierd!",
+      "paymentProtocolNotice": "OPMERKING: Financiering vereist een BIP70/JSONPaymentProtocol-compatibele Wallet.",
+      "knownWallets": "Bekende Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
     }
   }
 }

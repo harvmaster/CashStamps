@@ -1,22 +1,88 @@
 {
   "messages": {
     "en": {
+      "autoExpireTitle": "Auto-Expire",
       "reclaimStamps": "Reclaim Remaining Stamps",
       "enterPayoutAddress": "Enter the Bitcoin Cash Address that the remaining balances should be sent to.",
+      "enterPayoutAddressWithExpiry": "Enter the Bitcoin Cash Address that the remaining balances should be sent to on the expiry date ({expiry}).",
       "payoutAddress": "Payout Address",
       "invalidBCHAddress": "Invalid Bitcoin Cash Address",
       "enableAutoExpire": "Enable Auto-Expire",
+      "autoExpireEnabled": "Auto-Expire Enabled",
       "bip39Info": "NOTE: Your stamp collection is a BIP39 HD Wallet using derivation path m/44'/145'/0'. This means that you can also import your mnemonic into Electron Cash (and other BIP39 compatible wallets) and manage stamp balances from there.",
       "stampsReclaimed": "Stamps reclaimed successfully!"
     },
     "es": {
+      "autoExpireTitle": "Vencimiento Automático",
       "reclaimStamps": "Reclamar Sellos Restantes",
       "enterPayoutAddress": "Ingrese la dirección de Bitcoin Cash que los saldos restantes deben enviarse a.",
+      "enterPayoutAddressWithExpiry": "Ingrese la dirección de Bitcoin Cash a la que se deben enviar los saldos restantes en la fecha de vencimiento ({expiry}).",
       "payoutAddress": "Dirección de Pago",
       "invalidBCHAddress": "Dirección de Bitcoin Cash Inválida",
-      "reclaim": "Reclamar",
+      "enableAutoExpire": "Activar Vencimiento Automático",
+      "autoExpireEnabled": "Vencimiento Automático Activado",
       "bip39Info": "NOTA: Tu colección de sellos es una cartera HD BIP39 utilizando la ruta de derivación m/44'/145'/0'. Esto significa que también puedes importar tu mnemónico en Electron Cash (y otras carteras compatibles con BIP39) y gestionar los saldos de los sellos desde allí.",
       "stampsReclaimed": "¡Sellos reclamados con éxito!"
+    },
+    "de": {
+      "autoExpireTitle": "Automatisches Ablaufen",
+      "reclaimStamps": "Verbleibende Stamps zurückfordern",
+      "enterPayoutAddress": "Gib die Bitcoin Cash Adresse ein, an die die verbleibenden Guthaben gesendet werden sollen.",
+      "enterPayoutAddressWithExpiry": "Gib die Bitcoin Cash Adresse ein, an die die verbleibenden Guthaben am Ablaufdatum ({expiry}) gesendet werden sollen.",
+      "payoutAddress": "Auszahlungsadresse",
+      "invalidBCHAddress": "Ungültige Bitcoin Cash Adresse",
+      "enableAutoExpire": "Automatisches Ablaufen aktivieren",
+      "autoExpireEnabled": "Automatisches Ablaufen aktiviert",
+      "bip39Info": "HINWEIS: Deine Stamp-Sammlung ist eine BIP39 HD Wallet mit Ableitungspfad m/44'/145'/0'. Das bedeutet, dass du deine Mnemonic auch in Electron Cash (und andere BIP39-kompatible Wallets) importieren und die Stamp-Guthaben von dort verwalten kannst.",
+      "stampsReclaimed": "Stamps erfolgreich zurückgefordert!"
+    },
+    "tl": {
+      "autoExpireTitle": "Awtomatikong Pag-expire",
+      "reclaimStamps": "Bawiin ang Natitirang Stamps",
+      "enterPayoutAddress": "Ilagay ang Bitcoin Cash Address na pagdalhan ng mga natitirang balanse.",
+      "enterPayoutAddressWithExpiry": "Ilagay ang Bitcoin Cash Address na pagdalhan ng mga natitirang balanse sa expiry date ({expiry}).",
+      "payoutAddress": "Payout Address",
+      "invalidBCHAddress": "Invalid na Bitcoin Cash Address",
+      "enableAutoExpire": "I-enable ang Auto-Expire",
+      "autoExpireEnabled": "Na-enable ang Auto-Expire",
+      "bip39Info": "PAALALA: Ang iyong stamp collection ay isang BIP39 HD Wallet na gumagamit ng derivation path m/44'/145'/0'. Ibig sabihin, maaari mo ring i-import ang iyong mnemonic sa Electron Cash (at iba pang BIP39 compatible wallets) at pamahalaan ang stamp balances mula doon.",
+      "stampsReclaimed": "Matagumpay na nabawi ang Stamps!"
+    },
+    "zh": {
+      "autoExpireTitle": "自动过期",
+      "reclaimStamps": "回收剩余邮票",
+      "enterPayoutAddress": "输入用于接收剩余余额的比特币现金地址。",
+      "enterPayoutAddressWithExpiry": "输入在过期日期 ({expiry}) 用于接收剩余余额的比特币现金地址。",
+      "payoutAddress": "收款地址",
+      "invalidBCHAddress": "无效的比特币现金地址",
+      "enableAutoExpire": "启用自动过期",
+      "autoExpireEnabled": "已启用自动过期",
+      "bip39Info": "注意：您的邮票收藏是一个使用派生路径 m/44'/145'/0' 的 BIP39 HD 钱包。这意味着您也可以将助记词导入 Electron Cash（及其他兼容 BIP39 的钱包）并从那里管理邮票余额。",
+      "stampsReclaimed": "邮票回收成功！"
+    },
+    "da": {
+      "autoExpireTitle": "Automatisk udløb",
+      "reclaimStamps": "Reclaim resterende Stamps",
+      "enterPayoutAddress": "Indtast den Bitcoin Cash adresse, som de resterende saldi skal sendes til.",
+      "enterPayoutAddressWithExpiry": "Indtast den Bitcoin Cash adresse, som de resterende saldi skal sendes til på udløbsdatoen ({expiry}).",
+      "payoutAddress": "Udbetalingsadresse",
+      "invalidBCHAddress": "Ugyldig Bitcoin Cash adresse",
+      "enableAutoExpire": "Aktivér automatisk udløb",
+      "autoExpireEnabled": "Automatisk udløb aktiveret",
+      "bip39Info": "BEMÆRK: Din stamp-samling er en BIP39 HD Wallet med derivation path m/44'/145'/0'. Det betyder, at du også kan importere din mnemonic til Electron Cash (og andre BIP39-kompatible wallets) og administrere stamp-saldi derfra.",
+      "stampsReclaimed": "Stamps reclaimed succesfuldt!"
+    },
+    "nl": {
+      "autoExpireTitle": "Automatisch verlopen",
+      "reclaimStamps": "Resterende Stamps terugvorderen",
+      "enterPayoutAddress": "Voer het Bitcoin Cash adres in waarnaar de resterende saldi moeten worden verzonden.",
+      "enterPayoutAddressWithExpiry": "Voer het Bitcoin Cash adres in waarnaar de resterende saldi op de vervaldatum ({expiry}) moeten worden verzonden.",
+      "payoutAddress": "Uitbetalingsadres",
+      "invalidBCHAddress": "Ongeldig Bitcoin Cash adres",
+      "enableAutoExpire": "Auto-Expire inschakelen",
+      "autoExpireEnabled": "Auto-Expire ingeschakeld",
+      "bip39Info": "OPMERKING: Je stampcollectie is een BIP39 HD Wallet met derivatiepad m/44'/145'/0'. Dit betekent dat je je mnemonic ook in Electron Cash (en andere BIP39-compatibele wallets) kunt importeren en de stampsaldi van daaruit kunt beheren.",
+      "stampsReclaimed": "Stamps succesvol teruggevorderd!"
     }
   }
 }

@@ -27,6 +27,76 @@
           "Haga clic en Reclamar para enviar cualquier estampa no reclamada de vuelta a su propia billetera."
         ]
       }
+    },
+    "de": {
+      "subtitle": "Verschenkbares BCH, das bei Nichtnutzung zurückgefordert werden kann",
+      "description": "CashStamps sind einfach einlösbare Bitcoin Cash Wallets, die zum Verschenken von BCH verwendet werden können, mit der Option, ungenutzte Stamps zurückzufordern.",
+      "instructions": {
+        "title": "Anleitung:",
+        "steps": [
+          "Gib Wert, Währung und Anzahl der Stamps ein, die du erstellen möchtest.",
+          "Wähle eine Vorlage (oder erstelle deine eigene mit dem Bearbeiten-Button).",
+          "Klicke auf den Aufladen-Button und scanne den QR-Code mit deiner Wallet.",
+          "Drucke die Stamps und gib sie deinen Freunden, deiner Familie oder Kunden.",
+          "Klicke auf Zurückfordern, um nicht eingelöste Stamps an deine eigene Wallet zurückzusenden."
+        ]
+      }
+    },
+    "tl": {
+      "subtitle": "Maireregalong BCH na maaaring bawiin kung hindi nagamit",
+      "description": "Ang CashStamps ay madaling ma-redeem na Bitcoin Cash wallets na maaaring gamitin sa pagreregalo ng BCH na may opsyon na bawiin ang anumang hindi nagamit na stamps.",
+      "instructions": {
+        "title": "Mga Tagubilin:",
+        "steps": [
+          "Ilagay ang value, currency at dami ng stamps na gusto mong gawin.",
+          "Pumili ng template (o gumawa ng sarili gamit ang Edit Button).",
+          "I-click ang fund button at i-scan ang QR Code gamit ang iyong wallet.",
+          "I-print ang stamps at ibigay sa iyong mga kaibigan, pamilya, o customers.",
+          "I-click ang Reclaim upang ipadala ang anumang hindi na-claim na stamps pabalik sa iyong sariling wallet."
+        ]
+      }
+    },
+    "zh": {
+      "subtitle": "可赠送的BCH，未使用可回收",
+      "description": "CashStamps 是易于兑换的比特币现金钱包，可用于赠送 BCH，并可选择回收任何未使用的邮票。",
+      "instructions": {
+        "title": "说明：",
+        "steps": [
+          "输入您要创建的邮票的价值、货币和数量。",
+          "选择一个模板（或使用编辑按钮创建自己的模板）。",
+          "点击充值按钮并用您的钱包扫描二维码。",
+          "打印邮票并将其送给您的朋友、家人或客户。",
+          "点击回收可将任何无人领取的邮票退回您自己的钱包。"
+        ]
+      }
+    },
+    "da": {
+      "subtitle": "Gave-BCH, der kan reclaimeres hvis ubrugt",
+      "description": "CashStamps er nemt indløselige Bitcoin Cash wallets, der kan bruges til at give BCH i gave med mulighed for at reclaimere ubrugte stamps.",
+      "instructions": {
+        "title": "Vejledning:",
+        "steps": [
+          "Indtast værdi, valuta og antal stamps, du vil oprette.",
+          "Vælg en skabelon (eller opret din egen med Rediger-knappen).",
+          "Klik på finansier-knappen og scan QR-koden med din wallet.",
+          "Print stamps og giv dem til dine venner, familie eller kunder.",
+          "Klik på Reclaim for at sende eventuelle uafhentede stamps tilbage til din egen wallet."
+        ]
+      }
+    },
+    "nl": {
+      "subtitle": "Schenkbare BCH die kan worden teruggevorderd indien ongebruikt",
+      "description": "CashStamps zijn eenvoudig inwisselbare Bitcoin Cash wallets die kunnen worden gebruikt voor het schenken van BCH met de optie om ongebruikte stamps terug te vorderen.",
+      "instructions": {
+        "title": "Instructies:",
+        "steps": [
+          "Voer de waarde, valuta en hoeveelheid stamps in die je wilt maken.",
+          "Selecteer een sjabloon (of maak je eigen met de Bewerken-knop).",
+          "Klik op de financieringsknop en scan de QR-code met je wallet.",
+          "Print de stamps en geef ze aan je vrienden, familie of klanten.",
+          "Klik op Terugvorderen om niet-geclaimde stamps terug te sturen naar je eigen wallet."
+        ]
+      }
     }
   }
 }

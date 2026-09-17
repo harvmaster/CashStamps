@@ -59,7 +59,22 @@
                   <q-item-section>🇬🇧 English</q-item-section>
                 </q-item>
                 <q-item clickable @click="() => setLocale('es')">
-                  <q-item-section>🇪🇸 Spanish</q-item-section>
+                  <q-item-section>🇪🇸 Español</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('de')">
+                  <q-item-section>🇩🇪 Deutsch</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('tl')">
+                  <q-item-section>🇵🇭 Tagalog</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('zh')">
+                  <q-item-section>🇨🇳 中文</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('da')">
+                  <q-item-section>🇩🇰 Dansk</q-item-section>
+                </q-item>
+                <q-item clickable @click="() => setLocale('nl')">
+                  <q-item-section>🇳🇱 Nederlands</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -118,13 +133,18 @@ const localeIcon = computed((): string => {
   const icons: { [lang: string]: string } = {
     en: '🇬🇧',
     es: '🇪🇸',
+    de: '🇩🇪',
+    tl: '🇵🇭',
+    zh: '🇨🇳',
+    da: '🇩🇰',
+    nl: '🇳🇱',
   };
 
   // Get the main locale (e.g. "en" as opposed to "en-GB")
   const localeMain = locale.value.substring(0, 2);
 
   // Return the matching icon from our map.
-  return icons[localeMain];
+  return icons[localeMain] || icons['en'];
 });
 
 const setLocale = (newLocale: string) => {
