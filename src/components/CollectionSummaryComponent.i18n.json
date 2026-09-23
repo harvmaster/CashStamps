@@ -11,6 +11,36 @@
       "claimed": "Reclamado",
       "currentStampValue": "Valor de Sello Actual",
       "totalRemaining": "Total Restante"
+    },
+    "de": {
+      "totalDue": "Gesamt fällig",
+      "claimed": "Eingelöst",
+      "currentStampValue": "Aktueller Stamp-Wert",
+      "totalRemaining": "Verbleibend gesamt"
+    },
+    "tl": {
+      "totalDue": "Kabuuang Dapat Bayaran",
+      "claimed": "Na-claim",
+      "currentStampValue": "Kasalukuyang Halaga ng Stamp",
+      "totalRemaining": "Kabuuang Natitira"
+    },
+    "zh": {
+      "totalDue": "应付总额",
+      "claimed": "已领取",
+      "currentStampValue": "当前邮票价值",
+      "totalRemaining": "剩余总额"
+    },
+    "da": {
+      "totalDue": "Total forfaldent",
+      "claimed": "Claimed",
+      "currentStampValue": "Aktueld Stamp-værdi",
+      "totalRemaining": "Resterende total"
+    },
+    "nl": {
+      "totalDue": "Totaal verschuldigd",
+      "claimed": "Geclaimd",
+      "currentStampValue": "Huidige Stamp-waarde",
+      "totalRemaining": "Totaal resterend"
     }
   }
 }

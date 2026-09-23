@@ -1,25 +1,36 @@
 <template>
   <!-- Auto-Expiry -->
   <div>
+  <div class="row items-center no-wrap">
     <q-toggle
       v-if="app.autoExpire.isServiceAvailable.value"
-      label="Auto Expire"
+      :label="t('autoExpire')"
       :model-value="app.autoExpire.isAutoExpireEnabled.value"
       @update:model-value="onAutoExpireToggled"
       :disable="!props.wallet?.isFunded.value || props.wallet.isClaimed.value"
     >
-      <q-tooltip v-if="!props.wallet?.isFunded.value"
-        >You must fund your Stamps before you can enable Auto-Expiry</q-tooltip
-      >
+      <q-tooltip v-if="!props.wallet?.isFunded.value">{{ t('mustFundFirst') }}</q-tooltip>
       <q-tooltip v-else-if="app.autoExpire.isAutoExpireEnabled.value">
-        Stamps are set to auto-expire on {{ app.autoExpire.expiryDate.value }}
+        {{ t('autoExpireOn', { date: app.autoExpire.expiryDate.value }) }}
       </q-tooltip>
-      <q-tooltip v-else
-        >Automatically reclaim stamps after Expiry Date passes<br /><strong
-          >NOTE: This feature is currently experimental.</strong
-        ></q-tooltip
-      >
+      <q-tooltip v-else>
+        {{ t('autoReclaimInfo') }}<br /><strong>{{ t('experimentalNote') }}</strong>
+      </q-tooltip>
     </q-toggle>
+    <!-- Legacy: enabled with no stored payout address — refunds can't rebuild.
+         Warning icon at the right; tooltip explains why, click re-enables
+         via the existing dialog. -->
+    <q-icon
+      v-if="app.autoExpire.missingPayoutAddress.value"
+      name="warning"
+      color="warning"
+      size="20px"
+      class="q-ml-xs cursor-pointer"
+      @click="onAutoExpireToggled(true)"
+    >
+      <q-tooltip>{{ t('reEnablePrompt') }}</q-tooltip>
+    </q-icon>
+  </div>
   </div>
 </template>
 
@@ -33,7 +44,7 @@ import { showAsyncDialog } from 'src/utils/ui.js';
 import { WalletHD } from 'src/utils/wallet-hd.js';
 
 // Translations
-import translations from './CollectionSummaryComponent.i18n.json';
+import translations from './AutoExpireComponent.i18n.json';
 
 // Components
 import AutoExpireDialog from './AutoExpireDialog.vue';

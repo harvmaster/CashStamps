@@ -11,6 +11,36 @@
       "currency": "Moneda",
       "expiryDate": "Fecha de Expiración (AAAA/MM/DD)",
       "stampQuantity": "Cantidad de Sellos"
+    },
+    "de": {
+      "targetAmount": "Zielbetrag",
+      "currency": "Währung",
+      "expiryDate": "Ablaufdatum (JJJJ/MM/TT)",
+      "stampQuantity": "Stamp-Anzahl"
+    },
+    "tl": {
+      "targetAmount": "Target Amount",
+      "currency": "Currency",
+      "expiryDate": "Expiry Date (YYYY/MM/DD)",
+      "stampQuantity": "Dami ng Stamp"
+    },
+    "zh": {
+      "targetAmount": "目标金额",
+      "currency": "货币",
+      "expiryDate": "过期日期 (YYYY/MM/DD)",
+      "stampQuantity": "邮票数量"
+    },
+    "da": {
+      "targetAmount": "Målbeløb",
+      "currency": "Valuta",
+      "expiryDate": "Udløbsdato (ÅÅÅÅ/MM/DD)",
+      "stampQuantity": "Stamp-antal"
+    },
+    "nl": {
+      "targetAmount": "Doelbedrag",
+      "currency": "Valuta",
+      "expiryDate": "Vervaldatum (JJJJ/MM/DD)",
+      "stampQuantity": "Aantal Stamps"
     }
   }
 }

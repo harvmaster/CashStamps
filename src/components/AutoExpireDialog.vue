@@ -1,11 +1,10 @@
 <template>
   <q-card style="max-width: 500px; width: 100%">
-    <q-card-section class="text-h6 text-center"> Auto-Expire </q-card-section>
+    <q-card-section class="text-h6 text-center">{{ t('autoExpireTitle') }}</q-card-section>
 
     <q-card-section class="column q-gutter-md">
       <div class="text-body1">
-        Enter the Bitcoin Cash Address that the remaining balances should be
-        sent to on the expiry date ({{ props.stampCollection.expiry }}).
+        {{ t('enterPayoutAddressWithExpiry', { expiry: props.stampCollection.expiry }) }}
       </div>
       <q-form @submit="submitToSettlementService">
         <q-input
@@ -16,7 +15,7 @@
         />
         <q-btn
           color="primary"
-          label="Enable Auto-Expire"
+          :label="t('enableAutoExpire')"
           type="submit"
           class="full-width"
         />
@@ -73,6 +72,8 @@ async function submitToSettlementService() {
 
     const address = Address.fromCashAddrOrLegacy(state.payoutAddress);
 
+    // The payout travels in each item's meta (normalized cashaddr), so any
+    // machine holding the mnemonic can rebuild without a local copy.
     await props.app.autoExpire.enable({
       payoutBytecode: address.toLockscriptBytes(),
     });
@@ -83,7 +84,7 @@ async function submitToSettlementService() {
 
     $q.notify({
       color: 'primary',
-      message: 'Auto-Expire Enabled',
+      message: t('autoExpireEnabled'),
     });
   } catch (error) {
     console.error(error);

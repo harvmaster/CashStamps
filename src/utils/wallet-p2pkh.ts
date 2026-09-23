@@ -18,6 +18,17 @@ export class WalletP2PKH extends PrivateKey {
   // Dependencies/Services
   public electrum: ElectrumService;
 
+  // Last Electrum status seen for this address (hash of its history;
+  // null = no history, undefined = nothing observed yet). Notifications
+  // repeating the stored status carry no new information and skip the
+  // refresh below.
+  private lastAddressStatus: string | null | undefined = undefined;
+
+  // Cache validity for `unspents`. True until the first successful fetch;
+  // set again by anything that learns the address changed. While false,
+  // getters serve the cache with zero network.
+  private needsRefresh = true;
+
   // Reactives.
   public transactions = shallowRef<Array<Transaction>>([]);
   public unspents = shallowRef<AddressListUnspent['response']>([]);
@@ -101,17 +112,21 @@ export class WalletP2PKH extends PrivateKey {
   }
 
   async getUnspentOutputs() {
-    const address = this.getAddress();
+    if (this.needsRefresh) {
+      const address = this.getAddress();
 
-    const unspentTransactions = await this.electrum.request<AddressListUnspent>(
-      'blockchain.address.listunspent',
-      address,
-      'include_tokens'
-    );
+      const unspentTransactions =
+        await this.electrum.request<AddressListUnspent>(
+          'blockchain.address.listunspent',
+          address,
+          'include_tokens'
+        );
 
-    this.unspents.value = unspentTransactions;
+      this.unspents.value = unspentTransactions;
+      this.needsRefresh = false;
+    }
 
-    return unspentTransactions;
+    return this.unspents.value;
   }
 
   async getUnspentDirectives() {
@@ -141,16 +156,26 @@ export class WalletP2PKH extends PrivateKey {
   }
 
   async refresh(): Promise<void> {
+    // Explicit refresh always goes to the network.
+    this.needsRefresh = true;
     await Promise.all([this.getUnspentOutputs(), this.getHistory()]);
   }
 
   async onAddressNotification(status: string | null) {
+    // Duplicate status means nothing changed since the last refresh.
+    if (status === this.lastAddressStatus) {
+      return;
+    }
+    this.lastAddressStatus = status;
+
     // If status is null, it simply means that our subscribe call to Electrum was successful.
     if (!status) {
       return;
     }
 
-    // Refresh our wallet's state.
+    // State changed: invalidate the cache, then refresh through the
+    // getters so the fetch populates it.
+    this.needsRefresh = true;
     await Promise.all([this.getHistory(), this.getUnspentOutputs()]);
   }
 }

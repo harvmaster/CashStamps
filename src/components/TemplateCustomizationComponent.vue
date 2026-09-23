@@ -4,7 +4,7 @@
       <!-- Theme Customizer -->
       <q-expansion-item
         v-if="template.variables"
-        :label="t('Customize Template')"
+        :label="t('customizeTemplate')"
         icon="edit"
         header-class="bg-primary text-white"
         expand-icon-class="text-white"
@@ -19,12 +19,12 @@
           <template v-slot:avatar>
             <q-icon name="warning" color="white" />
           </template>
-          This template is read-only.
+          {{ t('templateReadonly') }}
           <template v-slot:action>
             <q-btn
               flat
               dense
-              label="Clone Template"
+              :label="t('cloneTemplate')"
               @click="props.onCopyTemplate()"
             />
           </template>
@@ -49,7 +49,7 @@
               :disable="history.undo.length === 0"
               @click="undo"
             >
-              <q-tooltip>Undo</q-tooltip>
+              <q-tooltip>{{ t('undo') }}</q-tooltip>
             </q-btn>
             <q-btn
               flat
@@ -59,7 +59,7 @@
               :disable="history.redo.length === 0"
               @click="redo"
             >
-              <q-tooltip>Redo</q-tooltip>
+              <q-tooltip>{{ t('redo') }}</q-tooltip>
             </q-btn>
           </div>
         </q-banner>

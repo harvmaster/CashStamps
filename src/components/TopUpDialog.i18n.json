@@ -17,6 +17,51 @@
       "stampsToppedUpSuccessfully": "¡Sellos rellenados con éxito!",
       "paymentProtocolNotice": "NOTA: La financiación requiere una billetera compatible con BIP70/JSONPaymentProtocol.",
       "knownWallets": "Billeteras conocidas: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "de": {
+      "allStampsFunded": "Alle Stamps sind bereits vollständig aufgeladen — nichts nachzuladen!",
+      "topUpSummary": "{count} von {total} Stamps müssen nachgeladen werden.",
+      "topUpAmountNeeded": "Insgesamt benötigt: {amount} BCH",
+      "scanToTopUp": "Scannen, um Stamps auf ihren Zielwert aufzufüllen",
+      "stampsToppedUpSuccessfully": "Stamps erfolgreich nachgeladen!",
+      "paymentProtocolNotice": "HINWEIS: Das Aufladen erfordert eine BIP70/JSONPaymentProtocol-kompatible Wallet.",
+      "knownWallets": "Bekannte Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "tl": {
+      "allStampsFunded": "Lahat ng stamps ay fully funded na — walang kailangang i-top up!",
+      "topUpSummary": "{count} sa {total} stamps ang kailangang i-top up.",
+      "topUpAmountNeeded": "Kabuuang kailangan: {amount} BCH",
+      "scanToTopUp": "I-scan upang ibalik ang stamps sa target value",
+      "stampsToppedUpSuccessfully": "Matagumpay na na-top up ang Stamps!",
+      "paymentProtocolNotice": "PAALALA: Ang pagpondo ay nangangailangan ng BIP70/JSONPaymentProtocol compatible Wallet.",
+      "knownWallets": "Kilalang Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "zh": {
+      "allStampsFunded": "所有邮票均已全额充值——无需补足！",
+      "topUpSummary": "{total} 张邮票中有 {count} 张需要补足。",
+      "topUpAmountNeeded": "总共需要：{amount} BCH",
+      "scanToTopUp": "扫描以将邮票恢复到目标价值",
+      "stampsToppedUpSuccessfully": "邮票补足成功！",
+      "paymentProtocolNotice": "注意：充值需要兼容 BIP70/JSONPaymentProtocol 的钱包。",
+      "knownWallets": "已知钱包：Electron Cash、Bitcoin.com Wallet、Paytaca、Flowee。"
+    },
+    "da": {
+      "allStampsFunded": "Alle stamps er allerede fuldt finansieret — intet at fylde op!",
+      "topUpSummary": "{count} af {total} stamps skal fyldes op.",
+      "topUpAmountNeeded": "Total behov: {amount} BCH",
+      "scanToTopUp": "Scan for at gendanne stamps til deres målværdi",
+      "stampsToppedUpSuccessfully": "Stamps fyldt op succesfuldt!",
+      "paymentProtocolNotice": "BEMÆRK: Finansiering kræver en BIP70/JSONPaymentProtocol-kompatibel Wallet.",
+      "knownWallets": "Kendte Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
+    },
+    "nl": {
+      "allStampsFunded": "Alle stamps zijn al volledig gefinancierd — niets op te waarderen!",
+      "topUpSummary": "{count} van {total} stamps moeten worden opgewaardeerd.",
+      "topUpAmountNeeded": "Totaal nodig: {amount} BCH",
+      "scanToTopUp": "Scan om stamps naar hun doelwaarde aan te vullen",
+      "stampsToppedUpSuccessfully": "Stamps succesvol opgewaardeerd!",
+      "paymentProtocolNotice": "OPMERKING: Financiering vereist een BIP70/JSONPaymentProtocol-compatibele Wallet.",
+      "knownWallets": "Bekende Wallets: Electron Cash, Bitcoin.com Wallet, Paytaca, Flowee."
     }
   }
 }
