@@ -5,49 +5,56 @@
       "mustFundFirst": "You must fund your Stamps before you can enable Auto-Expiry",
       "autoExpireOn": "Stamps are set to auto-expire on {date}",
       "autoReclaimInfo": "Automatically reclaim stamps after Expiry Date passes",
-      "experimentalNote": "NOTE: This feature is currently experimental."
+      "experimentalNote": "NOTE: This feature is currently experimental.",
+      "reEnablePrompt": "Auto-expire is on, but no payout address is saved. Re-enable to keep refunds current."
     },
     "es": {
       "autoExpire": "Vencimiento automático",
       "mustFundFirst": "Debes financiar tus Sellos antes de poder activar el Vencimiento Automático",
       "autoExpireOn": "Los Sellos están configurados para vencer automáticamente el {date}",
       "autoReclaimInfo": "Reclamar Sellos automáticamente después de que pase la Fecha de Vencimiento",
-      "experimentalNote": "NOTA: Esta función es actualmente experimental."
+      "experimentalNote": "NOTA: Esta función es actualmente experimental.",
+      "reEnablePrompt": "El vencimiento automático está activado, pero no hay dirección de pago guardada. Vuelve a activarlo para mantener los reembolsos actualizados."
     },
     "de": {
       "autoExpire": "Automatisches Ablaufen",
       "mustFundFirst": "Du musst deine Stamps erst finanzieren, bevor du das automatische Ablaufen aktivieren kannst",
       "autoExpireOn": "Stamps laufen am {date} automatisch ab",
       "autoReclaimInfo": "Stamps nach Ablauf des Ablaufdatums automatisch zurückfordern",
-      "experimentalNote": "HINWEIS: Diese Funktion ist derzeit experimentell."
+      "experimentalNote": "HINWEIS: Diese Funktion ist derzeit experimentell.",
+      "reEnablePrompt": "Automatisches Ablaufen ist aktiv, aber es ist keine Auszahlungsadresse gespeichert. Reaktiviere es, um Rückerstattungen aktuell zu halten."
     },
     "tl": {
       "autoExpire": "Awtomatikong Pag-expire",
       "mustFundFirst": "Kailangan mong pondohan muna ang iyong Stamps bago mo ma-enable ang Auto-Expiry",
       "autoExpireOn": "Ang Stamps ay nakatakdang mag-auto-expire sa {date}",
       "autoReclaimInfo": "Awtomatikong bawiin ang stamps pagkatapos lumipas ang Expiry Date",
-      "experimentalNote": "PAALALA: Ang feature na ito ay experimental pa."
+      "experimentalNote": "PAALALA: Ang feature na ito ay experimental pa.",
+      "reEnablePrompt": "Naka-on ang auto-expire, pero walang naka-save na payout address. I-enable muli upang panatilihing updated ang refunds."
     },
     "zh": {
       "autoExpire": "自动过期",
       "mustFundFirst": "您必须先为邮票充值，才能启用自动过期功能",
       "autoExpireOn": "邮票已设置为在 {date} 自动过期",
       "autoReclaimInfo": "过期日期过后自动回收邮票",
-      "experimentalNote": "注意：此功能目前为实验性功能。"
+      "experimentalNote": "注意：此功能目前为实验性功能。",
+      "reEnablePrompt": "自动过期已启用，但未保存收款地址。请重新启用以保持退款更新。"
     },
     "da": {
       "autoExpire": "Automatisk udløb",
       "mustFundFirst": "Du skal finansiere dine Stamps, før du kan aktivere automatisk udløb",
       "autoExpireOn": "Stamps er indstillet til automatisk at udløbe den {date}",
       "autoReclaimInfo": "Reclaim automatisk stamps efter udløbsdatoen er passeret",
-      "experimentalNote": "BEMÆRK: Denne funktion er i øjeblikket eksperimentel."
+      "experimentalNote": "BEMÆRK: Denne funktion er i øjeblikket eksperimentel.",
+      "reEnablePrompt": "Automatisk udløb er slået til, men ingen udbetalingsadresse er gemt. Genaktivér for at holde refusioner opdaterede."
     },
     "nl": {
       "autoExpire": "Automatisch verlopen",
       "mustFundFirst": "Je moet je Stamps eerst financieren voordat je Auto-Expire kunt inschakelen",
       "autoExpireOn": "Stamps verlopen automatisch op {date}",
       "autoReclaimInfo": "Stamps automatisch terugvorderen nadat de vervaldatum is verstreken",
-      "experimentalNote": "OPMERKING: Deze functie is momenteel experimenteel."
+      "experimentalNote": "OPMERKING: Deze functie is momenteel experimenteel.",
+      "reEnablePrompt": "Auto-expire staat aan, maar er is geen uitbetalingsadres opgeslagen. Schakel opnieuw in om terugbetalingen actueel te houden."
     }
   }
 }

@@ -1,6 +1,7 @@
 <template>
   <!-- Auto-Expiry -->
   <div>
+  <div class="row items-center no-wrap">
     <q-toggle
       v-if="app.autoExpire.isServiceAvailable.value"
       :label="t('autoExpire')"
@@ -16,6 +17,20 @@
         {{ t('autoReclaimInfo') }}<br /><strong>{{ t('experimentalNote') }}</strong>
       </q-tooltip>
     </q-toggle>
+    <!-- Legacy: enabled with no stored payout address — refunds can't rebuild.
+         Warning icon at the right; tooltip explains why, click re-enables
+         via the existing dialog. -->
+    <q-icon
+      v-if="app.autoExpire.missingPayoutAddress.value"
+      name="warning"
+      color="warning"
+      size="20px"
+      class="q-ml-xs cursor-pointer"
+      @click="onAutoExpireToggled(true)"
+    >
+      <q-tooltip>{{ t('reEnablePrompt') }}</q-tooltip>
+    </q-icon>
+  </div>
   </div>
 </template>
 

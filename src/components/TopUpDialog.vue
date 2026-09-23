@@ -274,6 +274,10 @@ async function generateQrCode(targetBchAmount: number) {
 
       // Close the dialog now that the top-up has landed.
       state.visible = false;
+
+      // NOTE: auto-expire convergence is handled by the service's aggregate
+      // watcher (auto-expire.ts), which picks up the new UTXOs once Electrum
+      // indexes them. No explicit sync here — it would race indexing.
     });
 
   // Create the QR code by sending request to CashPayServer

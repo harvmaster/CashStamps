@@ -72,6 +72,8 @@ async function submitToSettlementService() {
 
     const address = Address.fromCashAddrOrLegacy(state.payoutAddress);
 
+    // The payout travels in each item's meta (normalized cashaddr), so any
+    // machine holding the mnemonic can rebuild without a local copy.
     await props.app.autoExpire.enable({
       payoutBytecode: address.toLockscriptBytes(),
     });

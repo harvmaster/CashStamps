@@ -35,14 +35,10 @@
       <!-- Action Buttons -->
       <div class="col-md-3 col-12">
         <div class="column q-col-gutter-y-md">
-          <!-- Fund Stamps -->
-          <div>
+          <!-- Fund Stamps (hidden once funded; Top Up takes over as the CTA) -->
+          <div v-if="!props.wallet.isFunded.value">
             <q-btn
-              :disable="
-                props.wallet.isFunded.value ||
-                !collection.quantity ||
-                !collection.amount
-              "
+              :disable="!collection.quantity || !collection.amount"
               :label="t('fundStamps')"
               color="primary"
               @click="showFundingDialog"
@@ -52,9 +48,7 @@
             />
           </div>
 
-          <div
-            v-if="props.app.experimental.value && props.wallet.isFunded.value"
-          >
+          <div v-if="props.wallet.isFunded.value">
             <q-btn
               :disabled="props.wallet.isClaimed.value"
               :label="t('topUpStamps')"
