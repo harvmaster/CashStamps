@@ -52,7 +52,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover :breakpoint="600">
-              <q-date v-model="expiryModel" />
+              <q-date v-model="expiryModel" no-unset />
             </q-popup-proxy>
           </q-icon>
         </template>
